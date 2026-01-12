@@ -1,0 +1,319 @@
+.header {
+  height: 70px;
+  background-color: var(--white);
+  border-bottom: 1px solid var(--border-color);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 30px;
+  position: fixed;
+  top: 0;
+  left: 250px;
+  right: 0;
+  z-index: 90;
+}
+
+.greeting {
+  flex: 1;
+}
+
+.greetingText {
+  font-size: 24px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 4px;
+}
+
+.greetingSubtext {
+  font-size: 14px;
+  color: var(--text-secondary);
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.iconBtn {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: #f5f7fa;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+.iconBtn:hover {
+  background-color: #e3f2fd;
+  color: var(--primary-color);
+}
+
+.icon {
+  font-size: 20px;
+}
+
+.badge {
+  position: absolute;
+  top: -2px;
+  right: -2px;
+  background-color: var(--danger-color);
+  color: white;
+  font-size: 10px;
+  font-weight: 600;
+  padding: 2px 6px;
+  border-radius: 10px;
+  min-width: 18px;
+  text-align: center;
+}
+
+.profileWrapper {
+  position: relative;
+}
+
+.profile {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.profile:hover {
+  background-color: #f5f7fa;
+}
+
+.avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  font-size: 16px;
+}
+
+.profileInfo {
+  display: flex;
+  flex-direction: column;
+}
+
+.profileName {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.profileRole {
+  font-size: 12px;
+  color: var(--text-secondary);
+  text-transform: capitalize;
+}
+
+.dropdownIcon {
+  font-size: 20px;
+  color: var(--text-secondary);
+  transition: transform 0.3s ease;
+}
+
+.dropdownIcon.rotated {
+  transform: rotate(180deg);
+}
+
+.profileMenu {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  background-color: var(--white);
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  min-width: 200px;
+  padding: 8px;
+  animation: slideDown 0.2s ease;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.menuItem {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  border: none;
+  background: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-primary);
+  transition: all 0.2s ease;
+  text-align: left;
+}
+
+.menuItem:hover {
+  background-color: #f5f7fa;
+  color: var(--primary-color);
+}
+
+.menuIcon {
+  font-size: 18px;
+}
+
+.notificationWrapper {
+  position: relative;
+}
+
+.notificationDropdown {
+  position: absolute;
+  top: calc(100% + 12px);
+  right: 0;
+  background-color: var(--white);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-xl);
+  min-width: 380px;
+  max-height: 500px;
+  display: flex;
+  flex-direction: column;
+  animation: slideDown 0.2s ease;
+  border: 1px solid var(--border-light);
+  z-index: 1000;
+}
+
+.notifHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--border-light);
+}
+
+.notifTitle {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.closeBtn {
+  background: none;
+  border: none;
+  color: var(--text-secondary);
+  cursor: pointer;
+  padding: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  transition: var(--transition-fast);
+}
+
+.closeBtn:hover {
+  background-color: var(--background);
+  color: var(--text-primary);
+}
+
+.notifList {
+  flex: 1;
+  overflow-y: auto;
+  max-height: 350px;
+}
+
+.notifItem {
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--border-light);
+  cursor: pointer;
+  transition: var(--transition-fast);
+  display: flex;
+  align-items: start;
+  gap: 12px;
+  position: relative;
+}
+
+.notifItem:hover {
+  background-color: var(--background);
+}
+
+.notifItem.unread {
+  background-color: rgba(74, 144, 226, 0.05);
+}
+
+.notifContent {
+  flex: 1;
+}
+
+.notifItem .notifTitle {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 4px;
+}
+
+.notifMessage {
+  font-size: 13px;
+  color: var(--text-secondary);
+  margin-bottom: 6px;
+  line-height: 1.4;
+}
+
+.notifTime {
+  font-size: 12px;
+  color: var(--text-tertiary);
+}
+
+.unreadDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: var(--primary-color);
+  flex-shrink: 0;
+  margin-top: 6px;
+}
+
+.emptyNotif {
+  padding: 40px 20px;
+  text-align: center;
+  color: var(--text-secondary);
+  font-size: 14px;
+}
+
+.notifFooter {
+  padding: 12px 20px;
+  border-top: 1px solid var(--border-light);
+}
+
+.viewAllBtn {
+  width: 100%;
+  padding: 10px;
+  background-color: var(--primary-color);
+  color: white;
+  border: none;
+  border-radius: var(--radius);
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.viewAllBtn:hover {
+  background-color: var(--primary-dark);
+  transform: translateY(-1px);
+}

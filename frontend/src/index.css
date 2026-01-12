@@ -1,0 +1,174 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-color: #f5f7fa;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
+}
+
+:root {
+  --primary-color: #4A90E2;
+  --primary-dark: #357ABD;
+  --primary-light: #7FB3E8;
+  --secondary-color: #50C878;
+  --danger-color: #F44336;
+  --warning-color: #FF9800;
+  --success-color: #4CAF50;
+  --info-color: #2196F3;
+  
+  --background: #f5f7fa;
+  --background-alt: #ffffff;
+  --white: #ffffff;
+  
+  --text-primary: #2c3e50;
+  --text-secondary: #7f8c8d;
+  --text-tertiary: #95a5a6;
+  
+  --border-color: #e0e6ed;
+  --border-light: #ecf0f1;
+  
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.05);
+  --shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.12);
+  --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.15);
+  --shadow-xl: 0 12px 32px rgba(0, 0, 0, 0.18);
+  
+  --radius-sm: 6px;
+  --radius: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  
+  --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-fast: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--background);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border-color);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--text-secondary);
+}
+
+button {
+  font-family: inherit;
+}
+
+input, textarea, select {
+  font-family: inherit;
+}
+
+a {
+  color: var(--primary-color);
+  text-decoration: none;
+  transition: var(--transition-fast);
+}
+
+a:hover {
+  color: var(--primary-dark);
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.5s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-slide-in {
+  animation: slideIn 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateX(-20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+/* Dark Mode Styles */
+.dark-mode {
+  --primary-color: #5AA3F0;
+  --primary-dark: #4A90E2;
+  --primary-light: #8FC5F5;
+  
+  --background: #1a1d23;
+  --background-alt: #232831;
+  --white: #2d3139;
+  
+  --text-primary: #e4e6eb;
+  --text-secondary: #b0b3b8;
+  --text-tertiary: #8a8d91;
+  
+  --border-color: #3a3f4b;
+  --border-light: #2f3541;
+  
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.3);
+  --shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.5);
+  --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.6);
+  --shadow-xl: 0 12px 32px rgba(0, 0, 0, 0.7);
+}
+
+.dark-mode body {
+  background-color: #1a1d23;
+  color: #e4e6eb;
+}
+
+/* Dark Mode - Keep text visible in light containers */
+.dark-mode .statusPending,
+.dark-mode .statusApproved,
+.dark-mode .statusRejected,
+.dark-mode .statusMerged {
+  color: #1a1d23 !important;
+}
+
+.dark-mode input:disabled,
+.dark-mode textarea:disabled,
+.dark-mode select:disabled {
+  color: var(--text-secondary) !important;
+}
+
+/* Keep gradient stat cards readable in dark mode */
+.dark-mode [class*="blue"],
+.dark-mode [class*="green"],
+.dark-mode [class*="orange"],
+.dark-mode [class*="red"],
+.dark-mode [class*="purple"],
+.dark-mode [class*="cyan"] {
+  color: white !important;
+}
