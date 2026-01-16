@@ -1,98 +1,228 @@
+:root {
+  --white: #ffffff;
+  --black: #000000;
+  --text-primary: #000000;
+  --text-secondary: #666666;
+  --border-color: #e0e0e0;
+  --primary-color: #000000;
+  --primary-dark: #333333;
+}
+
 .container {
   min-height: 100vh;
-  background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+  background: #ffffff;
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 20px;
 }
+
 .card {
-  background-color: var(--white);
+  background-color: #ffffff;
   border-radius: 16px;
   padding: 48px;
-  box-shadow: 0 10px 40px rgba(74, 144, 226, 0.15);
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.03);
   width: 100%;
   max-width: 450px;
-  border: 1px solid rgba(74, 144, 226, 0.1);
+  border: 1px solid rgba(0, 0, 0, 0.05);
 }
+
 .header {
   text-align: center;
   margin-bottom: 32px;
 }
+
 .logo {
   font-size: 32px;
   font-weight: 700;
-  color: var(--primary-color);
+  color: #000000;
   margin-bottom: 8px;
 }
+
 .subtitle {
   font-size: 14px;
-  color: var(--text-secondary);
+  color: #666666;
 }
+
 .title {
   font-size: 24px;
   font-weight: 600;
-  color: var(--text-primary);
+  color: #000000;
   margin-top: 24px;
   margin-bottom: 8px;
 }
+
 .description {
   font-size: 14px;
-  color: var(--text-secondary);
+  color: #666666;
 }
+
 .form {
   margin-top: 32px;
 }
+
 .formGroup {
   margin-bottom: 20px;
 }
+
 .label {
   display: block;
   font-size: 14px;
   font-weight: 500;
-  color: var(--text-primary);
+  color: #000000;
   margin-bottom: 8px;
 }
+
 .inputWrapper {
   display: flex;
   gap: 8px;
 }
-.input {
+
+input.input,
+input[type="text"].input,
+input[type="password"].input,
+input[type="email"].input,
+textarea.input {
   width: 100%;
   padding: 12px 16px;
-  border: 1px solid var(--border-color);
+  border: 1px solid #e0e0e0 !important;
   border-radius: 8px;
   font-size: 14px;
   transition: all 0.3s ease;
+  background-color: #ffffff !important;
+  background: #ffffff !important;
+  color: #000000 !important;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
 }
-.input:focus {
+
+input.input::placeholder,
+input[type="text"].input::placeholder,
+input[type="password"].input::placeholder,
+input[type="email"].input::placeholder,
+textarea.input::placeholder {
+  color: #999999;
+}
+
+input.input:focus,
+input[type="text"].input:focus,
+input[type="password"].input:focus,
+input[type="email"].input:focus,
+textarea.input:focus {
   outline: none;
-  border-color: var(--primary-color);
-  box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.1);
+  border-color: #000000 !important;
+  box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.05) !important;
+  background-color: #ffffff !important;
+  background: #ffffff !important;
 }
-.select {
-  padding: 12px 16px;
-  border: 1px solid var(--border-color);
-  border-radius: 8px;
-  font-size: 14px;
-  background-color: white;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  min-width: 180px;
+
+input.input:hover,
+input[type="text"].input:hover,
+input[type="password"].input:hover,
+input[type="email"].input:hover,
+textarea.input:hover {
+  border-color: #999999 !important;
+  background-color: #ffffff !important;
+  background: #ffffff !important;
 }
-.select:focus {
-  outline: none;
-  border-color: var(--primary-color);
-  box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.1);
+
+/* Force ALL select/dropdown elements to be white ALWAYS - MAXIMUM OVERRIDE */
+select,
+select.select,
+select[class*="select"],
+.select,
+[class*="select"] select,
+div[class*="select"],
+button[role="combobox"],
+[role="combobox"] {
+  padding: 12px 16px !important;
+  padding-right: 40px !important;
+  border: 1px solid #e0e0e0 !important;
+  border-radius: 8px !important;
+  font-size: 14px !important;
+  background-color: #ffffff !important;
+  background: #ffffff !important;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 16 16'%3E%3Cpath fill='%23000000' d='M4.427 6.427l3.396 3.396a.25.25 0 00.354 0l3.396-3.396A.25.25 0 0011.396 6H4.604a.25.25 0 00-.177.427z'/%3E%3C/svg%3E") !important;
+  background-repeat: no-repeat !important;
+  background-position: right 12px center !important;
+  background-size: 16px !important;
+  color: #000000 !important;
+  cursor: pointer !important;
+  transition: all 0.3s ease !important;
+  min-width: 180px !important;
+  -webkit-appearance: none !important;
+  -moz-appearance: none !important;
+  appearance: none !important;
 }
+
+/* Input wrapper - also force white */
+.inputWrapper select,
+.inputWrapper [class*="select"],
+.inputWrapper button {
+  background-color: #ffffff !important;
+  background: #ffffff !important;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 16 16'%3E%3Cpath fill='%23000000' d='M4.427 6.427l3.396 3.396a.25.25 0 00.354 0l3.396-3.396A.25.25 0 0011.396 6H4.604a.25.25 0 00-.177.427z'/%3E%3C/svg%3E") !important;
+  background-repeat: no-repeat !important;
+  background-position: right 12px center !important;
+  background-size: 16px !important;
+  color: #000000 !important;
+}
+
+select:focus,
+select.select:focus,
+select[class*="select"]:focus,
+.select:focus,
+[class*="select"] select:focus,
+div[class*="select"]:focus,
+button[role="combobox"]:focus,
+[role="combobox"]:focus {
+  outline: none !important;
+  border-color: #000000 !important;
+  box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.05) !important;
+  background-color: #ffffff !important;
+  background: #ffffff !important;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 16 16'%3E%3Cpath fill='%23000000' d='M4.427 6.427l3.396 3.396a.25.25 0 00.354 0l3.396-3.396A.25.25 0 0011.396 6H4.604a.25.25 0 00-.177.427z'/%3E%3C/svg%3E") !important;
+  background-repeat: no-repeat !important;
+  background-position: right 12px center !important;
+  background-size: 16px !important;
+}
+
+select:hover,
+select.select:hover,
+select[class*="select"]:hover,
+.select:hover,
+[class*="select"] select:hover,
+div[class*="select"]:hover,
+button[role="combobox"]:hover,
+[role="combobox"]:hover {
+  border-color: #999999 !important;
+  background-color: #ffffff !important;
+  background: #ffffff !important;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 16 16'%3E%3Cpath fill='%23000000' d='M4.427 6.427l3.396 3.396a.25.25 0 00.354 0l3.396-3.396A.25.25 0 0011.396 6H4.604a.25.25 0 00-.177.427z'/%3E%3C/svg%3E") !important;
+  background-repeat: no-repeat !important;
+  background-position: right 12px center !important;
+  background-size: 16px !important;
+}
+
+/* Force option elements inside select to be white */
+select option,
+select.select option,
+.select option {
+  background-color: #ffffff !important;
+  color: #000000 !important;
+}
+
 .hint {
   font-size: 12px;
-  color: var(--primary-color);
+  color: #000000;
   margin-top: 6px;
 }
+
 .passwordWrapper {
   position: relative;
 }
+
 .passwordToggle {
   position: absolute;
   right: 12px;
@@ -100,33 +230,41 @@
   transform: translateY(-50%);
   background: none;
   border: none;
-  color: var(--text-secondary);
+  color: #666666;
   cursor: pointer;
   padding: 4px;
   display: flex;
   align-items: center;
   justify-content: center;
+  transition: all 0.3s ease;
 }
+
 .passwordToggle:hover {
-  color: var(--primary-color);
+  color: #000000;
 }
+
 .forgotPassword {
   text-align: right;
   margin-top: 8px;
 }
+
 .forgotLink {
   font-size: 14px;
-  color: var(--primary-color);
+  color: #000000;
   text-decoration: none;
+  transition: all 0.3s ease;
 }
+
 .forgotLink:hover {
   text-decoration: underline;
+  color: #333333;
 }
+
 .submitBtn {
   width: 100%;
   padding: 14px;
-  background-color: var(--primary-color);
-  color: white;
+  background-color: #000000;
+  color: #ffffff;
   border: none;
   border-radius: 8px;
   font-size: 16px;
@@ -135,31 +273,39 @@
   transition: all 0.3s ease;
   margin-top: 24px;
 }
+
 .submitBtn:hover {
-  background-color: var(--primary-dark);
+  background-color: #333333;
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(74, 144, 226, 0.4);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 }
+
 .submitBtn:disabled {
-  background-color: #ccc;
+  background-color: #cccccc;
   cursor: not-allowed;
   transform: none;
 }
+
 .footer {
   text-align: center;
   margin-top: 24px;
   font-size: 14px;
-  color: var(--text-secondary);
+  color: #666666;
 }
+
 .footerLink {
-  color: var(--primary-color);
+  color: #000000;
   text-decoration: none;
   font-weight: 600;
   margin-left: 4px;
+  transition: all 0.3s ease;
 }
+
 .footerLink:hover {
   text-decoration: underline;
+  color: #333333;
 }
+
 .error {
   background-color: #ffebee;
   color: #c62828;
@@ -169,6 +315,7 @@
   font-size: 14px;
   text-align: center;
 }
+
 .success {
   background-color: #e8f5e9;
   color: #2e7d32;
@@ -178,18 +325,20 @@
   font-size: 14px;
   text-align: center;
 }
+
 .backButton {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  color: var(--primary-color);
+  color: #000000;
   text-decoration: none;
   font-size: 14px;
   font-weight: 500;
   margin-bottom: 24px;
   transition: all 0.3s ease;
 }
+
 .backButton:hover {
-  color: var(--primary-dark);
+  color: #333333;
   gap: 12px;
 }
