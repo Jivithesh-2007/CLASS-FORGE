@@ -16,6 +16,7 @@ import StudentSettings from './pages/Settings/Settings';
 
 import TeacherDashboard from './pages/TeacherDashboard/Dashboard';
 import ReviewIdeas from './pages/TeacherDashboard/ReviewIdeas';
+import Ideas from './pages/TeacherDashboard/Ideas';
 import ApprovedIdeas from './pages/TeacherDashboard/ApprovedIdeas';
 import Students from './pages/TeacherDashboard/Students';
 import TeacherSettings from './pages/Settings/Settings';
@@ -107,6 +108,14 @@ function App() {
               element={
                 <ProtectedRoute allowedRoles={['teacher']}>
                   <ReviewIdeas />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/teacher-dashboard/ideas"
+              element={
+                <ProtectedRoute allowedRoles={['teacher']}>
+                  <Ideas />
                 </ProtectedRoute>
               }
             />

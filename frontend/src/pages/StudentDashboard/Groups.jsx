@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { MdAdd, MdGroup, MdPeople, MdEmail, MdDelete, MdExitToApp, MdContentCopy, MdClose, MdChat } from 'react-icons/md';
+import { MdAdd, MdGroup, MdPeople, MdEmail, MdDelete, MdExitToApp, MdContentCopy, MdClose, MdChat, MdMoreVert } from 'react-icons/md';
 import { useAuth } from '../../context/AuthContext';
 import Sidebar from '../../components/Sidebar/Sidebar';
 import Header from '../../components/Header/Header';
 import GroupChat from '../../components/GroupChat/GroupChat';
 import { groupAPI } from '../../services/api';
-import styles from './Dashboard.module.css';
+import styles from './Groups.module.css';
 
 const Groups = () => {
   const { user } = useAuth();
@@ -87,7 +87,6 @@ const Groups = () => {
   };
 
   const handleLeaveGroup = async (groupId) => {
-    if (!confirm('Are you sure you want to leave this group?')) return;
     try {
       await groupAPI.leaveGroup(groupId);
       showMessage('success', 'Left group successfully');
@@ -98,7 +97,6 @@ const Groups = () => {
   };
 
   const handleDeleteGroup = async (groupId) => {
-    if (!confirm('Are you sure you want to delete this group?')) return;
     try {
       await groupAPI.deleteGroup(groupId);
       showMessage('success', 'Group deleted successfully');
@@ -114,6 +112,18 @@ const Groups = () => {
     setTimeout(() => setCopiedCode(null), 2000);
   };
 
+  const getGroupRole = (group) => {
+    if (group.founder?._id === user?._id) return 'FOUNDER';
+    return 'CONTRIBUTOR';
+  };
+
+  const getGroupStatus = (group) => {
+    const memberCount = group.members?.length || 0;
+    if (memberCount >= 5) return 'IN PROGRESS';
+    if (memberCount >= 3) return 'PLANNING';
+    return 'ACTIVE';
+  };
+
   if (loading) {
     return <div>Loading...</div>;
   }
@@ -122,7 +132,7 @@ const Groups = () => {
     <div className={styles.layout}>
       <Sidebar role="student" />
       <div className={styles.main}>
-        <Header title="My Groups" subtitle="Collaborate with your peers" />
+        <Header title="Project Teams" />
         <div className={styles.content}>
           {message.text && (
             <div style={{
@@ -168,135 +178,101 @@ const Groups = () => {
             }
           `}</style>
 
-          <div className={styles.section}>
-            <div className={styles.sectionHeader}>
-              <h2 className={styles.sectionTitle}>
-                <MdGroup /> Groups
-              </h2>
-              <div style={{ display: 'flex', gap: '12px' }}>
-                <button className={styles.button} onClick={() => setShowJoinModal(true)}>
-                  <MdAdd /> Join Group
-                </button>
-                <button className={styles.button} onClick={() => setShowCreateModal(true)}>
-                  <MdAdd /> Create Group
-                </button>
-              </div>
+          <div className={styles.headerSection}>
+            <div className={styles.headerLeft}>
+              <h1 className={styles.pageTitle}>Project Groups</h1>
+              <p className={styles.pageSubtitle}>Collaborate with peers on innovation challenges.</p>
             </div>
+            <div className={styles.headerRight}>
+              <button className={styles.codeButton} onClick={() => setShowJoinModal(true)}>
+                ENTER JOIN CODE
+              </button>
+              <button className={styles.createBtn} onClick={() => setShowCreateModal(true)}>
+                <MdAdd size={18} />
+                Create New Group
+              </button>
+            </div>
+          </div>
 
-            {groups.length === 0 ? (
-              <div className={styles.emptyState}>
-                <MdGroup className={styles.emptyIcon} />
-                <div className={styles.emptyText}>No groups yet</div>
-                <div className={styles.emptySubtext}>Create a group or join one using a code to collaborate with other students</div>
-              </div>
-            ) : (
-              <div className={styles.ideaGrid}>
-                {groups.map((group) => (
-                  <div key={group._id} className={styles.ideaCard}>
-                    <h3 className={styles.ideaTitle}>{group.name}</h3>
-                    <p className={styles.ideaDescription}>{group.description}</p>
-                    
-                    <div style={{ marginTop: '12px', marginBottom: '12px', padding: '12px', backgroundColor: '#f5f7fa', borderRadius: '8px' }}>
-                      <div style={{ fontSize: '12px', color: 'var(--text-secondary)', marginBottom: '6px' }}>Group Code:</div>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                        <code style={{ fontSize: '16px', fontWeight: '600', color: 'var(--primary-color)' }}>{group.groupCode}</code>
-                        <button
+          {groups.length === 0 ? (
+            <div className={styles.emptyState}>
+              <MdGroup className={styles.emptyIcon} />
+              <div className={styles.emptyText}>No groups yet</div>
+              <div className={styles.emptySubtext}>Create a group or join one using a code to collaborate with other students</div>
+            </div>
+          ) : (
+            <div className={styles.groupsGrid}>
+              {groups.map((group) => (
+                <div key={group._id} className={styles.groupCard}>
+                  <div className={styles.cardHeader}>
+                    <div className={styles.groupIcon}>
+                      <MdPeople size={24} />
+                    </div>
+                    <div>
+                      <div className={styles.statusBadge}>
+                        {getGroupStatus(group)}
+                      </div>
+                      <div className={styles.codeSection}>
+                        <span className={styles.groupCodeText}>CODE: {group.groupCode}</span>
+                        <button 
                           onClick={() => copyToClipboard(group.groupCode)}
-                          style={{
-                            background: 'none',
-                            border: 'none',
-                            cursor: 'pointer',
-                            color: 'var(--primary-color)',
-                            padding: '4px'
-                          }}
+                          className={styles.copyCodeBtn}
                           title="Copy code"
                         >
-                          <MdContentCopy size={16} />
+                          <MdContentCopy size={14} />
                         </button>
-                        {copiedCode === group.groupCode && <span style={{ fontSize: '12px', color: 'green' }}>Copied!</span>}
                       </div>
-                    </div>
-
-                    <div style={{ marginTop: '12px', marginBottom: '12px' }}>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '14px', color: 'var(--text-secondary)' }}>
-                        <MdPeople />
-                        <span>{group.members?.length || 0} members</span>
-                      </div>
-                    </div>
-
-                    <div style={{ display: 'flex', gap: '8px', marginTop: '12px', flexWrap: 'wrap' }}>
-                      {group.members?.length >= 2 && (
-                        <button 
-                          onClick={() => { setSelectedGroup(group); setShowChatModal(true); }}
-                          style={{
-                            flex: 1,
-                            minWidth: '80px',
-                            padding: '8px 12px',
-                            backgroundColor: '#10b981',
-                            color: 'white',
-                            border: 'none',
-                            borderRadius: 'var(--radius)',
-                            cursor: 'pointer',
-                            fontSize: '13px',
-                            fontWeight: '500'
-                          }}
-                        >
-                          <MdChat style={{ verticalAlign: 'middle', marginRight: '4px' }} />
-                          Chat
-                        </button>
-                      )}
-                      <button 
-                        onClick={() => { setSelectedGroup(group); setShowInviteModal(true); }}
-                        style={{
-                          flex: 1,
-                          minWidth: '80px',
-                          padding: '8px 12px',
-                          backgroundColor: 'var(--primary-color)',
-                          color: 'white',
-                          border: 'none',
-                          borderRadius: 'var(--radius)',
-                          cursor: 'pointer',
-                          fontSize: '13px',
-                          fontWeight: '500'
-                        }}
-                      >
-                        <MdEmail style={{ verticalAlign: 'middle', marginRight: '4px' }} />
-                        Invite
-                      </button>
-                      <button 
-                        onClick={() => handleLeaveGroup(group._id)}
-                        style={{
-                          padding: '8px 12px',
-                          backgroundColor: 'var(--warning-color)',
-                          color: 'white',
-                          border: 'none',
-                          borderRadius: 'var(--radius)',
-                          cursor: 'pointer',
-                          fontSize: '13px'
-                        }}
-                      >
-                        <MdExitToApp />
-                      </button>
-                      <button 
-                        onClick={() => handleDeleteGroup(group._id)}
-                        style={{
-                          padding: '8px 12px',
-                          backgroundColor: 'var(--danger-color)',
-                          color: 'white',
-                          border: 'none',
-                          borderRadius: 'var(--radius)',
-                          cursor: 'pointer',
-                          fontSize: '13px'
-                        }}
-                      >
-                        <MdDelete />
-                      </button>
                     </div>
                   </div>
-                ))}
-              </div>
-            )}
-          </div>
+
+                  <h3 className={styles.groupName}>{group.name}</h3>
+                  <p className={styles.groupRole}>{getGroupRole(group)}</p>
+                  <p className={styles.groupDescription}>{group.description}</p>
+
+                  <div className={styles.groupMembers}>
+                    {group.members?.slice(0, 3).map((member, idx) => (
+                      <div key={idx} className={styles.memberAvatar}>
+                        {member.user?.fullName?.charAt(0) || 'U'}
+                      </div>
+                    ))}
+                    {group.members?.length > 3 && (
+                      <div className={styles.memberAvatar}>
+                        +{group.members.length - 3}
+                      </div>
+                    )}
+                  </div>
+
+                  <div className={styles.cardActions}>
+                    {group.members?.length >= 2 && (
+                      <button 
+                        onClick={() => { setSelectedGroup(group); setShowChatModal(true); }}
+                        className={styles.actionBtn}
+                        title="Chat"
+                      >
+                        <MdChat size={18} />
+                      </button>
+                    )}
+                    <button 
+                      onClick={() => { setSelectedGroup(group); setShowInviteModal(true); }}
+                      className={styles.actionBtn}
+                      title="Invite"
+                    >
+                      <MdEmail size={18} />
+                    </button>
+                    {group.founder?._id === user?._id && (
+                      <button 
+                        onClick={() => handleDeleteGroup(group._id)}
+                        className={`${styles.actionBtn} ${styles.deleteBtn}`}
+                        title="Delete group"
+                      >
+                        <MdDelete size={18} />
+                      </button>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       </div>
 

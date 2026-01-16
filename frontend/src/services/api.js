@@ -52,6 +52,7 @@ export const ideaAPI = {
   deleteIdea: (id) => api.delete(`/ideas/${id}`),
   reviewIdea: (id, data) => api.post(`/ideas/${id}/review`, data),
   getSimilarIdeas: (id) => api.get(`/ideas/${id}/similar`),
+  getAiInsights: (id) => api.get(`/ideas/${id}/ai-insights`),
   mergeIdeas: (data) => api.post('/ideas/merge', data),
   getStudentStats: () => api.get('/ideas/stats/student'),
   getTeacherStats: () => api.get('/ideas/stats/teacher')

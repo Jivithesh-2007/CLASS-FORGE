@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { MdArrowBack } from 'react-icons/md';
+import { MdClose, MdSend } from 'react-icons/md';
 import Sidebar from '../../components/Sidebar/Sidebar';
 import Header from '../../components/Header/Header';
 import { ideaAPI } from '../../services/api';
-import styles from './Dashboard.module.css';
-import formStyles from '../Login/Login.module.css';
+import styles from './SubmitIdea.module.css';
+
 const SubmitIdea = () => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
@@ -17,6 +17,7 @@ const SubmitIdea = () => {
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
   const [loading, setLoading] = useState(false);
+
   const handleChange = (e) => {
     setFormData({
       ...formData,
@@ -25,12 +26,15 @@ const SubmitIdea = () => {
     setError('');
     setSuccess('');
   };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
     setSuccess('');
     setLoading(true);
+
     const tags = formData.tags.split(',').map(tag => tag.trim()).filter(tag => tag);
+
     try {
       const response = await ideaAPI.createIdea({
         title: formData.title,
@@ -50,85 +54,144 @@ const SubmitIdea = () => {
       setLoading(false);
     }
   };
+
   return (
     <div className={styles.layout}>
       <Sidebar role="student" />
       <div className={styles.main}>
-        <Header title="Submit New Idea" subtitle="Share your innovative thoughts" />
+        <Header title="New Proposal" />
         <div className={styles.content}>
-          <div className={styles.section}>
-            <button 
-              className={styles.button} 
-              onClick={() => navigate('/student-dashboard')}
-              style={{ marginBottom: '20px' }}
-            >
-              <MdArrowBack />
-              Back to Dashboard
-            </button>
-            {error && <div className={formStyles.error}>{error}</div>}
-            {success && <div className={formStyles.success}>{success}</div>}
-            <form onSubmit={handleSubmit}>
-              <div className={formStyles.formGroup}>
-                <label className={formStyles.label}>Idea Title</label>
+          <div className={styles.formContainer}>
+            <div className={styles.formHeader}>
+              <div>
+                <h2 className={styles.formTitle}>New Idea Submission</h2>
+                <p className={styles.formSubtitle}>Fill in the details for your innovation proposal.</p>
+              </div>
+              <button 
+                className={styles.closeBtn}
+                onClick={() => navigate('/student-dashboard')}
+              >
+                <MdClose size={24} />
+              </button>
+            </div>
+
+            {error && (
+              <div className={styles.alert} style={{ backgroundColor: '#ffebee', borderColor: '#ffcdd2', color: '#c62828' }}>
+                {error}
+              </div>
+            )}
+            {success && (
+              <div className={styles.alert} style={{ backgroundColor: '#e8f5e9', borderColor: '#c8e6c9', color: '#2e7d32' }}>
+                {success}
+              </div>
+            )}
+
+            <form onSubmit={handleSubmit} className={styles.form}>
+              {/* Project Title */}
+              <div className={styles.formGroup}>
+                <label className={styles.label}>PROJECT TITLE</label>
                 <input
                   type="text"
                   name="title"
-                  placeholder="Enter a catchy title for your idea"
-                  className={formStyles.input}
+                  placeholder="e.g. Next-Gen Vertical Farming"
+                  className={styles.input}
                   value={formData.title}
                   onChange={handleChange}
                   required
                 />
               </div>
-              <div className={formStyles.formGroup}>
-                <label className={formStyles.label}>Description</label>
+
+              {/* Domain and Stage Row */}
+              <div className={styles.formRow}>
+                <div className={styles.formGroup}>
+                  <label className={styles.label}>TARGET DOMAIN</label>
+                  <select
+                    name="domain"
+                    className={styles.select}
+                    value={formData.domain}
+                    onChange={handleChange}
+                    required
+                  >
+                    <option value="">Select domain</option>
+                    <option value="Technology">Technology</option>
+                    <option value="Science">Science</option>
+                    <option value="Education">Education</option>
+                    <option value="Healthcare">Healthcare</option>
+                    <option value="Environment">Environment</option>
+                    <option value="Business">Business</option>
+                    <option value="Arts">Arts</option>
+                    <option value="Social">Social</option>
+                    <option value="Other">Other</option>
+                  </select>
+                </div>
+                <div className={styles.formGroup}>
+                  <label className={styles.label}>STAGE</label>
+                  <select
+                    name="stage"
+                    className={styles.select}
+                    defaultValue="Concept"
+                  >
+                    <option value="Concept">Concept</option>
+                    <option value="Development">Development</option>
+                    <option value="Testing">Testing</option>
+                    <option value="Implementation">Implementation</option>
+                  </select>
+                </div>
+              </div>
+
+              {/* Description */}
+              <div className={styles.formGroup}>
+                <label className={styles.label}>DESCRIPTION</label>
                 <textarea
                   name="description"
-                  placeholder="Describe your idea in detail..."
-                  className={formStyles.input}
+                  placeholder="Summarize the problem, solution, and impact in 2-3 sentences..."
+                  className={styles.textarea}
                   value={formData.description}
                   onChange={handleChange}
-                  rows="6"
+                  rows="4"
                   required
-                  style={{ resize: 'vertical' }}
                 />
               </div>
-              <div className={formStyles.formGroup}>
-                <label className={formStyles.label}>Domain</label>
-                <select
-                  name="domain"
-                  className={formStyles.select}
-                  value={formData.domain}
-                  onChange={handleChange}
-                  required
-                  style={{ width: '100%' }}
-                >
-                  <option value="">Select domain</option>
-                  <option value="Technology">Technology</option>
-                  <option value="Science">Science</option>
-                  <option value="Education">Education</option>
-                  <option value="Healthcare">Healthcare</option>
-                  <option value="Environment">Environment</option>
-                  <option value="Business">Business</option>
-                  <option value="Arts">Arts</option>
-                  <option value="Social">Social</option>
-                  <option value="Other">Other</option>
-                </select>
+
+              {/* Guidelines */}
+              <div className={styles.guidelines}>
+                <h4 className={styles.guidelinesTitle}>GUIDELINES</h4>
+                <p className={styles.guidelinesText}>
+                  Submissions are reviewed weekly by our innovation mentors. Ensure your pitch clearly states the value proposition. You can edit your submission until it moves to "reviewing" status.
+                </p>
               </div>
-              <div className={formStyles.formGroup}>
-                <label className={formStyles.label}>Tags (comma-separated)</label>
+
+              {/* Tags */}
+              <div className={styles.formGroup}>
+                <label className={styles.label}>TAGS (optional)</label>
                 <input
                   type="text"
                   name="tags"
                   placeholder="e.g., AI, Machine Learning, Innovation"
-                  className={formStyles.input}
+                  className={styles.input}
                   value={formData.tags}
                   onChange={handleChange}
                 />
               </div>
-              <button type="submit" className={formStyles.submitBtn} disabled={loading}>
-                {loading ? 'Submitting...' : 'Submit Idea'}
-              </button>
+
+              {/* Buttons */}
+              <div className={styles.formActions}>
+                <button 
+                  type="submit" 
+                  className={styles.submitBtn} 
+                  disabled={loading}
+                >
+                  <MdSend size={18} />
+                  {loading ? 'Submitting...' : 'Submit Proposal'}
+                </button>
+                <button 
+                  type="button"
+                  className={styles.cancelBtn}
+                  onClick={() => navigate('/student-dashboard')}
+                >
+                  Cancel
+                </button>
+              </div>
             </form>
           </div>
         </div>
@@ -136,4 +199,5 @@ const SubmitIdea = () => {
     </div>
   );
 };
+
 export default SubmitIdea;

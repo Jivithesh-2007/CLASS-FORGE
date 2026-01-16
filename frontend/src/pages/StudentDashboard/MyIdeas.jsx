@@ -1,17 +1,20 @@
 import React, { useState, useEffect } from 'react';
-import { useLocation } from 'react-router-dom';
-import { MdEdit, MdDelete, MdVisibility } from 'react-icons/md';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { MdAdd } from 'react-icons/md';
 import Sidebar from '../../components/Sidebar/Sidebar';
 import Header from '../../components/Header/Header';
 import { ideaAPI } from '../../services/api';
-import styles from './Dashboard.module.css';
+import styles from './MyIdeas.module.css';
 
 const MyIdeas = () => {
   const location = useLocation();
+  const navigate = useNavigate();
   const [ideas, setIdeas] = useState([]);
   const [filteredIdeas, setFilteredIdeas] = useState([]);
   const [filterStatus, setFilterStatus] = useState(location.state?.filterStatus || 'all');
   const [loading, setLoading] = useState(true);
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
 
   useEffect(() => {
     fetchIdeas();
@@ -23,6 +26,7 @@ const MyIdeas = () => {
     } else {
       setFilteredIdeas(ideas.filter(idea => idea.status === filterStatus));
     }
+    setCurrentPage(1);
   }, [filterStatus, ideas]);
 
   const fetchIdeas = async () => {
@@ -37,18 +41,6 @@ const MyIdeas = () => {
     }
   };
 
-  const handleDelete = async (id) => {
-    if (window.confirm('Are you sure you want to delete this idea?')) {
-      try {
-        await ideaAPI.deleteIdea(id);
-        fetchIdeas();
-      } catch (error) {
-        console.error('Error deleting idea:', error);
-        alert(error.response?.data?.message || 'Failed to delete idea');
-      }
-    }
-  };
-
   const getStatusClass = (status) => {
     switch (status) {
       case 'pending': return styles.statusPending;
@@ -59,6 +51,27 @@ const MyIdeas = () => {
     }
   };
 
+  const totalPages = Math.ceil(filteredIdeas.length / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const paginatedIdeas = filteredIdeas.slice(startIndex, endIndex);
+
+  const handlePrevPage = () => {
+    if (currentPage > 1) {
+      setCurrentPage(currentPage - 1);
+    }
+  };
+
+  const handleNextPage = () => {
+    if (currentPage < totalPages) {
+      setCurrentPage(currentPage + 1);
+    }
+  };
+
+  const handleSubmitIdea = () => {
+    navigate('/student-dashboard/submit-idea');
+  };
+
   if (loading) {
     return <div>Loading...</div>;
   }
@@ -67,94 +80,119 @@ const MyIdeas = () => {
     <div className={styles.layout}>
       <Sidebar role="student" />
       <div className={styles.main}>
-        <Header title="My Ideas" subtitle="Manage your submitted ideas" />
+        <Header title="My Submissions" />
         <div className={styles.content}>
-          <div className={styles.section}>
-            <div className={styles.sectionHeader}>
-              <h2 className={styles.sectionTitle}>All My Ideas</h2>
-              <div style={{ display: 'flex', gap: '10px' }}>
-                <select
-                  value={filterStatus}
-                  onChange={(e) => setFilterStatus(e.target.value)}
-                  style={{
-                    padding: '10px',
-                    borderRadius: '8px',
-                    border: '1px solid var(--border-color)',
-                    backgroundColor: 'var(--white)',
-                    color: 'var(--text-primary)',
-                    cursor: 'pointer'
-                  }}
-                >
-                  <option value="all">All Status</option>
-                  <option value="pending">Pending</option>
-                  <option value="approved">Approved</option>
-                  <option value="rejected">Rejected</option>
-                  <option value="merged">Merged</option>
-                </select>
+          <div className={styles.headerSection}>
+            <div className={styles.headerLeft}>
+              <h1 className={styles.pageTitle}>My Submissions</h1>
+              <p className={styles.pageSubtitle}>Track and manage your personal innovation proposals.</p>
+            </div>
+            <button className={styles.submitBtn} onClick={handleSubmitIdea}>
+              <MdAdd size={18} />
+              Submit New Proposal
+            </button>
+          </div>
+
+          {/* Filter Tabs */}
+          <div className={styles.filterTabs}>
+            <button
+              className={`${styles.filterTab} ${filterStatus === 'all' ? styles.active : ''}`}
+              onClick={() => setFilterStatus('all')}
+            >
+              All
+            </button>
+            <button
+              className={`${styles.filterTab} ${filterStatus === 'approved' ? styles.active : ''}`}
+              onClick={() => setFilterStatus('approved')}
+            >
+              Approved
+            </button>
+            <button
+              className={`${styles.filterTab} ${filterStatus === 'pending' ? styles.active : ''}`}
+              onClick={() => setFilterStatus('pending')}
+            >
+              Pending
+            </button>
+            <button
+              className={`${styles.filterTab} ${filterStatus === 'rejected' ? styles.active : ''}`}
+              onClick={() => setFilterStatus('rejected')}
+            >
+              Rejected
+            </button>
+            <button
+              className={`${styles.filterTab} ${filterStatus === 'under_review' ? styles.active : ''}`}
+              onClick={() => setFilterStatus('under_review')}
+            >
+              Under Review
+            </button>
+          </div>
+
+          {filteredIdeas.length === 0 ? (
+            <div className={styles.emptyState}>
+              <div className={styles.emptyText}>No ideas found</div>
+              <div className={styles.emptySubtext}>
+                {filterStatus === 'all' 
+                  ? 'Submit your first idea to get started' 
+                  : `No ${filterStatus} ideas`}
               </div>
             </div>
-            {filteredIdeas.length === 0 ? (
-              <div className={styles.emptyState}>
-                <div className={styles.emptyText}>No ideas found</div>
-                <div className={styles.emptySubtext}>
-                  {filterStatus === 'all' 
-                    ? 'Submit your first idea to get started' 
-                    : `No ${filterStatus} ideas`}
+          ) : (
+            <>
+              <div className={styles.tableWrapper}>
+                <div className={styles.tableHeader}>
+                  <div className={styles.headerCell}>PROPOSAL DETAILS</div>
+                  <div className={styles.headerCell}>AUTHOR</div>
+                  <div className={styles.headerCell}>DEPARTMENT</div>
+                  <div className={styles.headerCell}>DATE</div>
+                  <div className={styles.headerCell}>STATUS</div>
                 </div>
-              </div>
-            ) : (
-              <div className={styles.ideaGrid}>
-                {filteredIdeas.map((idea) => (
-                  <div key={idea._id} className={styles.ideaCard}>
-                    <div className={styles.ideaHeader}>
+                {paginatedIdeas.map((idea) => (
+                  <div key={idea._id} className={styles.ideaRow}>
+                    <div className={styles.proposalDetails}>
                       <h3 className={styles.ideaTitle}>{idea.title}</h3>
+                      <p className={styles.ideaDescription}>{idea.description}</p>
                     </div>
-                    <span className={`${styles.status} ${getStatusClass(idea.status)}`}>
-                      {idea.status.charAt(0).toUpperCase() + idea.status.slice(1)}
-                    </span>
-                    <p className={styles.ideaDescription}>{idea.description}</p>
-                    <div className={styles.ideaFooter}>
-                      <div className={styles.ideaMeta}>
-                        <span>{idea.domain}</span>
-                      </div>
-                      <div style={{ display: 'flex', gap: '8px' }}>
-                        {idea.status === 'pending' && (
-                          <>
-                            <button
-                              onClick={() => handleDelete(idea._id)}
-                              style={{
-                                background: 'none',
-                                border: 'none',
-                                color: 'var(--danger-color)',
-                                cursor: 'pointer',
-                                padding: '4px'
-                              }}
-                              title="Delete"
-                            >
-                              <MdDelete size={18} />
-                            </button>
-                          </>
-                        )}
-                      </div>
+                    <div className={styles.authorCell}>
+                      <span className={styles.authorInitial}>{idea.submittedBy?.fullName?.charAt(0) || 'U'}</span>
+                      <span className={styles.authorName}>{idea.submittedBy?.fullName || 'Unknown'}</span>
                     </div>
-                    {idea.feedback && (
-                      <div style={{
-                        marginTop: '12px',
-                        padding: '12px',
-                        backgroundColor: 'var(--background-alt)',
-                        borderRadius: '8px',
-                        fontSize: '13px',
-                        color: 'var(--text-primary)',
-                        border: `1px solid var(--border-color)`
-                      }}>
-                        <strong>Feedback:</strong> {idea.feedback}
-                      </div>
-                    )}
+                    <div className={styles.departmentCell}>
+                      {idea.domain}
+                    </div>
+                    <div className={styles.dateCell}>
+                      {new Date(idea.createdAt).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })}
+                    </div>
+                    <div className={styles.statusCell}>
+                      <span className={`${styles.status} ${getStatusClass(idea.status)}`}>
+                        {idea.status.charAt(0).toUpperCase() + idea.status.slice(1)}
+                      </span>
+                    </div>
                   </div>
                 ))}
+                <div className={styles.footerSection}>
+                  <span className={styles.resultCount}>Showing {startIndex + 1} result{filteredIdeas.length !== 1 ? 's' : ''}</span>
+                  <div className={styles.pagination}>
+                    <button 
+                      className={styles.paginationBtn}
+                      onClick={handlePrevPage}
+                      disabled={currentPage === 1}
+                    >
+                      <span>←</span>
+                      <span style={{ marginLeft: '8px' }}>Prev</span>
+                    </button>
+                    <button 
+                      className={styles.paginationBtn}
+                      onClick={handleNextPage}
+                      disabled={currentPage === totalPages}
+                    >
+                      <span style={{ marginRight: '8px' }}>Next</span>
+                      <span>→</span>
+                    </button>
+                  </div>
+                </div>
               </div>
-            )}
-          </div>
+            </>
+          )}
         </div>
       </div>
     </div>

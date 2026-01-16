@@ -1,0 +1,176 @@
+================================================================================
+                    REVIEW IDEAS - VISUAL CHANGES
+================================================================================
+
+CHANGE 1: SUBMITTER PROFILE COLOR
+================================================================================
+
+BEFORE (Blue Gradient):
+┌─────────────────────────────────────────┐
+│ ┌─────────────────────────────────────┐ │
+│ │ 🟦 (Blue Gradient)                  │ │
+│ │ AB                                  │ │
+│ │ Alex Brown                          │ │
+│ │ Submitted on Oct 15, 2023           │ │
+│ └─────────────────────────────────────┘ │
+└─────────────────────────────────────────┘
+
+AFTER (Gray):
+┌─────────────────────────────────────────┐
+│ ┌─────────────────────────────────────┐ │
+│ │ ⬜ (Gray)                           │ │
+│ │ AB                                  │ │
+│ │ Alex Brown                          │ │
+│ │ Submitted on Oct 15, 2023           │ │
+│ └─────────────────────────────────────┘ │
+└─────────────────────────────────────────┘
+
+CHANGE 2: AI INSIGHTS LOADING
+================================================================================
+
+BEFORE (Instant):
+Click Eye Icon → Insights Appear Immediately
+
+AFTER (With Loading):
+Click Eye Icon → Loading Animation → Wait 2-3 Seconds → Insights Appear
+
+LOADING SCREEN:
+┌─────────────────────────────────────────┐
+│ INFRASTRUCTURE                          │
+│ AI Smart Grid                           │
+├─────────────────────────────────────────┤
+│                                         │
+│ PROJECT DESCRIPTION                     │
+│ [Description text]                      │
+│                                         │
+│              ⟳                          │
+│                                         │
+│    Analysing the potential...           │
+│                                         │
+│ Our AI is evaluating this idea for      │
+│ innovation, feasibility, and market     │
+│ potential                               │
+│                                         │
+└─────────────────────────────────────────┘
+
+INSIGHTS SCREEN (After Loading):
+┌─────────────────────────────────────────┐
+│ INFRASTRUCTURE                          │
+│ AI Smart Grid                           │
+├─────────────────────────────────────────┤
+│                                         │
+│ PROJECT DESCRIPTION                     │
+│ [Description text]                      │
+│                                         │
+│ ✨ AI Innovation Insight                │
+│ [Analysis text]                    82   │
+│                                         │
+│ • Key Point 1                           │
+│ • Key Point 2                           │
+│ • Key Point 3                           │
+│                                         │
+│ Feasibility: 8/10                       │
+│ Impact: 8/10                            │
+│ Market: 8/10                            │
+│                                         │
+│ [Recommendations]                       │
+│ [Risk Factors]                          │
+│                                         │
+│ ┌─────────────────────────────────────┐ │
+│ │ ⬜ (Gray Avatar)                    │ │
+│ │ AB                                  │ │
+│ │ Alex Brown                          │ │
+│ │ Submitted on Oct 15, 2023           │ │
+│ └─────────────────────────────────────┘ │
+│                                         │
+│ ADD FEEDBACK (Optional)                 │
+│ [Textarea]                              │
+│                                         │
+│ [Reject] [Approve]                      │
+└─────────────────────────────────────────┘
+
+CHANGE 3: ALIGNMENT
+================================================================================
+
+BEFORE:
+- Submitter profile had blue background
+- Didn't align well with other elements
+- Stood out too much
+
+AFTER:
+- Submitter profile has gray background
+- Aligns properly with other content
+- Neutral appearance
+- Better visual hierarchy
+
+================================================================================
+                        LOADING ANIMATION
+================================================================================
+
+The loading animation shows:
+
+1. Spinning circle (⟳)
+2. Message: "Analysing the potential..."
+3. Explanation: "Our AI is evaluating this idea for innovation, feasibility, 
+   and market potential"
+4. Waits 2-3 seconds
+5. Then shows insights
+
+This gives users feedback that something is happening and improves perceived
+performance.
+
+================================================================================
+                        SUBMITTER PROFILE COLORS
+================================================================================
+
+BEFORE:
+- Avatar Background: Blue Gradient (#667eea to #764ba2)
+- Avatar Text: White
+- Box Background: Light gray (var(--bg-light))
+
+AFTER:
+- Avatar Background: Gray (#e0e0e0)
+- Avatar Text: Dark Gray (#666)
+- Box Background: Light gray (#f5f5f5)
+- More neutral and professional
+
+================================================================================
+                        QUICK COMPARISON
+================================================================================
+
+ASPECT              BEFORE              AFTER
+────────────────────────────────────────────────────────────
+Submitter Avatar    Blue Gradient       Gray
+Avatar Text         White               Dark Gray
+Loading State       None                Spinner + Message
+Load Time           Instant             2-3 seconds
+Alignment           Misaligned          Properly Aligned
+Visual Balance      Stands Out          Neutral
+Professional Look   Good                Better
+
+================================================================================
+                        HOW TO TEST
+================================================================================
+
+1. Restart frontend: npm run dev
+2. Go to Review Ideas
+3. Click eye icon on any idea
+4. Watch loading animation (2-3 seconds)
+5. See insights appear
+6. Check submitter profile - should be gray
+7. Verify alignment looks good
+
+================================================================================
+                        EXPECTED BEHAVIOR
+================================================================================
+
+✓ Click eye icon
+✓ Modal opens with loading state
+✓ Spinner shows "Analysing the potential..."
+✓ Wait 2-3 seconds
+✓ Insights appear smoothly
+✓ Submitter profile shows in gray
+✓ Everything is properly aligned
+✓ Can add feedback and approve/reject
+
+================================================================================

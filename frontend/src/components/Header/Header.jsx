@@ -115,7 +115,11 @@ const Header = ({ title, subtitle }) => {
   return (
     <header className={styles.header}>
       <div className={styles.greeting}>
-        <h1 className={styles.greetingText}>{title || `Welcome back, ${user?.fullName?.split(' ')[0] || 'User'}!`}</h1>
+        <div className={styles.breadcrumb}>
+          <span className={styles.breadcrumbApp}>ClassForge</span>
+          <span className={styles.breadcrumbSeparator}>/</span>
+          <span className={styles.breadcrumbPage}>{title || 'Dashboard'}</span>
+        </div>
         {subtitle && <p className={styles.greetingSubtext}>{subtitle}</p>}
       </div>
       

@@ -10,7 +10,8 @@ const {
   getSimilarIdeas,
   mergeIdeas,
   getStudentStats,
-  getTeacherStats
+  getTeacherStats,
+  getAiInsights
 } = require('../controllers/ideaController');
 const { authMiddleware, roleCheck } = require('../middleware/auth');
 router.use(authMiddleware);
@@ -28,4 +29,5 @@ router.put('/:id', updateIdea);
 router.delete('/:id', deleteIdea);
 router.post('/:id/review', roleCheck('teacher', 'admin'), reviewIdea);
 router.get('/:id/similar', roleCheck('teacher', 'admin'), getSimilarIdeas);
+router.get('/:id/ai-insights', roleCheck('teacher', 'admin'), getAiInsights);
 module.exports = router;

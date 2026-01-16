@@ -1,13 +1,18 @@
 import React, { useState, useEffect } from 'react';
-import { MdPerson, MdEmail, MdSchool } from 'react-icons/md';
+import { MdPerson, MdRefresh } from 'react-icons/md';
 import Sidebar from '../../components/Sidebar/Sidebar';
 import Header from '../../components/Header/Header';
-import { teacherAPI } from '../../services/api';
+import StudentCard from '../../components/StudentCard/StudentCard';
+import StudentDetail from '../../components/StudentDetail/StudentDetail';
+import { teacherAPI, ideaAPI } from '../../services/api';
 import styles from '../StudentDashboard/Dashboard.module.css';
+import pageStyles from './StudentsPage.module.css';
 
 const Students = () => {
   const [students, setStudents] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [selectedStudent, setSelectedStudent] = useState(null);
 
   useEffect(() => {
     fetchStudents();
@@ -15,79 +20,132 @@ const Students = () => {
 
   const fetchStudents = async () => {
     try {
-      const response = await teacherAPI.getStudents();
-      setStudents(response.data.users);
-    } catch (error) {
-      console.error('Error fetching students:', error);
+      setLoading(true);
+      setError(null);
+      
+      // Set a timeout to prevent infinite loading
+      const timeoutPromise = new Promise((_, reject) =>
+        setTimeout(() => reject(new Error('Request timeout')), 10000)
+      );
+
+      // Fetch students
+      const studentsRes = await Promise.race([
+        teacherAPI.getStudents(),
+        timeoutPromise
+      ]);
+      
+      const studentsList = studentsRes.data?.users || [];
+      
+      if (studentsList.length === 0) {
+        setStudents([]);
+        setLoading(false);
+        return;
+      }
+
+      // Fetch all ideas
+      let allIdeas = [];
+      try {
+        const ideasRes = await Promise.race([
+          ideaAPI.getIdeas({}),
+          timeoutPromise
+        ]);
+        allIdeas = ideasRes.data?.ideas || [];
+      } catch (err) {
+        console.warn('Could not fetch ideas:', err.message);
+      }
+
+      // Map students with stats
+      const enrichedStudents = studentsList.map((student) => {
+        const studentIdeas = allIdeas.filter(
+          (idea) => idea.submittedBy?._id === student._id
+        );
+
+        return {
+          ...student,
+          totalIdeas: studentIdeas.length,
+          approvedIdeas: studentIdeas.filter((i) => i.status === 'approved').length,
+          pendingIdeas: studentIdeas.filter((i) => i.status === 'pending').length,
+          rejectedIdeas: studentIdeas.filter((i) => i.status === 'rejected').length,
+          recentIdeas: studentIdeas.slice(0, 5),
+          lastActivityDate: student.updatedAt
+            ? new Date(student.updatedAt).toLocaleDateString('en-US', {
+                month: 'short',
+                day: 'numeric',
+              })
+            : 'N/A',
+        };
+      });
+
+      setStudents(enrichedStudents);
+    } catch (err) {
+      console.error('Error fetching students:', err);
+      setError(err.message || 'Failed to load students');
     } finally {
       setLoading(false);
     }
   };
 
-  if (loading) {
-    return <div>Loading...</div>;
-  }
-
   return (
     <div className={styles.layout}>
       <Sidebar role="teacher" />
       <div className={styles.main}>
-        <Header title="Registered Students" subtitle={`Total: ${students.length} students`} />
+        <Header 
+          title="Registered Students" 
+          subtitle={`Total: ${students.length}`} 
+        />
         <div className={styles.content}>
-          <div className={styles.section}>
-            {students.length === 0 ? (
-              <div className={styles.emptyState}>
-                <MdPerson className={styles.emptyIcon} />
-                <div className={styles.emptyText}>No students registered yet</div>
+          <div className={pageStyles.container}>
+            {loading && (
+              <div className={pageStyles.loadingState}>
+                <div className={pageStyles.spinner}></div>
+                <p>Loading students...</p>
               </div>
-            ) : (
-              <div className={styles.ideaGrid}>
-                {students.map((student) => (
-                  <div key={student._id} className={styles.ideaCard} style={{ cursor: 'default' }}>
-                    <div style={{ marginBottom: '16px' }}>
-                      <div style={{ 
-                        width: '60px', 
-                        height: '60px', 
-                        borderRadius: '50%', 
-                        background: 'linear-gradient(135deg, var(--primary-color), var(--primary-dark))',
-                        color: 'white',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        fontSize: '24px',
-                        fontWeight: '600',
-                        margin: '0 auto 12px'
-                      }}>
-                        {student.fullName.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2)}
-                      </div>
-                      <h3 style={{ fontSize: '18px', fontWeight: '600', textAlign: 'center', marginBottom: '8px' }}>
-                        {student.fullName}
-                      </h3>
-                    </div>
-                    
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '14px', color: 'var(--text-secondary)' }}>
-                        <MdEmail />
-                        <span>{student.email}</span>
-                      </div>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '14px', color: 'var(--text-secondary)' }}>
-                        <MdSchool />
-                        <span>{student.department || 'N/A'}</span>
-                      </div>
-                    </div>
+            )}
 
-                    <div style={{ marginTop: '12px', paddingTop: '12px', borderTop: '1px solid var(--border-light)', textAlign: 'center' }}>
-                      <span className={styles.statusApproved}>
-                        {student.isActive ? 'Active' : 'Inactive'}
-                      </span>
-                    </div>
-                  </div>
+            {error && !loading && (
+              <div className={pageStyles.errorState}>
+                <p><strong>Error:</strong> {error}</p>
+                <p style={{ fontSize: '12px', color: '#666', marginTop: '8px' }}>
+                  Make sure you are logged in as a teacher.
+                </p>
+                <button 
+                  onClick={fetchStudents} 
+                  className={pageStyles.retryBtn}
+                >
+                  <MdRefresh size={16} /> Retry
+                </button>
+              </div>
+            )}
+
+            {!loading && !error && students.length === 0 && (
+              <div className={pageStyles.emptyState}>
+                <MdPerson size={48} />
+                <h3>No students found</h3>
+                <p>There are no registered students yet</p>
+              </div>
+            )}
+
+            {!loading && !error && students.length > 0 && (
+              <div className={pageStyles.grid}>
+                {students.map((student) => (
+                  <StudentCard
+                    key={student._id}
+                    student={student}
+                    onClick={() => setSelectedStudent(student)}
+                  />
                 ))}
               </div>
             )}
           </div>
         </div>
       </div>
+
+      {selectedStudent && (
+        <StudentDetail
+          student={selectedStudent}
+          onClose={() => setSelectedStudent(null)}
+        />
+      )}
     </div>
   );
 };

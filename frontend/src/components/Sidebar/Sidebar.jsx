@@ -1,17 +1,17 @@
 import React from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { 
-  MdDashboard, 
-  MdLightbulb, 
-  MdSearch, 
-  MdList, 
+  MdGridView,
+  MdAddCircleOutline,
+  MdTravelExplore,
+  MdLightbulb,
+  MdPeople,
   MdNotifications, 
   MdSettings,
   MdLogout,
-  MdGroup,
-  MdPeople,
+  MdRateReview,
   MdCheckCircle,
-  MdRateReview
+  MdPersonOutline
 } from 'react-icons/md';
 import { useAuth } from '../../context/AuthContext';
 import styles from './Sidebar.module.css';
@@ -26,25 +26,25 @@ const Sidebar = ({ role }) => {
   };
 
   const studentLinks = [
-    { path: '/student-dashboard', icon: MdDashboard, label: 'Dashboard' },
-    { path: '/student-dashboard/submit-idea', icon: MdLightbulb, label: 'Submit Idea' },
-    { path: '/student-dashboard/my-ideas', icon: MdList, label: 'My Ideas' },
-    { path: '/student-dashboard/groups', icon: MdGroup, label: 'My Groups' },
+    { path: '/student-dashboard', icon: MdGridView, label: 'Dashboard' },
+    { path: '/student-dashboard/submit-idea', icon: MdAddCircleOutline, label: 'Submit Idea' },
+    { path: '/student-dashboard/my-ideas', icon: MdLightbulb, label: 'My Ideas' },
+    { path: '/student-dashboard/groups', icon: MdPeople, label: 'My Groups' },
     { path: '/student-dashboard/notifications', icon: MdNotifications, label: 'Notifications' },
     { path: '/student-dashboard/settings', icon: MdSettings, label: 'Settings' }
   ];
 
   const teacherLinks = [
-    { path: '/teacher-dashboard', icon: MdDashboard, label: 'Dashboard' },
+    { path: '/teacher-dashboard', icon: MdGridView, label: 'Dashboard' },
     { path: '/teacher-dashboard/review', icon: MdRateReview, label: 'Review Ideas' },
-    { path: '/teacher-dashboard/approved', icon: MdCheckCircle, label: 'Approved Ideas' },
-    { path: '/teacher-dashboard/students', icon: MdPeople, label: 'Students' },
+    { path: '/teacher-dashboard/ideas', icon: MdLightbulb, label: 'Ideas' },
+    { path: '/teacher-dashboard/students', icon: MdPersonOutline, label: 'Students' },
     { path: '/teacher-dashboard/notifications', icon: MdNotifications, label: 'Notifications' },
     { path: '/teacher-dashboard/settings', icon: MdSettings, label: 'Settings' }
   ];
 
   const adminLinks = [
-    { path: '/admin-dashboard', icon: MdDashboard, label: 'Dashboard' },
+    { path: '/admin-dashboard', icon: MdGridView, label: 'Dashboard' },
     { path: '/admin-dashboard/users', icon: MdPeople, label: 'Manage Users' },
     { path: '/admin-dashboard/ideas', icon: MdLightbulb, label: 'All Ideas' },
     { path: '/admin-dashboard/notifications', icon: MdNotifications, label: 'Notifications' },
@@ -65,7 +65,7 @@ const Sidebar = ({ role }) => {
             key={link.path}
             to={link.path}
             className={({ isActive }) => 
-              `${styles.navItem} ${isActive ? styles.active : ''}`
+              `${styles.navItem} ${isActive && window.location.pathname === link.path ? styles.active : ''}`
             }
           >
             <link.icon className={styles.navIcon} />

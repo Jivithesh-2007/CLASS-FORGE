@@ -4,6 +4,7 @@ const Notification = require('../models/Notification');
 const MergeHistory = require('../models/MergeHistory');
 const { findSimilarIdeas } = require('../services/similarityService');
 const { sendIdeaStatusEmail } = require('../services/emailService');
+const { generateAiInsights } = require('../services/aiInsightsService');
 
 const createIdea = async (req, res) => {
   try {
@@ -486,6 +487,42 @@ const getTeacherStats = async (req, res) => {
   }
 };
 
+const getAiInsights = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const idea = await Idea.findById(id);
+    if (!idea) {
+      return res.status(404).json({
+        success: false,
+        message: 'Idea not found'
+      });
+    }
+
+    const result = await generateAiInsights(idea);
+    
+    if (!result.success) {
+      return res.status(500).json({
+        success: false,
+        message: 'Error generating AI insights',
+        error: result.error
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      ...result.insights
+    });
+  } catch (error) {
+    console.error('Get AI insights error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Error fetching AI insights',
+      error: error.message
+    });
+  }
+};
+
 module.exports = {
   createIdea,
   getIdeas,
@@ -496,5 +533,6 @@ module.exports = {
   getSimilarIdeas,
   mergeIdeas,
   getStudentStats,
-  getTeacherStats
+  getTeacherStats,
+  getAiInsights
 };

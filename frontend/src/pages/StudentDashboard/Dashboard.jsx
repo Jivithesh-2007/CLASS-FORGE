@@ -115,24 +115,34 @@ const StudentDashboard = () => {
                 </button>
               </div>
             ) : (
-              <div className={styles.ideaGrid}>
+              <div className={styles.ideaTable}>
+                <div className={styles.tableHeader}>
+                  <div className={styles.headerCell}>PROPOSAL DETAILS</div>
+                  <div className={styles.headerCell}>AUTHOR</div>
+                  <div className={styles.headerCell}>DEPARTMENT</div>
+                  <div className={styles.headerCell}>DATE</div>
+                  <div className={styles.headerCell}>STATUS</div>
+                </div>
                 {recentIdeas.map((idea) => (
-                  <div key={idea._id} className={styles.ideaCard}>
-                    <div className={styles.ideaHeader}>
-                      <div>
-                        <h3 className={styles.ideaTitle}>{idea.title}</h3>
-                        <span className={`${styles.status} ${getStatusClass(idea.status)}`}>
-                          {idea.status.charAt(0).toUpperCase() + idea.status.slice(1)}
-                        </span>
-                      </div>
+                  <div key={idea._id} className={styles.ideaRow}>
+                    <div className={styles.proposalDetails}>
+                      <h3 className={styles.ideaRowTitleText}>{idea.title}</h3>
+                      <p className={styles.ideaRowDescription}>{idea.description}</p>
                     </div>
-                    <p className={styles.ideaDescription}>{idea.description}</p>
-                    <div className={styles.ideaFooter}>
-                      <div className={styles.ideaMeta}>
-                        <span>{idea.domain}</span>
-                        <span>•</span>
-                        <span>{new Date(idea.createdAt).toLocaleDateString()}</span>
-                      </div>
+                    <div className={styles.authorCell}>
+                      <span className={styles.authorInitial}>{idea.submittedBy?.fullName?.charAt(0) || 'U'}</span>
+                      <span className={styles.authorName}>{idea.submittedBy?.fullName || 'Unknown'}</span>
+                    </div>
+                    <div className={styles.departmentCell}>
+                      {idea.domain}
+                    </div>
+                    <div className={styles.dateCell}>
+                      {new Date(idea.createdAt).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })}
+                    </div>
+                    <div className={styles.statusCell}>
+                      <span className={`${styles.status} ${getStatusClass(idea.status)}`}>
+                        {idea.status.charAt(0).toUpperCase() + idea.status.slice(1)}
+                      </span>
                     </div>
                   </div>
                 ))}

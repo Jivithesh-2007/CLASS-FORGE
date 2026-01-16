@@ -22,6 +22,42 @@
   flex: 1;
 }
 
+.breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.breadcrumbApp {
+  color: var(--text-secondary);
+}
+
+:root.dark-mode .breadcrumbApp {
+  color: #a0a0a0 !important;
+}
+
+.breadcrumbSeparator {
+  color: var(--text-tertiary);
+}
+
+:root.dark-mode .breadcrumbSeparator {
+  color: #666666 !important;
+}
+
+.breadcrumbPage {
+  color: var(--text-primary);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+:root.dark-mode .breadcrumbPage {
+  color: #ffffff !important;
+}
+
 .greetingText {
   font-size: 24px;
   font-weight: 600;
