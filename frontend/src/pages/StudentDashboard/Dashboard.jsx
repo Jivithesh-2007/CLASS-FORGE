@@ -6,14 +6,17 @@ import Header from '../../components/Header/Header';
 import StatCard from '../../components/StatCard/StatCard';
 import { ideaAPI } from '../../services/api';
 import styles from './Dashboard.module.css';
+
 const StudentDashboard = () => {
   const navigate = useNavigate();
   const [stats, setStats] = useState(null);
   const [recentIdeas, setRecentIdeas] = useState([]);
   const [loading, setLoading] = useState(true);
+
   useEffect(() => {
     fetchDashboardData();
   }, []);
+
   const fetchDashboardData = async () => {
     try {
       const [statsRes, ideasRes] = await Promise.all([
@@ -28,9 +31,15 @@ const StudentDashboard = () => {
       setLoading(false);
     }
   };
+
   const handleSubmitIdea = () => {
     navigate('/student-dashboard/submit-idea');
   };
+
+  const handleStatCardClick = (status) => {
+    navigate('/student-dashboard/my-ideas', { state: { filterStatus: status } });
+  };
+
   const getStatusClass = (status) => {
     switch (status) {
       case 'pending': return styles.statusPending;
@@ -40,9 +49,11 @@ const StudentDashboard = () => {
       default: return styles.statusPending;
     }
   };
+
   if (loading) {
     return <div>Loading...</div>;
   }
+
   return (
     <div className={styles.layout}>
       <Sidebar role="student" />
@@ -50,30 +61,38 @@ const StudentDashboard = () => {
         <Header />
         <div className={styles.content}>
           <div className={styles.stats}>
-            <StatCard
-              label="Total Ideas"
-              value={stats?.totalIdeas || 0}
-              icon={MdList}
-              color="blue"
-            />
-            <StatCard
-              label="Approved"
-              value={stats?.approvedIdeas || 0}
-              icon={MdCheckCircle}
-              color="green"
-            />
-            <StatCard
-              label="Pending"
-              value={stats?.pendingIdeas || 0}
-              icon={MdLightbulb}
-              color="orange"
-            />
-            <StatCard
-              label="Rejected"
-              value={stats?.rejectedIdeas || 0}
-              icon={MdCancel}
-              color="red"
-            />
+            <div onClick={() => handleStatCardClick('all')} style={{ cursor: 'pointer' }}>
+              <StatCard
+                label="Total Ideas"
+                value={stats?.totalIdeas || 0}
+                icon={MdList}
+                color="blue"
+              />
+            </div>
+            <div onClick={() => handleStatCardClick('approved')} style={{ cursor: 'pointer' }}>
+              <StatCard
+                label="Approved"
+                value={stats?.approvedIdeas || 0}
+                icon={MdCheckCircle}
+                color="green"
+              />
+            </div>
+            <div onClick={() => handleStatCardClick('pending')} style={{ cursor: 'pointer' }}>
+              <StatCard
+                label="Pending"
+                value={stats?.pendingIdeas || 0}
+                icon={MdLightbulb}
+                color="orange"
+              />
+            </div>
+            <div onClick={() => handleStatCardClick('rejected')} style={{ cursor: 'pointer' }}>
+              <StatCard
+                label="Rejected"
+                value={stats?.rejectedIdeas || 0}
+                icon={MdCancel}
+                color="red"
+              />
+            </div>
           </div>
           <div className={styles.section}>
             <div className={styles.sectionHeader}>
@@ -125,4 +144,5 @@ const StudentDashboard = () => {
     </div>
   );
 };
+
 export default StudentDashboard;

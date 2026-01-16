@@ -62,33 +62,43 @@ const signup = async (req, res) => {
 const login = async (req, res) => {
   try {
     const { email, password } = req.body;
+    
     if (!email || !password) {
       return res.status(400).json({
         success: false,
         message: 'Email and password are required'
       });
     }
+    
     const user = await User.findOne({ email });
     if (!user) {
+      console.log(`Login attempt failed: User not found for email ${email}`);
       return res.status(401).json({
         success: false,
         message: 'Invalid email or password'
       });
     }
+    
     if (!user.isActive) {
+      console.log(`Login attempt failed: User ${email} is inactive`);
       return res.status(403).json({
         success: false,
         message: 'Account is inactive. Please contact administrator.'
       });
     }
+    
     const isPasswordValid = await comparePassword(password, user.password);
     if (!isPasswordValid) {
+      console.log(`Login attempt failed: Invalid password for ${email}`);
       return res.status(401).json({
         success: false,
         message: 'Invalid email or password'
       });
     }
+    
     const token = generateToken(user._id, user.role);
+    console.log(`✓ Login successful for ${email} (${user.role})`);
+    
     res.status(200).json({
       success: true,
       message: 'Login successful',
@@ -250,14 +260,6 @@ const getProfile = async (req, res) => {
       error: error.message
     });
   }
-};
-module.exports = {
-  signup,
-  login,
-  forgotPassword,
-  verifyOTP,
-  resetPassword,
-  getProfile
 };
 
 const updateProfile = async (req, res) => {

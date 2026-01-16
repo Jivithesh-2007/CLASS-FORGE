@@ -18,6 +18,9 @@ export const initSocket = (userId) => {
     socket.on('disconnect', () => {
       console.log('✗ Socket disconnected');
     });
+    socket.on('new_message', (message) => {
+      console.log('✓ New message received:', message);
+    });
   }
   return socket;
 };

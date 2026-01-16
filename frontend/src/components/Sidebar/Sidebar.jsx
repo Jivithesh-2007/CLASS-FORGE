@@ -28,7 +28,6 @@ const Sidebar = ({ role }) => {
   const studentLinks = [
     { path: '/student-dashboard', icon: MdDashboard, label: 'Dashboard' },
     { path: '/student-dashboard/submit-idea', icon: MdLightbulb, label: 'Submit Idea' },
-    { path: '/student-dashboard/explore', icon: MdSearch, label: 'Explore Ideas' },
     { path: '/student-dashboard/my-ideas', icon: MdList, label: 'My Ideas' },
     { path: '/student-dashboard/groups', icon: MdGroup, label: 'My Groups' },
     { path: '/student-dashboard/notifications', icon: MdNotifications, label: 'Notifications' },

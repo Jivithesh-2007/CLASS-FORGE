@@ -1,17 +1,22 @@
 import React, { useState, useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 import { MdEdit, MdDelete, MdVisibility } from 'react-icons/md';
 import Sidebar from '../../components/Sidebar/Sidebar';
 import Header from '../../components/Header/Header';
 import { ideaAPI } from '../../services/api';
 import styles from './Dashboard.module.css';
+
 const MyIdeas = () => {
+  const location = useLocation();
   const [ideas, setIdeas] = useState([]);
   const [filteredIdeas, setFilteredIdeas] = useState([]);
-  const [filterStatus, setFilterStatus] = useState('all');
+  const [filterStatus, setFilterStatus] = useState(location.state?.filterStatus || 'all');
   const [loading, setLoading] = useState(true);
+
   useEffect(() => {
     fetchIdeas();
   }, []);
+
   useEffect(() => {
     if (filterStatus === 'all') {
       setFilteredIdeas(ideas);
@@ -19,6 +24,7 @@ const MyIdeas = () => {
       setFilteredIdeas(ideas.filter(idea => idea.status === filterStatus));
     }
   }, [filterStatus, ideas]);
+
   const fetchIdeas = async () => {
     try {
       const response = await ideaAPI.getIdeas({});
@@ -30,6 +36,7 @@ const MyIdeas = () => {
       setLoading(false);
     }
   };
+
   const handleDelete = async (id) => {
     if (window.confirm('Are you sure you want to delete this idea?')) {
       try {
@@ -41,6 +48,7 @@ const MyIdeas = () => {
       }
     }
   };
+
   const getStatusClass = (status) => {
     switch (status) {
       case 'pending': return styles.statusPending;
@@ -50,9 +58,11 @@ const MyIdeas = () => {
       default: return styles.statusPending;
     }
   };
+
   if (loading) {
     return <div>Loading...</div>;
   }
+
   return (
     <div className={styles.layout}>
       <Sidebar role="student" />
@@ -69,7 +79,10 @@ const MyIdeas = () => {
                   style={{
                     padding: '10px',
                     borderRadius: '8px',
-                    border: '1px solid var(--border-color)'
+                    border: '1px solid var(--border-color)',
+                    backgroundColor: 'var(--white)',
+                    color: 'var(--text-primary)',
+                    cursor: 'pointer'
                   }}
                 >
                   <option value="all">All Status</option>
@@ -128,9 +141,11 @@ const MyIdeas = () => {
                       <div style={{
                         marginTop: '12px',
                         padding: '12px',
-                        backgroundColor: '#f5f7fa',
+                        backgroundColor: 'var(--background-alt)',
                         borderRadius: '8px',
-                        fontSize: '13px'
+                        fontSize: '13px',
+                        color: 'var(--text-primary)',
+                        border: `1px solid var(--border-color)`
                       }}>
                         <strong>Feedback:</strong> {idea.feedback}
                       </div>
@@ -145,4 +160,5 @@ const MyIdeas = () => {
     </div>
   );
 };
+
 export default MyIdeas;

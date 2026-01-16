@@ -11,9 +11,22 @@ const createGroup = async (req, res) => {
         message: 'Group name is required'
       });
     }
+
+    // Generate unique group code
+    let groupCode;
+    let isUnique = false;
+    while (!isUnique) {
+      groupCode = Math.random().toString(36).substring(2, 8).toUpperCase();
+      const existing = await Group.findOne({ groupCode });
+      if (!existing) {
+        isUnique = true;
+      }
+    }
+
     const group = new Group({
       name,
       description,
+      groupCode,
       createdBy: req.user._id,
       members: [{
         user: req.user._id,
@@ -22,6 +35,9 @@ const createGroup = async (req, res) => {
     });
     await group.save();
     await group.populate('members.user', 'fullName email username');
+
+    console.log(`✓ Group created: ${name} with code: ${groupCode}`);
+
     res.status(201).json({
       success: true,
       message: 'Group created successfully',
@@ -316,6 +332,101 @@ const deleteGroup = async (req, res) => {
     });
   }
 };
+
+const joinGroupByCode = async (req, res) => {
+  try {
+    const { groupCode } = req.body;
+    
+    console.log('Join group attempt - Code received:', groupCode);
+    console.log('User ID:', req.user._id);
+    
+    if (!groupCode) {
+      return res.status(400).json({
+        success: false,
+        message: 'Group code is required'
+      });
+    }
+
+    // Search for group with exact code match (case-insensitive)
+    const searchCode = groupCode.toUpperCase().trim();
+    console.log('Searching for group with code:', searchCode);
+    
+    const group = await Group.findOne({ 
+      groupCode: searchCode
+    });
+    
+    console.log('Group search result:', group ? `Found - ${group._id}` : 'Not found');
+    
+    if (!group) {
+      console.log('Available group codes in DB:');
+      const allGroups = await Group.find({}, 'name groupCode');
+      console.log(allGroups);
+      
+      return res.status(404).json({
+        success: false,
+        message: 'Invalid group code'
+      });
+    }
+
+    if (!group.isActive) {
+      return res.status(400).json({
+        success: false,
+        message: 'This group is no longer active'
+      });
+    }
+
+    const alreadyMember = group.members.some(
+      member => member.user.toString() === req.user._id.toString()
+    );
+
+    if (alreadyMember) {
+      return res.status(400).json({
+        success: false,
+        message: 'You are already a member of this group'
+      });
+    }
+
+    group.members.push({
+      user: req.user._id,
+      role: 'member'
+    });
+
+    await group.save();
+    await group.populate('members.user', 'fullName email username');
+    await group.populate('createdBy', 'fullName email username');
+
+    const notification = new Notification({
+      recipient: group.createdBy._id,
+      sender: req.user._id,
+      type: 'group_join',
+      title: 'New Group Member',
+      message: `${req.user.fullName} joined ${group.name}`,
+      relatedGroup: group._id
+    });
+    await notification.save();
+
+    const io = req.app.get('io');
+    if (io) {
+      io.to(group.createdBy._id.toString()).emit('notification', notification);
+    }
+
+    console.log(`✓ User ${req.user.fullName} joined group ${group.name} using code ${searchCode}`);
+
+    res.status(200).json({
+      success: true,
+      message: 'Joined group successfully',
+      group
+    });
+  } catch (error) {
+    console.error('Join group by code error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Error joining group: ' + error.message,
+      error: error.message
+    });
+  }
+};
+
 module.exports = {
   createGroup,
   getGroups,
@@ -324,5 +435,6 @@ module.exports = {
   acceptInvite,
   rejectInvite,
   leaveGroup,
-  deleteGroup
+  deleteGroup,
+  joinGroupByCode
 };

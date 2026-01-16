@@ -65,7 +65,8 @@ export const groupAPI = {
   acceptInvite: (id) => api.post(`/groups/${id}/accept`),
   rejectInvite: (id) => api.post(`/groups/${id}/reject`),
   leaveGroup: (id) => api.post(`/groups/${id}/leave`),
-  deleteGroup: (id) => api.delete(`/groups/${id}`)
+  deleteGroup: (id) => api.delete(`/groups/${id}`),
+  joinByCode: (data) => api.post('/groups/join-by-code', data)
 };
 
 export const notificationAPI = {
@@ -84,6 +85,12 @@ export const adminAPI = {
 
 export const teacherAPI = {
   getStudents: () => api.get('/teacher/students')
+};
+
+export const messageAPI = {
+  sendMessage: (data) => api.post('/messages', data),
+  getGroupMessages: (groupId, params) => api.get(`/messages/${groupId}`, { params }),
+  markMessageAsRead: (messageId) => api.put(`/messages/${messageId}/read`)
 };
 
 export default api;

@@ -32,26 +32,34 @@ const createIdea = async (req, res) => {
     const teachers = await User.find({ role: 'teacher', isActive: true });
     const io = req.app.get('io');
     
-    for (const teacher of teachers) {
-      const notification = new Notification({
-        recipient: teacher._id,
-        sender: req.user._id,
-        type: 'idea_submitted',
-        title: 'New Idea Submitted',
-        message: `${req.user.fullName} submitted "${title}"`,
-        relatedIdea: idea._id
-      });
-      await notification.save();
-      
-      if (io) {
-        io.to(teacher._id.toString()).emit('notification', {
-          type: 'idea_submitted',
-          message: `New idea submitted by ${req.user.fullName}`,
-          idea: idea
-        });
+    // Send notifications asynchronously without blocking response
+    setImmediate(async () => {
+      try {
+        for (const teacher of teachers) {
+          const notification = new Notification({
+            recipient: teacher._id,
+            sender: req.user._id,
+            type: 'idea_submitted',
+            title: 'New Idea Submitted',
+            message: `${req.user.fullName} submitted "${title}"`,
+            relatedIdea: idea._id
+          });
+          await notification.save();
+          
+          if (io) {
+            io.to(teacher._id.toString()).emit('notification', {
+              type: 'idea_submitted',
+              message: `New idea submitted by ${req.user.fullName}`,
+              idea: idea
+            });
+          }
+        }
+      } catch (notificationError) {
+        console.error('Notification error:', notificationError);
       }
-    }
+    });
 
+    console.log('✓ Idea created successfully:', idea._id);
     res.status(201).json({
       success: true,
       message: 'Idea submitted successfully',

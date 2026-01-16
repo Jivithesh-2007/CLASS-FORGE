@@ -1,4 +1,10 @@
 const mongoose = require('mongoose');
+
+// Function to generate unique group code
+const generateGroupCode = () => {
+  return Math.random().toString(36).substring(2, 8).toUpperCase();
+};
+
 const groupSchema = new mongoose.Schema({
   name: {
     type: String,
@@ -8,6 +14,12 @@ const groupSchema = new mongoose.Schema({
   description: {
     type: String,
     trim: true
+  },
+  groupCode: {
+    type: String,
+    unique: true,
+    default: generateGroupCode,
+    uppercase: true
   },
   createdBy: {
     type: mongoose.Schema.Types.ObjectId,
@@ -43,4 +55,5 @@ const groupSchema = new mongoose.Schema({
 }, {
   timestamps: true
 });
+
 module.exports = mongoose.model('Group', groupSchema);
