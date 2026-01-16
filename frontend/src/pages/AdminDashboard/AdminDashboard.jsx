@@ -5,12 +5,16 @@ import Header from '../../components/Header/Header';
 import StatCard from '../../components/StatCard/StatCard';
 import { adminAPI } from '../../services/api';
 import styles from '../StudentDashboard/Dashboard.module.css';
+import Spinner from '../../components/Spinner/Spinner'; // Moved to top level
+
 const AdminDashboard = () => {
   const [stats, setStats] = useState(null);
   const [loading, setLoading] = useState(true);
+
   useEffect(() => {
     fetchStats();
   }, []);
+
   const fetchStats = async () => {
     try {
       const response = await adminAPI.getSystemStats();
@@ -21,9 +25,11 @@ const AdminDashboard = () => {
       setLoading(false);
     }
   };
+
   if (loading) {
-    return <div>Loading...</div>;
+    return <Spinner />;
   }
+
   return (
     <div className={styles.layout}>
       <Sidebar role="admin" />

@@ -28,16 +28,16 @@ code {
   --success-color: #4CAF50;
   --info-color: #2196F3;
   
-  --background: #f5f7fa;
+  --background: #f0f8ff;
   --background-alt: #ffffff;
   --white: #ffffff;
   
-  --text-primary: #2c3e50;
-  --text-secondary: #7f8c8d;
-  --text-tertiary: #95a5a6;
+  --text-primary: #000000;
+  --text-secondary: #555555;
+  --text-tertiary: #777777;
   
-  --border-color: #e0e6ed;
-  --border-light: #ecf0f1;
+  --border-color: #d4e3f3;
+  --border-light: #e8f1fa;
   
   --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.05);
   --shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
@@ -130,7 +130,7 @@ a:hover {
   --background-alt: #232831;
   --white: #2d3139;
   
-  --text-primary: #e4e6eb;
+  --text-primary: #ffffff;
   --text-secondary: #b0b3b8;
   --text-tertiary: #8a8d91;
   

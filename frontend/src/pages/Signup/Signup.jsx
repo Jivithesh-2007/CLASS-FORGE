@@ -17,6 +17,7 @@ const Signup = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
   const [loading, setLoading] = useState(false);
   const handleChange = (e) => {
     setFormData({
@@ -24,10 +25,12 @@ const Signup = () => {
       [e.target.name]: e.target.value
     });
     setError('');
+    setSuccess('');
   };
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
+    setSuccess('');
     if (formData.password !== formData.confirmPassword) {
       setError('Passwords do not match');
       return;
@@ -47,14 +50,17 @@ const Signup = () => {
         password: formData.password
       });
       if (result.success) {
-        const role = result.user.role;
-        if (role === 'student') {
-          navigate('/student-dashboard');
-        } else if (role === 'teacher') {
-          navigate('/teacher-dashboard');
-        } else if (role === 'admin') {
-          navigate('/admin-dashboard');
-        }
+        setSuccess('Account created successfully!');
+        setTimeout(() => {
+          const role = result.user.role;
+          if (role === 'student') {
+            navigate('/student-dashboard');
+          } else if (role === 'teacher') {
+            navigate('/teacher-dashboard');
+          } else if (role === 'admin') {
+            navigate('/admin-dashboard');
+          }
+        }, 1500);
       } else {
         setError(result.message);
       }
@@ -74,6 +80,7 @@ const Signup = () => {
         <div className={styles.title}>Create Account</div>
         <div className={styles.description}>Sign up to start submitting your ideas</div>
         {error && <div className={styles.error}>{error}</div>}
+        {success && <div className={styles.success}>{success}</div>}
         <form className={styles.form} onSubmit={handleSubmit}>
           <div className={styles.formGroup}>
             <label className={styles.label}>Full Name</label>

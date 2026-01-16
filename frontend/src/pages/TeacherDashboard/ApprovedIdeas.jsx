@@ -3,12 +3,18 @@ import Sidebar from '../../components/Sidebar/Sidebar';
 import Header from '../../components/Header/Header';
 import { ideaAPI } from '../../services/api';
 import styles from '../StudentDashboard/Dashboard.module.css';
+import Spinner from '../../components/Spinner/Spinner'; // Moved to top level
+
 const ApprovedIdeas = () => {
   const [ideas, setIdeas] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [showDetailsModal, setShowDetailsModal] = useState(false);
+  const [selectedIdeaId, setSelectedIdeaId] = useState(null);
+
   useEffect(() => {
     fetchApprovedIdeas();
   }, []);
+
   const fetchApprovedIdeas = async () => {
     try {
       const response = await ideaAPI.getIdeas({ status: 'approved' });
@@ -19,9 +25,21 @@ const ApprovedIdeas = () => {
       setLoading(false);
     }
   };
+
+  const handleCardClick = (ideaId) => {
+    setSelectedIdeaId(ideaId);
+    setShowDetailsModal(true);
+  };
+
+  const handleCloseModal = () => {
+    setShowDetailsModal(false);
+    setSelectedIdeaId(null);
+  };
+
   if (loading) {
-    return <div>Loading...</div>;
+    return <Spinner />;
   }
+
   return (
     <div className={styles.layout}>
       <Sidebar role="teacher" />
@@ -37,7 +55,7 @@ const ApprovedIdeas = () => {
             ) : (
               <div className={styles.ideaGrid}>
                 {ideas.map((idea) => (
-                  <div key={idea._id} className={styles.ideaCard}>
+                  <div key={idea._id} className={styles.ideaCard} onClick={() => handleCardClick(idea._id)}>
                     <h3 className={styles.ideaTitle}>{idea.title}</h3>
                     <p className={styles.ideaDescription}>{idea.description}</p>
                     <div className={styles.ideaFooter}>
@@ -57,6 +75,10 @@ const ApprovedIdeas = () => {
           </div>
         </div>
       </div>
+
+      {showDetailsModal && (
+        <IdeaDetailsModal ideaId={selectedIdeaId} onClose={handleCloseModal} />
+      )}
     </div>
   );
 };

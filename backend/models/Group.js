@@ -14,6 +14,11 @@ const groupSchema = new mongoose.Schema({
     ref: 'User',
     required: true
   },
+  inviteCode: {
+    type: String,
+    unique: true,
+    sparse: true
+  },
   members: [{
     user: {
       type: mongoose.Schema.Types.ObjectId,
@@ -43,4 +48,13 @@ const groupSchema = new mongoose.Schema({
 }, {
   timestamps: true
 });
+groupSchema.statics.generateUniqueInviteCode = async function () {
+  let inviteCode;
+  let existingGroup;
+  do {
+    inviteCode = Math.random().toString(36).substring(2, 8).toUpperCase();
+    existingGroup = await this.findOne({ inviteCode });
+  } while (existingGroup);
+  return inviteCode;
+};
 module.exports = mongoose.model('Group', groupSchema);

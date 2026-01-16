@@ -65,7 +65,8 @@ export const groupAPI = {
   acceptInvite: (id) => api.post(`/groups/${id}/accept`),
   rejectInvite: (id) => api.post(`/groups/${id}/reject`),
   leaveGroup: (id) => api.post(`/groups/${id}/leave`),
-  deleteGroup: (id) => api.delete(`/groups/${id}`)
+  deleteGroup: (id) => api.delete(`/groups/${id}`),
+  joinGroupWithCode: (data) => api.post('/groups/join-with-code', data)
 };
 
 export const notificationAPI = {

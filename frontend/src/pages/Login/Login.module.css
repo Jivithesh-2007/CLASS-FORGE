@@ -1,19 +1,18 @@
 .container {
   min-height: 100vh;
-  background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+  background: var(--background);
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 20px;
 }
 .card {
-  background-color: var(--white);
+  background-color: var(--background-alt);
   border-radius: 16px;
   padding: 48px;
   box-shadow: 0 10px 40px rgba(74, 144, 226, 0.15);
   width: 100%;
   max-width: 450px;
-  border: 1px solid rgba(74, 144, 226, 0.1);
 }
 .header {
   text-align: center;

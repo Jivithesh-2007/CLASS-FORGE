@@ -32,16 +32,20 @@ const SubmitIdea = () => {
     setLoading(true);
     const tags = formData.tags.split(',').map(tag => tag.trim()).filter(tag => tag);
     try {
-      await ideaAPI.createIdea({
+      const response = await ideaAPI.createIdea({
         title: formData.title,
         description: formData.description,
         domain: formData.domain,
         tags
       });
-      setSuccess('Idea submitted successfully!');
-      setTimeout(() => {
-        navigate('/student-dashboard/my-ideas');
-      }, 1500);
+      if (response.data.success) {
+        setSuccess('Idea submitted successfully!');
+        setTimeout(() => {
+          navigate('/student-dashboard/my-ideas');
+        }, 1500);
+      } else {
+        setError(response.data.message || 'Failed to submit idea');
+      }
     } catch (err) {
       setError(err.response?.data?.message || 'Failed to submit idea');
     } finally {

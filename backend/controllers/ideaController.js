@@ -69,11 +69,16 @@ const createIdea = async (req, res) => {
 
 const getIdeas = async (req, res) => {
   try {
-    const { status, domain, search } = req.query;
+    const { status, domain, search, userId } = req.query;
+
     const query = {};
 
     if (req.user.role === 'student') {
       query.submittedBy = req.user._id;
+    } else if (req.user.role === 'teacher' || req.user.role === 'admin') {
+      if (userId) {
+        query.submittedBy = userId;
+      }
     }
 
     if (status) {

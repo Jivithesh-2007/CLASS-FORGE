@@ -13,6 +13,7 @@ const Login = () => {
   });
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
   const [loading, setLoading] = useState(false);
   const handleChange = (e) => {
     setFormData({
@@ -20,23 +21,28 @@ const Login = () => {
       [e.target.name]: e.target.value
     });
     setError('');
+    setSuccess('');
   };
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
+    setSuccess('');
     setLoading(true);
     const email = formData.username + formData.domain;
     try {
       const result = await login({ email, password: formData.password });
       if (result.success) {
-        const role = result.user.role;
-        if (role === 'student') {
-          navigate('/student-dashboard');
-        } else if (role === 'teacher') {
-          navigate('/teacher-dashboard');
-        } else if (role === 'admin') {
-          navigate('/admin-dashboard');
-        }
+        setSuccess('Login successful');
+        setTimeout(() => {
+          const role = result.user.role;
+          if (role === 'student') {
+            navigate('/student-dashboard');
+          } else if (role === 'teacher') {
+            navigate('/teacher-dashboard');
+          } else if (role === 'admin') {
+            navigate('/admin-dashboard');
+          }
+        }, 1500);
       } else {
         setError(result.message);
       }
@@ -56,6 +62,7 @@ const Login = () => {
         <div className={styles.title}>Welcome back</div>
         <div className={styles.description}>Login to your account</div>
         {error && <div className={styles.error}>{error}</div>}
+        {success && <div className={styles.success}>{success}</div>}
         <form className={styles.form} onSubmit={handleSubmit}>
           <div className={styles.formGroup}>
             <label className={styles.label}>Username</label>

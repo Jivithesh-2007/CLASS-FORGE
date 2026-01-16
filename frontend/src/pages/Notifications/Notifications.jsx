@@ -5,13 +5,17 @@ import Header from '../../components/Header/Header';
 import { useAuth } from '../../context/AuthContext';
 import { notificationAPI } from '../../services/api';
 import styles from '../StudentDashboard/Dashboard.module.css';
+import Spinner from '../../components/Spinner/Spinner'; // Moved to top level
+
 const Notifications = () => {
   const { user } = useAuth();
   const [notifications, setNotifications] = useState([]);
   const [loading, setLoading] = useState(true);
+
   useEffect(() => {
     fetchNotifications();
   }, []);
+
   const fetchNotifications = async () => {
     try {
       const response = await notificationAPI.getNotifications();
@@ -22,6 +26,7 @@ const Notifications = () => {
       setLoading(false);
     }
   };
+
   const handleMarkAsRead = async (id) => {
     try {
       await notificationAPI.markAsRead(id);
@@ -30,6 +35,7 @@ const Notifications = () => {
       console.error('Error marking notification as read:', error);
     }
   };
+
   const handleMarkAllAsRead = async () => {
     try {
       await notificationAPI.markAllAsRead();
@@ -38,6 +44,7 @@ const Notifications = () => {
       console.error('Error marking all as read:', error);
     }
   };
+
   const handleDelete = async (id) => {
     try {
       await notificationAPI.deleteNotification(id);
@@ -46,9 +53,11 @@ const Notifications = () => {
       console.error('Error deleting notification:', error);
     }
   };
+
   if (loading) {
-    return <div>Loading...</div>;
+    return <Spinner />;
   }
+
   return (
     <div className={styles.layout}>
       <Sidebar role={user?.role} />

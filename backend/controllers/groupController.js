@@ -2,6 +2,7 @@ const Group = require('../models/Group');
 const User = require('../models/User');
 const Notification = require('../models/Notification');
 const { sendGroupInviteEmail } = require('../services/emailService');
+
 const createGroup = async (req, res) => {
   try {
     const { name, description } = req.body;
@@ -11,10 +12,14 @@ const createGroup = async (req, res) => {
         message: 'Group name is required'
       });
     }
+
+    const inviteCode = await Group.generateUniqueInviteCode(); // Generate unique invite code
+
     const group = new Group({
       name,
       description,
       createdBy: req.user._id,
+      inviteCode, // Add invite code to group
       members: [{
         user: req.user._id,
         role: 'admin'
@@ -261,6 +266,7 @@ const leaveGroup = async (req, res) => {
         success: false,
         message: 'Group creator cannot leave. Delete the group instead.'
       });
+      return;
     }
     const memberIndex = group.members.findIndex(
       member => member.user.toString() === req.user._id.toString()
@@ -316,6 +322,65 @@ const deleteGroup = async (req, res) => {
     });
   }
 };
+
+const joinGroupWithCode = async (req, res) => {
+  try {
+    const { inviteCode } = req.body;
+    if (!inviteCode) {
+      return res.status(400).json({
+        success: false,
+        message: 'Invite code is required'
+      });
+    }
+
+    const group = await Group.findOne({ inviteCode });
+
+    if (!group) {
+      return res.status(404).json({
+        success: false,
+        message: 'Group not found with this invite code'
+      });
+    }
+
+    const isMember = group.members.some(
+      (member) => member.user.toString() === req.user._id.toString()
+    );
+
+    if (isMember) {
+      return res.status(400).json({
+        success: false,
+        message: 'You are already in this group'
+      });
+    }
+
+    group.members.push({ user: req.user._id, role: 'member' });
+    
+    // If user was invited via email, remove pending invite
+    const inviteIndex = group.pendingInvites.findIndex(
+      (invite) => invite.email === req.user.email
+    );
+    if (inviteIndex > -1) {
+      group.pendingInvites.splice(inviteIndex, 1);
+    }
+    
+    await group.save();
+    await group.populate('members.user', 'fullName email username');
+
+    res.status(200).json({
+      success: true,
+      message: `Successfully joined group: ${group.name}`,
+      group
+    });
+  } catch (error) {
+    console.error('Join group with code error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Error joining group',
+      error: error.message
+    });
+  }
+};
+
 module.exports = {
   createGroup,
   getGroups,
@@ -324,5 +389,6 @@ module.exports = {
   acceptInvite,
   rejectInvite,
   leaveGroup,
-  deleteGroup
+  deleteGroup,
+  joinGroupWithCode
 };

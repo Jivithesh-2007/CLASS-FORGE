@@ -6,14 +6,18 @@ import Header from '../../components/Header/Header';
 import StatCard from '../../components/StatCard/StatCard';
 import { ideaAPI } from '../../services/api';
 import styles from './Dashboard.module.css';
+import Spinner from '../../components/Spinner/Spinner'; // Moved to top level
+
 const StudentDashboard = () => {
   const navigate = useNavigate();
   const [stats, setStats] = useState(null);
   const [recentIdeas, setRecentIdeas] = useState([]);
   const [loading, setLoading] = useState(true);
+
   useEffect(() => {
     fetchDashboardData();
   }, []);
+
   const fetchDashboardData = async () => {
     try {
       const [statsRes, ideasRes] = await Promise.all([
@@ -28,9 +32,11 @@ const StudentDashboard = () => {
       setLoading(false);
     }
   };
+
   const handleSubmitIdea = () => {
     navigate('/student-dashboard/submit-idea');
   };
+
   const getStatusClass = (status) => {
     switch (status) {
       case 'pending': return styles.statusPending;
@@ -40,9 +46,11 @@ const StudentDashboard = () => {
       default: return styles.statusPending;
     }
   };
+
   if (loading) {
-    return <div>Loading...</div>;
+    return <Spinner />;
   }
+
   return (
     <div className={styles.layout}>
       <Sidebar role="student" />

@@ -5,13 +5,17 @@ import Header from '../../components/Header/Header';
 import StatCard from '../../components/StatCard/StatCard';
 import { ideaAPI } from '../../services/api';
 import styles from '../StudentDashboard/Dashboard.module.css';
+import Spinner from '../../components/Spinner/Spinner'; // Moved to top level
+
 const TeacherDashboard = () => {
   const [stats, setStats] = useState(null);
   const [recentIdeas, setRecentIdeas] = useState([]);
   const [loading, setLoading] = useState(true);
+
   useEffect(() => {
     fetchDashboardData();
   }, []);
+
   const fetchDashboardData = async () => {
     try {
       const [statsRes, ideasRes] = await Promise.all([
@@ -26,9 +30,11 @@ const TeacherDashboard = () => {
       setLoading(false);
     }
   };
+
   if (loading) {
-    return <div>Loading...</div>;
+    return <Spinner />;
   }
+
   return (
     <div className={styles.layout}>
       <Sidebar role="teacher" />

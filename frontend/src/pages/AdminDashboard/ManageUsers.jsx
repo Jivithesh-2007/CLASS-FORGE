@@ -4,13 +4,17 @@ import Sidebar from '../../components/Sidebar/Sidebar';
 import Header from '../../components/Header/Header';
 import { adminAPI } from '../../services/api';
 import styles from '../StudentDashboard/Dashboard.module.css';
+import Spinner from '../../components/Spinner/Spinner'; // Moved to top level
+
 const ManageUsers = () => {
   const [users, setUsers] = useState([]);
   const [filterRole, setFilterRole] = useState('all');
   const [loading, setLoading] = useState(true);
+
   useEffect(() => {
     fetchUsers();
   }, [filterRole]);
+
   const fetchUsers = async () => {
     try {
       const params = filterRole !== 'all' ? { role: filterRole } : {};
@@ -22,6 +26,7 @@ const ManageUsers = () => {
       setLoading(false);
     }
   };
+
   const handleToggleStatus = async (id) => {
     if (window.confirm('Are you sure you want to change this user\'s status?')) {
       try {
@@ -33,6 +38,7 @@ const ManageUsers = () => {
       }
     }
   };
+
   const handleDelete = async (id) => {
     if (window.confirm('Are you sure you want to delete this user? This action cannot be undone.')) {
       try {
@@ -44,9 +50,11 @@ const ManageUsers = () => {
       }
     }
   };
+
   if (loading) {
-    return <div>Loading...</div>;
+    return <Spinner />;
   }
+
   return (
     <div className={styles.layout}>
       <Sidebar role="admin" />

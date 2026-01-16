@@ -4,14 +4,21 @@ import Sidebar from '../../components/Sidebar/Sidebar';
 import Header from '../../components/Header/Header';
 import { ideaAPI } from '../../services/api';
 import styles from './Dashboard.module.css';
+import Spinner from '../../components/Spinner/Spinner';
+import IdeaDetailsModal from '../../components/IdeaDetailsModal/IdeaDetailsModal';
+
 const MyIdeas = () => {
   const [ideas, setIdeas] = useState([]);
   const [filteredIdeas, setFilteredIdeas] = useState([]);
   const [filterStatus, setFilterStatus] = useState('all');
   const [loading, setLoading] = useState(true);
+  const [showDetailsModal, setShowDetailsModal] = useState(false);
+  const [selectedIdeaId, setSelectedIdeaId] = useState(null);
+
   useEffect(() => {
     fetchIdeas();
   }, []);
+
   useEffect(() => {
     if (filterStatus === 'all') {
       setFilteredIdeas(ideas);
@@ -19,6 +26,7 @@ const MyIdeas = () => {
       setFilteredIdeas(ideas.filter(idea => idea.status === filterStatus));
     }
   }, [filterStatus, ideas]);
+
   const fetchIdeas = async () => {
     try {
       const response = await ideaAPI.getIdeas({});
@@ -30,6 +38,7 @@ const MyIdeas = () => {
       setLoading(false);
     }
   };
+
   const handleDelete = async (id) => {
     if (window.confirm('Are you sure you want to delete this idea?')) {
       try {
@@ -41,6 +50,17 @@ const MyIdeas = () => {
       }
     }
   };
+
+  const handleCardClick = (ideaId) => {
+    setSelectedIdeaId(ideaId);
+    setShowDetailsModal(true);
+  };
+
+  const handleCloseModal = () => {
+    setShowDetailsModal(false);
+    setSelectedIdeaId(null);
+  };
+
   const getStatusClass = (status) => {
     switch (status) {
       case 'pending': return styles.statusPending;
@@ -50,9 +70,11 @@ const MyIdeas = () => {
       default: return styles.statusPending;
     }
   };
+
   if (loading) {
-    return <div>Loading...</div>;
+    return <Spinner />;
   }
+
   return (
     <div className={styles.layout}>
       <Sidebar role="student" />
@@ -92,7 +114,7 @@ const MyIdeas = () => {
             ) : (
               <div className={styles.ideaGrid}>
                 {filteredIdeas.map((idea) => (
-                  <div key={idea._id} className={styles.ideaCard}>
+                  <div key={idea._id} className={styles.ideaCard} onClick={() => handleCardClick(idea._id)}>
                     <div className={styles.ideaHeader}>
                       <h3 className={styles.ideaTitle}>{idea.title}</h3>
                     </div>
@@ -108,7 +130,7 @@ const MyIdeas = () => {
                         {idea.status === 'pending' && (
                           <>
                             <button
-                              onClick={() => handleDelete(idea._id)}
+                              onClick={(e) => { e.stopPropagation(); handleDelete(idea._id); }}
                               style={{
                                 background: 'none',
                                 border: 'none',
@@ -142,6 +164,10 @@ const MyIdeas = () => {
           </div>
         </div>
       </div>
+
+      {showDetailsModal && (
+        <IdeaDetailsModal ideaId={selectedIdeaId} onClose={handleCloseModal} />
+      )}
     </div>
   );
 };
