@@ -1,23 +1,18 @@
-import React, { useState, useEffect } from 'react';
-import { MdCheckCircle, MdCancel, MdSearch, MdClose, MdVisibility, MdMoreVert, MdArrowDropDown, MdPerson, MdCheckBox, MdCheckBoxOutlineBlank, MdMergeType } from 'react-icons/md';
+import { useState, useEffect } from 'react';
+import { MdCheckCircle, MdCancel, MdClose, MdPerson, MdCheckBox, MdCheckBoxOutlineBlank, MdMergeType, MdDescription, MdNotes, MdAutoAwesome } from 'react-icons/md';
 import Sidebar from '../../components/Sidebar/Sidebar';
 import Header from '../../components/Header/Header';
 import { ideaAPI } from '../../services/api';
 import styles from './TeacherDashboard.module.css';
-import formStyles from '../Login/Login.module.css';
 import reviewStyles from './ReviewIdeas.module.css';
 
 const ReviewIdeas = () => {
   const [ideas, setIdeas] = useState([]);
   const [selectedIdea, setSelectedIdea] = useState(null);
   const [feedback, setFeedback] = useState('');
-  const [similarIdeas, setSimilarIdeas] = useState([]);
   const [loading, setLoading] = useState(true);
   const [reviewLoading, setReviewLoading] = useState(false);
   const [message, setMessage] = useState({ type: '', text: '' });
-  const [showDetailModal, setShowDetailModal] = useState(false);
-  const [sortBy, setSortBy] = useState('newest');
-  const [searchTerm, setSearchTerm] = useState('');
   const [aiInsights, setAiInsights] = useState(null);
   const [loadingInsights, setLoadingInsights] = useState(false);
   const [selectedForMerge, setSelectedForMerge] = useState([]);
@@ -49,32 +44,11 @@ const ReviewIdeas = () => {
   const handleSelectIdea = async (idea) => {
     setSelectedIdea(idea);
     setFeedback('');
-    setShowDetailModal(true);
     
     try {
-      const response = await ideaAPI.getSimilarIdeas(idea._id);
-      setSimilarIdeas(response.data.similarIdeas || []);
+      await ideaAPI.getSimilarIdeas(idea._id);
     } catch (error) {
       console.error('Error fetching similar ideas:', error);
-      setSimilarIdeas([]);
-    }
-  };
-
-  const handleReview = async (status) => {
-    if (!selectedIdea) return;
-    setReviewLoading(true);
-    try {
-      await ideaAPI.reviewIdea(selectedIdea._id, { status, feedback });
-      showMessage('success', `Idea ${status} successfully!`);
-      setShowDetailModal(false);
-      setSelectedIdea(null);
-      setFeedback('');
-      fetchPendingIdeas();
-    } catch (error) {
-      console.error('Error reviewing idea:', error);
-      showMessage('error', error.response?.data?.message || 'Failed to review idea');
-    } finally {
-      setReviewLoading(false);
     }
   };
 
@@ -117,16 +91,12 @@ const ReviewIdeas = () => {
 
   const getFilteredAndSortedIdeas = () => {
     let filtered = ideas.filter(idea =>
-      idea.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      idea.submittedBy?.fullName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      idea.domain.toLowerCase().includes(searchTerm.toLowerCase())
+      idea.title.toLowerCase().includes('') ||
+      idea.submittedBy?.fullName.toLowerCase().includes('') ||
+      idea.domain.toLowerCase().includes('')
     );
 
-    if (sortBy === 'newest') {
-      filtered.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-    } else if (sortBy === 'oldest') {
-      filtered.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
-    }
+    filtered.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
 
     return filtered;
   };
@@ -326,6 +296,7 @@ const ReviewIdeas = () => {
                     <div>
                       <span className={reviewStyles.domainBadge}>{selectedIdea.domain}</span>
                       <h3>{selectedIdea.title}</h3>
+                      <p>Proposal by <strong>{selectedIdea.submittedBy?.fullName || 'Unknown'}</strong></p>
                     </div>
                     <div className={reviewStyles.scoreDisplay}>
                       <div className={reviewStyles.scoreNumber}>{aiInsights.score}</div>
@@ -333,46 +304,54 @@ const ReviewIdeas = () => {
                     </div>
                   </div>
 
-                  <div className={reviewStyles.aiBox}>
-                    <div className={reviewStyles.aiBoxHeader}>
-                      <span className={reviewStyles.aiIcon}>✨</span>
-                      <h4>AI Innovation Audit</h4>
+                  <div className={reviewStyles.leftContent}>
+                    <div className={reviewStyles.projectCoreSection}>
+                      <h4><MdDescription size={18} /> PROJECT CORE CONCEPT</h4>
+                      <p>{selectedIdea.description}</p>
                     </div>
-                    <p className={reviewStyles.aiText}>{aiInsights.insight}</p>
-                    
-                    <div className={reviewStyles.keyPointsList}>
-                      {aiInsights.keyPoints?.map((point, idx) => (
-                        <div key={idx} className={reviewStyles.keyPointItem}>
-                          <span className={reviewStyles.bullet}>•</span>
-                          <span>{point}</span>
-                        </div>
-                      ))}
+
+                    <div className={reviewStyles.evaluationNotesSection}>
+                      <h4><MdNotes size={18} /> EVALUATION NOTES</h4>
+                      <textarea
+                        value={feedback}
+                        onChange={(e) => setFeedback(e.target.value)}
+                        placeholder="Provide specific feedback, missing links, or improvement suggestions for the student..."
+                      />
                     </div>
                   </div>
 
-                  <div className={reviewStyles.metricsRow}>
-                    <div className={reviewStyles.metricItem}>
-                      <span className={reviewStyles.metricLabel}>Feasibility</span>
-                      <span className={reviewStyles.metricValue}>{aiInsights.feasibility}/10</span>
+                  <div className={reviewStyles.rightContent}>
+                    <div className={reviewStyles.aiBox}>
+                      <div className={reviewStyles.aiBoxHeader}>
+                        <MdAutoAwesome size={24} />
+                        <h4>AI Innovation Audit</h4>
+                      </div>
+                      <p className={reviewStyles.aiText}>{aiInsights.insight}</p>
+                      
+                      <div className={reviewStyles.keyPointsList}>
+                        {aiInsights.keyPoints?.map((point, idx) => (
+                          <div key={idx} className={reviewStyles.keyPointItem}>
+                            <span className={reviewStyles.bullet}>◆</span>
+                            <span>{point}</span>
+                          </div>
+                        ))}
+                      </div>
                     </div>
-                    <div className={reviewStyles.metricItem}>
-                      <span className={reviewStyles.metricLabel}>Realistic Impact</span>
-                      <span className={reviewStyles.metricValue}>{aiInsights.impact}/10</span>
-                    </div>
-                    <div className={reviewStyles.metricItem}>
-                      <span className={reviewStyles.metricLabel}>Expect Viability</span>
-                      <span className={reviewStyles.metricValue}>{aiInsights.marketPotential}/10</span>
-                    </div>
-                  </div>
 
-                  <div className={reviewStyles.feedbackBox}>
-                    <label>Provide Feedback</label>
-                    <textarea
-                      value={feedback}
-                      onChange={(e) => setFeedback(e.target.value)}
-                      placeholder="Provide feedback to the student..."
-                      rows="3"
-                    />
+                    <div className={reviewStyles.metricsRow}>
+                      <div className={reviewStyles.metricItem}>
+                        <span className={reviewStyles.metricLabel}>Feasibility</span>
+                        <span className={reviewStyles.metricValue}>{aiInsights.feasibility}/10</span>
+                      </div>
+                      <div className={reviewStyles.metricItem}>
+                        <span className={reviewStyles.metricLabel}>Realistic Impact</span>
+                        <span className={reviewStyles.metricValue}>{aiInsights.impact}/10</span>
+                      </div>
+                      <div className={reviewStyles.metricItem}>
+                        <span className={reviewStyles.metricLabel}>Expect Viability</span>
+                        <span className={reviewStyles.metricValue}>{aiInsights.marketPotential}/10</span>
+                      </div>
+                    </div>
                   </div>
 
                   <div className={reviewStyles.actionButtons}>
@@ -390,6 +369,10 @@ const ReviewIdeas = () => {
                     >
                       <MdCheckCircle /> Approve Submission
                     </button>
+                  </div>
+
+                  <div className={reviewStyles.footerText}>
+                    Processing this will notify <strong>{selectedIdea.submittedBy?.fullName || 'the student'}</strong> immediately via email.
                   </div>
                 </div>
               ) : null}
