@@ -1,6 +1,6 @@
 .students-page {
   padding: 32px;
-  background: #f3f4f6;
+  background: var(--background);
   min-height: calc(100vh - 70px);
 }
 

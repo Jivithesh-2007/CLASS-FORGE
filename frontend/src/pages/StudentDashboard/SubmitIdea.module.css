@@ -4,9 +4,7 @@
   background-color: var(--background);
 }
 
-:root.dark-mode .layout {
-  background-color: #0f0f0f;
-}
+
 
 .main {
   flex: 1;
@@ -28,10 +26,7 @@
   border: 1px solid var(--border-light);
 }
 
-:root.dark-mode .formContainer {
-  background-color: #1a1a1a;
-  border-color: #333333;
-}
+
 
 .formHeader {
   display: flex;
@@ -42,9 +37,7 @@
   border-bottom: 2px solid var(--border-light);
 }
 
-:root.dark-mode .formHeader {
-  border-bottom-color: #333333;
-}
+
 
 .formTitle {
   font-size: 24px;
@@ -53,9 +46,7 @@
   margin: 0 0 8px 0;
 }
 
-:root.dark-mode .formTitle {
-  color: #ffffff;
-}
+
 
 .formSubtitle {
   font-size: 13px;
@@ -63,9 +54,7 @@
   margin: 0;
 }
 
-:root.dark-mode .formSubtitle {
-  color: #a0a0a0;
-}
+
 
 .closeBtn {
   background: none;
@@ -80,19 +69,14 @@
   transition: all 0.3s ease;
 }
 
-:root.dark-mode .closeBtn {
-  color: #d0d0d0;
-}
+
 
 .closeBtn:hover {
   background-color: #f5f7fa;
   color: var(--text-primary);
 }
 
-:root.dark-mode .closeBtn:hover {
-  background-color: #2a2a2a;
-  color: #ffffff;
-}
+
 
 .alert {
   padding: 16px 20px;
@@ -141,9 +125,7 @@
   letter-spacing: 0.5px;
 }
 
-:root.dark-mode .label {
-  color: #a0a0a0;
-}
+
 
 .input,
 .select,
@@ -158,13 +140,7 @@
   color: var(--text-primary);
 }
 
-:root.dark-mode .input,
-:root.dark-mode .select,
-:root.dark-mode .textarea {
-  background-color: #2a2a2a;
-  border-color: #333333;
-  color: #ffffff;
-}
+
 
 .input:focus,
 .select:focus,
@@ -174,11 +150,7 @@
   box-shadow: 0 0 0 3px rgba(90, 163, 240, 0.1);
 }
 
-:root.dark-mode .input:focus,
-:root.dark-mode .select:focus,
-:root.dark-mode .textarea:focus {
-  box-shadow: 0 0 0 3px rgba(90, 163, 240, 0.2);
-}
+
 
 .textarea {
   resize: vertical;
@@ -200,13 +172,10 @@
   padding: 16px 20px;
   background-color: #f5f7fa;
   border-radius: var(--radius);
-  border-left: 4px solid var(--primary-color);
+  border-left: 4px solid black;
 }
 
-:root.dark-mode .guidelines {
-  background-color: #2a2a2a;
-  border-left-color: #5AA3F0;
-}
+
 
 .guidelinesTitle {
   font-size: 12px;
@@ -217,9 +186,7 @@
   margin: 0 0 8px 0;
 }
 
-:root.dark-mode .guidelinesTitle {
-  color: #a0a0a0;
-}
+
 
 .guidelinesText {
   font-size: 13px;
@@ -228,9 +195,7 @@
   margin: 0;
 }
 
-:root.dark-mode .guidelinesText {
-  color: #d0d0d0;
-}
+
 
 .formActions {
   display: flex;
@@ -241,7 +206,7 @@
 .submitBtn {
   flex: 1;
   padding: 14px 28px;
-  background: linear-gradient(135deg, #5b5bff, #4a4aff);
+  background-color: #3d3b3b;
   color: white;
   border: none;
   border-radius: var(--radius);
@@ -257,7 +222,8 @@
 
 .submitBtn:hover:not(:disabled) {
   transform: translateY(-2px);
-  box-shadow: 0 8px 20px rgba(91, 91, 255, 0.4);
+  background-color: black;
+
 }
 
 .submitBtn:disabled {
@@ -266,9 +232,7 @@
   transform: none;
 }
 
-:root.dark-mode .submitBtn:disabled {
-  background: #444444;
-}
+
 
 .cancelBtn {
   flex: 1;
@@ -283,10 +247,7 @@
   transition: all 0.3s ease;
 }
 
-:root.dark-mode .cancelBtn {
-  border-color: #333333;
-  color: #ffffff;
-}
+
 
 .cancelBtn:hover {
   background-color: var(--background);
@@ -294,11 +255,7 @@
   color: var(--primary-color);
 }
 
-:root.dark-mode .cancelBtn:hover {
-  background-color: #2a2a2a;
-  border-color: #5AA3F0;
-  color: #5AA3F0;
-}
+
 
 /* Responsive Design */
 @media (max-width: 768px) {
@@ -326,4 +283,98 @@
   .formTitle {
     font-size: 24px;
   }
+}
+
+/* Dark Mode Styles */
+body.dark-mode .layout {
+  background-color: #05070F;
+}
+
+body.dark-mode .formContainer {
+  background-color: #0E1A3A;
+  border-color: #1a2a4a;
+}
+
+body.dark-mode .formHeader {
+  border-bottom-color: #1a2a4a;
+}
+
+body.dark-mode .formTitle {
+  color: #e0e0e0;
+}
+
+body.dark-mode .formSubtitle {
+  color: #b0b0b0;
+}
+
+body.dark-mode .closeBtn {
+  color: #b0b0b0;
+}
+
+body.dark-mode .closeBtn:hover {
+  background-color: #1a2a4a;
+  color: #e0e0e0;
+}
+
+body.dark-mode .alert {
+  background-color: rgba(16, 185, 129, 0.15);
+  border-color: #10b981;
+  color: #10b981;
+}
+
+body.dark-mode .label {
+  color: #b0b0b0;
+}
+
+body.dark-mode .input,
+body.dark-mode .select,
+body.dark-mode .textarea {
+  background-color: #0B1220;
+  border-color: #1a2a4a;
+  color: #e0e0e0;
+}
+
+body.dark-mode .input:focus,
+body.dark-mode .select:focus,
+body.dark-mode .textarea:focus {
+  border-color: #7FB3E8;
+  box-shadow: 0 0 0 3px rgba(127, 179, 232, 0.2);
+}
+
+body.dark-mode .guidelines {
+  background-color: #1a2a4a;
+  border-left-color: #7FB3E8;
+}
+
+body.dark-mode .guidelinesTitle {
+  color: #b0b0b0;
+}
+
+body.dark-mode .guidelinesText {
+  color: #b0b0b0;
+}
+
+body.dark-mode .submitBtn {
+  background-color: #1a2a4a;
+  color: #e0e0e0;
+}
+
+body.dark-mode .submitBtn:hover:not(:disabled) {
+  background-color: #2a3a5a;
+}
+
+body.dark-mode .submitBtn:disabled {
+  background: #0E1A3A;
+}
+
+body.dark-mode .cancelBtn {
+  background-color: transparent;
+  color: #e0e0e0;
+  border-color: #1a2a4a;
+}
+
+body.dark-mode .cancelBtn:hover {
+  background-color: #1a2a4a;
+  border-color: #7FB3E8;
+  color: #7FB3E8;
 }

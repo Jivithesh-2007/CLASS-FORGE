@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { MdPeople, MdLightbulb, MdPending, MdCheckCircle, MdTrendingUp } from 'react-icons/md';
+import { MdTrendingUp } from 'react-icons/md';
 import Sidebar from '../../components/Sidebar/Sidebar';
 import Header from '../../components/Header/Header';
 import { ideaAPI } from '../../services/api';
@@ -11,6 +11,7 @@ const TeacherDashboard = () => {
   const [stats, setStats] = useState(null);
   const [recentIdeas, setRecentIdeas] = useState([]);
   const [submissionTrend, setSubmissionTrend] = useState([]);
+  const [departmentStats, setDepartmentStats] = useState([]);
   const [loading, setLoading] = useState(true);
   const [hoveredPoint, setHoveredPoint] = useState(null);
 
@@ -25,6 +26,7 @@ const TeacherDashboard = () => {
         ideaAPI.getIdeas({ status: 'pending' })
       ]);
       setStats(statsRes.data.stats);
+      setDepartmentStats(statsRes.data.stats.departmentStats || []);
       setRecentIdeas(ideasRes.data.ideas.slice(0, 6));
       
       // Calculate submission trend for last 7 days using ALL ideas (not just pending)
@@ -62,9 +64,9 @@ const TeacherDashboard = () => {
   const generateCurvePoints = (data) => {
     if (!data || data.length === 0) return { path: '', points: [] };
     
-    const padding = 50;
-    const width = 400 - 2 * padding;
-    const height = 200 - 2 * padding;
+    const padding = 70;
+    const width = 900 - 2 * padding;
+    const height = 280 - 2 * padding;
     const maxValue = Math.max(...data, 1);
     
     const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
@@ -75,14 +77,20 @@ const TeacherDashboard = () => {
       return { x, y, value, day: days[index] };
     });
 
-    // Generate smooth curve using quadratic Bezier curves
+    // Generate smooth curve using cubic Bezier curves for smoother transitions
     let path = `M ${points[0].x},${points[0].y}`;
-    for (let i = 1; i < points.length; i++) {
-      const cp = {
-        x: (points[i - 1].x + points[i].x) / 2,
-        y: (points[i - 1].y + points[i].y) / 2
-      };
-      path += ` Q ${cp.x},${cp.y} ${points[i].x},${points[i].y}`;
+    
+    for (let i = 0; i < points.length - 1; i++) {
+      const current = points[i];
+      const next = points[i + 1];
+      
+      // Calculate control points for smooth curve
+      const cp1x = current.x + (next.x - current.x) / 3;
+      const cp1y = current.y;
+      const cp2x = next.x - (next.x - current.x) / 3;
+      const cp2y = next.y;
+      
+      path += ` C ${cp1x},${cp1y} ${cp2x},${cp2y} ${next.x},${next.y}`;
     }
 
     return { path, points, maxValue };
@@ -96,6 +104,80 @@ const TeacherDashboard = () => {
       case 'merged': return styles.statusMerged;
       default: return styles.statusPending;
     }
+  };
+
+  const StatCardNew = ({ label, value, total, color, trend, onClick }) => {
+    const percentage = total > 0 ? (value / total) * 100 : 0;
+    
+    const colorMap = {
+      blue: { bar: '#4A90E2', icon: '📊', trend: '+12% this week' },
+      teal: { bar: '#14b8a6', icon: '💡', trend: '+18% this week' },
+      orange: { bar: '#f59e0b', icon: '⏱', trend: '-5% vs last week' },
+      green: { bar: '#10b981', icon: '✓', trend: '+2% this week' }
+    };
+
+    const config = colorMap[color] || colorMap.blue;
+
+    return (
+      <div 
+        onClick={onClick}
+        style={{
+          backgroundColor: 'white',
+          borderRadius: '12px',
+          padding: '24px',
+          boxShadow: '0 2px 8px rgba(0, 0, 0, 0.08)',
+          border: '1px solid #e5e7eb',
+          cursor: 'pointer',
+          transition: 'all 0.3s ease',
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '16px'
+        }}
+        onMouseEnter={(e) => {
+          e.currentTarget.style.boxShadow = '0 8px 16px rgba(0, 0, 0, 0.12)';
+          e.currentTarget.style.transform = 'translateY(-2px)';
+        }}
+        onMouseLeave={(e) => {
+          e.currentTarget.style.boxShadow = '0 2px 8px rgba(0, 0, 0, 0.08)';
+          e.currentTarget.style.transform = 'translateY(0)';
+        }}
+      >
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+          <div style={{ fontSize: '32px' }}>{config.icon}</div>
+          <span style={{ fontSize: '12px', color: '#6b7280', fontWeight: '500' }}>
+            {trend || config.trend}
+          </span>
+        </div>
+        
+        <div>
+          <div style={{ fontSize: '12px', color: '#9ca3af', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '8px' }}>
+            {label}
+          </div>
+          <div style={{ fontSize: '32px', fontWeight: '700', color: '#1f2937' }}>
+            {value}
+          </div>
+        </div>
+
+        <div>
+          <div style={{
+            height: '6px',
+            backgroundColor: '#e5e7eb',
+            borderRadius: '3px',
+            overflow: 'hidden'
+          }}>
+            <div style={{
+              height: '100%',
+              width: `${percentage}%`,
+              backgroundColor: config.bar,
+              transition: 'width 0.3s ease'
+            }} />
+          </div>
+          <div style={{ fontSize: '11px', color: '#9ca3af', marginTop: '6px' }}>
+            {value} of {total} ideas
+          </div>
+        </div>
+      </div>
+    );
   };
 
   if (loading) {
@@ -116,48 +198,44 @@ const TeacherDashboard = () => {
         <div className={styles.content}>
           {/* TOP STAT CARDS */}
           <div className={styles.statsGrid}>
-            <div className={styles.statCard}>
-              <div className={styles.statHeader}>
-                <div className={`${styles.statIcon} ${styles.iconPurple}`}>
-                  <MdPeople size={24} />
-                </div>
-                <span className={`${styles.statTrend} ${styles.trendUp}`}>+12% ↑</span>
-              </div>
-              <div className={styles.statLabel}>Total Students</div>
-              <div className={styles.statValue}>5</div>
+            <div onClick={() => navigate('/teacher-dashboard/students')}>
+              <StatCardNew
+                label="Total Students"
+                value={5}
+                total={5}
+                color="blue"
+                trend="+12% this week"
+              />
             </div>
 
-            <div className={styles.statCard}>
-              <div className={styles.statHeader}>
-                <div className={`${styles.statIcon} ${styles.iconTeal}`}>
-                  <MdLightbulb size={24} />
-                </div>
-                <span className={`${styles.statTrend} ${styles.trendUp}`}>+18% ↑</span>
-              </div>
-              <div className={styles.statLabel}>Ideas Submitted</div>
-              <div className={styles.statValue}>{totalSubmissions}</div>
+            <div onClick={() => navigate('/teacher-dashboard/ideas')}>
+              <StatCardNew
+                label="Ideas Submitted"
+                value={totalSubmissions}
+                total={totalSubmissions}
+                color="teal"
+                trend="+18% this week"
+              />
             </div>
 
-            <div className={styles.statCard}>
-              <div className={styles.statHeader}>
-                <div className={`${styles.statIcon} ${styles.iconOrange}`}>
-                  <MdPending size={24} />
-                </div>
-                <span className={`${styles.statTrend} ${styles.trendDown}`}>-5% ↓</span>
-              </div>
-              <div className={styles.statLabel}>Pending Review</div>
-              <div className={styles.statValue}>{pendingReview}</div>
+            <div onClick={() => navigate('/teacher-dashboard/review')}>
+              <StatCardNew
+                label="Pending Review"
+                value={pendingReview}
+                total={totalSubmissions}
+                color="orange"
+                trend="-5% vs last week"
+              />
             </div>
 
-            <div className={styles.statCard}>
-              <div className={styles.statHeader}>
-                <div className={`${styles.statIcon} ${styles.iconBlue}`}>
-                  <MdCheckCircle size={24} />
-                </div>
-                <span className={`${styles.statTrend} ${styles.trendUp}`}>+2% ↑</span>
-              </div>
-              <div className={styles.statLabel}>Approval Rate</div>
-              <div className={styles.statValue}>{approvalRate}%</div>
+            <div onClick={() => navigate('/teacher-dashboard/approved')}>
+              <StatCardNew
+                label="Approval Rate"
+                value={`${approvalRate}%`}
+                total={100}
+                color="green"
+                trend="+2% this week"
+              />
             </div>
           </div>
 
@@ -166,22 +244,22 @@ const TeacherDashboard = () => {
             <div className={styles.chartCard}>
               <div className={styles.chartHeader}>
                 <h3>Submission Trend</h3>
-                <p>Daily idea submissions over the last 7 days</p>
+                <p>Daily idea submissions</p>
               </div>
               <div className={styles.chartPlaceholder}>
                 <div className={styles.trendChart}>
-                  <svg viewBox="0 0 500 280" className={styles.trendSvg}>
+                  <svg viewBox="0 0 900 350" className={styles.trendSvg}>
                     <defs>
                       <linearGradient id="trendGradient" x1="0%" y1="0%" x2="0%" y2="100%">
-                        <stop offset="0%" style={{ stopColor: '#4f46e5', stopOpacity: 0.3 }} />
-                        <stop offset="100%" style={{ stopColor: '#4f46e5', stopOpacity: 0.05 }} />
+                        <stop offset="0%" style={{ stopColor: '#000000', stopOpacity: 0.15 }} />
+                        <stop offset="100%" style={{ stopColor: '#000000', stopOpacity: 0.02 }} />
                       </linearGradient>
                     </defs>
                     {(() => {
                       const { path, points, maxValue } = generateCurvePoints(submissionTrend);
                       if (!path || points.length === 0) {
                         return (
-                          <text x="250" y="140" textAnchor="middle" fill="#9ca3af" fontSize="14">
+                          <text x="450" y="175" textAnchor="middle" fill="var(--text-secondary)" fontSize="14">
                             No submission data available
                           </text>
                         );
@@ -193,21 +271,21 @@ const TeacherDashboard = () => {
                       return (
                         <>
                           {/* Y-axis */}
-                          <line x1="50" y1="30" x2="50" y2="230" stroke="#e5e7eb" strokeWidth="2" />
+                          <line x1="70" y1="50" x2="70" y2="300" stroke="var(--border-light)" strokeWidth="2" />
                           {/* X-axis */}
-                          <line x1="50" y1="230" x2="480" y2="230" stroke="#e5e7eb" strokeWidth="2" />
+                          <line x1="70" y1="300" x2="870" y2="300" stroke="var(--border-light)" strokeWidth="2" />
                           
                           {/* Y-axis labels and grid lines */}
                           {yLabels.map((label, idx) => {
-                            const y = 230 - (idx / (yLabels.length - 1)) * 200;
+                            const y = 300 - (idx / (yLabels.length - 1)) * 250;
                             return (
                               <g key={`y-${idx}`}>
-                                <line x1="45" y1={y} x2="50" y2={y} stroke="#e5e7eb" strokeWidth="1" />
-                                <text x="40" y={y + 4} textAnchor="end" fontSize="12" fill="#9ca3af">
+                                <line x1="60" y1={y} x2="70" y2={y} stroke="var(--border-light)" strokeWidth="1" />
+                                <text x="55" y={y + 5} textAnchor="end" fontSize="13" fill="var(--text-secondary)" fontWeight="500">
                                   {label}
                                 </text>
                                 {idx > 0 && (
-                                  <line x1="50" y1={y} x2="480" y2={y} stroke="#f3f4f6" strokeWidth="1" strokeDasharray="4" />
+                                  <line x1="70" y1={y} x2="870" y2={y} stroke="var(--border-color)" strokeWidth="1" strokeDasharray="4" />
                                 )}
                               </g>
                             );
@@ -215,26 +293,26 @@ const TeacherDashboard = () => {
 
                           {/* X-axis labels */}
                           {points.map((point, idx) => (
-                            <text key={`x-${idx}`} x={point.x} y="250" textAnchor="middle" fontSize="12" fill="#9ca3af">
+                            <text key={`x-${idx}`} x={point.x} y="325" textAnchor="middle" fontSize="13" fill="var(--text-secondary)" fontWeight="500">
                               {point.day}
                             </text>
                           ))}
 
                           {/* Y-axis label */}
-                          <text x="15" y="130" textAnchor="middle" fontSize="11" fill="#9ca3af" transform="rotate(-90 15 130)">
+                          <text x="20" y="175" textAnchor="middle" fontSize="12" fill="var(--text-secondary)" fontWeight="500" transform="rotate(-90 20 175)">
                             Submissions
                           </text>
 
                           {/* X-axis label */}
-                          <text x="265" y="275" textAnchor="middle" fontSize="11" fill="#9ca3af">
+                          <text x="470" y="345" textAnchor="middle" fontSize="12" fill="var(--text-secondary)" fontWeight="500">
                             Days
                           </text>
 
                           {/* Gradient fill under the curve */}
-                          <path d={`${path} L ${points[points.length - 1].x},230 L 50,230 Z`} fill="url(#trendGradient)" />
+                          <path d={`${path} L ${points[points.length - 1].x},300 L 70,300 Z`} fill="url(#trendGradient)" />
                           
                           {/* Smooth curve line */}
-                          <path d={path} stroke="#4f46e5" strokeWidth="3" fill="none" strokeLinecap="round" strokeLinejoin="round" />
+                          <path d={path} stroke="var(--primary-color)" strokeWidth="4" fill="none" strokeLinecap="round" strokeLinejoin="round" />
                           
                           {/* Interactive data points with hover */}
                           {points.map((point, idx) => (
@@ -242,8 +320,8 @@ const TeacherDashboard = () => {
                               <circle 
                                 cx={point.x} 
                                 cy={point.y} 
-                                r="4" 
-                                fill="#4f46e5"
+                                r="5" 
+                                fill="var(--primary-color)"
                                 style={{ cursor: 'pointer' }}
                                 onMouseEnter={() => setHoveredPoint(idx)}
                                 onMouseLeave={() => setHoveredPoint(null)}
@@ -251,23 +329,23 @@ const TeacherDashboard = () => {
                               {hoveredPoint === idx && (
                                 <g>
                                   <rect 
-                                    x={point.x - 50} 
-                                    y={point.y - 50} 
-                                    width="100" 
-                                    height="45" 
-                                    fill="white" 
-                                    stroke="#4f46e5" 
-                                    strokeWidth="1.5"
-                                    rx="6"
-                                    filter="drop-shadow(0 2px 8px rgba(0,0,0,0.1))"
+                                    x={point.x - 60} 
+                                    y={point.y - 60} 
+                                    width="120" 
+                                    height="55" 
+                                    fill="var(--background-alt)" 
+                                    stroke="var(--primary-color)" 
+                                    strokeWidth="2"
+                                    rx="8"
+                                    filter="drop-shadow(0 4px 12px rgba(0,0,0,0.15))"
                                   />
                                   <text 
                                     x={point.x} 
-                                    y={point.y - 30} 
+                                    y={point.y - 35} 
                                     textAnchor="middle" 
-                                    fontSize="12" 
-                                    fontWeight="600"
-                                    fill="#1f2937"
+                                    fontSize="13" 
+                                    fontWeight="700"
+                                    fill="var(--text-primary)"
                                   >
                                     {point.day}
                                   </text>
@@ -275,8 +353,8 @@ const TeacherDashboard = () => {
                                     x={point.x} 
                                     y={point.y - 12} 
                                     textAnchor="middle" 
-                                    fontSize="11" 
-                                    fill="#6b7280"
+                                    fontSize="12" 
+                                    fill="var(--text-secondary)"
                                   >
                                     {point.value} submissions
                                   </text>
@@ -302,40 +380,41 @@ const TeacherDashboard = () => {
                 <h3>Department Engagement</h3>
               </div>
               <div className={styles.departmentBars}>
-                <div className={styles.barItem}>
-                  <span className={styles.barLabel}>CS</span>
-                  <div className={styles.barContainer}>
-                    <div className={styles.bar} style={{ width: '85%', background: '#4f46e5' }}></div>
+                {departmentStats.length === 0 ? (
+                  <div style={{ padding: '20px', textAlign: 'center', color: 'var(--text-secondary)' }}>
+                    No department data available
                   </div>
-                </div>
-                <div className={styles.barItem}>
-                  <span className={styles.barLabel}>Engineering</span>
-                  <div className={styles.barContainer}>
-                    <div className={styles.bar} style={{ width: '60%', background: '#cbd5e1' }}></div>
-                  </div>
-                </div>
-                <div className={styles.barItem}>
-                  <span className={styles.barLabel}>Business</span>
-                  <div className={styles.barContainer}>
-                    <div className={styles.bar} style={{ width: '50%', background: '#cbd5e1' }}></div>
-                  </div>
-                </div>
-                <div className={styles.barItem}>
-                  <span className={styles.barLabel}>Design</span>
-                  <div className={styles.barContainer}>
-                    <div className={styles.bar} style={{ width: '45%', background: '#cbd5e1' }}></div>
-                  </div>
-                </div>
-                <div className={styles.barItem}>
-                  <span className={styles.barLabel}>BioTech</span>
-                  <div className={styles.barContainer}>
-                    <div className={styles.bar} style={{ width: '55%', background: '#cbd5e1' }}></div>
-                  </div>
-                </div>
+                ) : (
+                  (() => {
+                    const maxCount = Math.max(...departmentStats.map(d => d.count), 1);
+                    return departmentStats.map((dept, idx) => (
+                      <div key={idx} className={styles.barItem}>
+                        <span className={styles.barLabel}>{dept._id || 'Unknown'}</span>
+                        <div className={styles.barContainer}>
+                          <div 
+                            className={styles.bar} 
+                            style={{ 
+                              width: `${(dept.count / maxCount) * 100}%`, 
+                              background: 'var(--primary-color)' 
+                            }}
+                          ></div>
+                        </div>
+                        <span style={{ fontSize: '12px', color: 'var(--text-secondary)', marginLeft: '8px' }}>
+                          {dept.count}
+                        </span>
+                      </div>
+                    ));
+                  })()
+                )}
               </div>
               <div className={styles.chartFooter}>
-                <MdTrendingUp size={16} style={{ color: '#10b981' }} />
-                <span>Computer Science leading with 42 ideas</span>
+                <MdTrendingUp size={16} style={{ color: 'var(--success-color)' }} />
+                <span>
+                  {departmentStats.length > 0 
+                    ? `${departmentStats[0]._id} leading with ${departmentStats[0].count} ideas`
+                    : 'No data available'
+                  }
+                </span>
               </div>
             </div>
           </div>
@@ -346,6 +425,28 @@ const TeacherDashboard = () => {
           <div className={styles.section}>
             <div className={styles.sectionHeader}>
               <h2 className={styles.sectionTitle}>Recent Pending Ideas</h2>
+              <button 
+                onClick={() => navigate('/teacher-dashboard/review')}
+                style={{
+                  padding: '0',
+                  background: 'none',
+                  color: 'var(--primary-color)',
+                  border: 'none',
+                  fontSize: '12px',
+                  fontWeight: '600',
+                  cursor: 'pointer',
+                  transition: 'var(--transition-fast)',
+                  textDecoration: 'none'
+                }}
+                onMouseEnter={(e) => {
+                  e.target.style.textDecoration = 'underline';
+                }}
+                onMouseLeave={(e) => {
+                  e.target.style.textDecoration = 'none';
+                }}
+              >
+                REVIEW QUEUE
+              </button>
             </div>
 
             {recentIdeas.length === 0 ? (

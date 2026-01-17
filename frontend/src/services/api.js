@@ -41,7 +41,8 @@ export const authAPI = {
   verifyOTP: (data) => api.post('/auth/verify-otp', data),
   resetPassword: (data) => api.post('/auth/reset-password', data),
   getProfile: () => api.get('/auth/profile'),
-  updateProfile: (data) => api.put('/auth/profile', data)
+  updateProfile: (data) => api.put('/auth/profile', data),
+  deactivateAccount: () => api.post('/auth/deactivate')
 };
 
 export const ideaAPI = {

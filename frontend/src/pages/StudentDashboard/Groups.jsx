@@ -132,7 +132,7 @@ const Groups = () => {
     <div className={styles.layout}>
       <Sidebar role="student" />
       <div className={styles.main}>
-        <Header title="Project Teams" />
+        <Header title="My GROUPS" />
         <div className={styles.content}>
           {message.text && (
             <div style={{
@@ -143,9 +143,9 @@ const Groups = () => {
               alignItems: 'center',
               justifyContent: 'space-between',
               animation: 'slideDown 0.3s ease-out',
-              backgroundColor: message.type === 'success' ? '#e8f5e9' : '#ffebee',
-              border: `1px solid ${message.type === 'success' ? '#c8e6c9' : '#ffcdd2'}`,
-              color: message.type === 'success' ? '#2e7d32' : '#c62828'
+              backgroundColor: message.type === 'success' ? 'var(--icon-teal-bg)' : '#ffebee',
+              border: `1px solid ${message.type === 'success' ? 'var(--icon-teal-text)' : '#ffcdd2'}`,
+              color: message.type === 'success' ? 'var(--icon-teal-text)' : 'var(--status-danger)'
             }}>
               <span style={{ fontSize: '14px', fontWeight: '500' }}>{message.text}</span>
               <button
@@ -339,7 +339,7 @@ const Groups = () => {
                   style={{
                     flex: 1,
                     padding: '12px',
-                    backgroundColor: 'var(--primary-color)',
+                    backgroundColor: 'black',
                     color: 'white',
                     border: 'none',
                     borderRadius: 'var(--radius)',
@@ -422,7 +422,7 @@ const Groups = () => {
                   style={{
                     flex: 1,
                     padding: '12px',
-                    backgroundColor: 'var(--primary-color)',
+                    backgroundColor:'black',
                     color: 'white',
                     border: 'none',
                     borderRadius: 'var(--radius)',

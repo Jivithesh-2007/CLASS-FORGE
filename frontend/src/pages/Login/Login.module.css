@@ -19,6 +19,14 @@
   text-align: center;
   margin-bottom: 32px;
 }
+
+.logoImage {
+  width: 80px;
+  height: 80px;
+  object-fit: contain;
+  margin: 0 auto 16px;
+}
+
 .logo {
   font-size: 32px;
   font-weight: 700;
@@ -162,7 +170,7 @@
 }
 .error {
   background-color: #ffebee;
-  color: #c62828;
+  color: var(--status-danger);
   padding: 12px;
   border-radius: 8px;
   margin-bottom: 20px;
@@ -170,8 +178,8 @@
   text-align: center;
 }
 .success {
-  background-color: #e8f5e9;
-  color: #2e7d32;
+  background-color: var(--icon-teal-bg);
+  color: var(--icon-teal-text);
   padding: 12px;
   border-radius: 8px;
   margin-bottom: 20px;
@@ -192,4 +200,120 @@
 .backButton:hover {
   color: var(--primary-dark);
   gap: 12px;
+}
+
+/* Dark Mode Styles */
+body.dark-mode .container {
+  background: linear-gradient(135deg, #05070F 0%, #0B1220 100%);
+}
+
+body.dark-mode .card {
+  background-color: #0E1A3A;
+  border-color: #1a2a4a;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+}
+
+body.dark-mode .logo {
+  color: #7FB3E8;
+}
+
+body.dark-mode .subtitle {
+  color: #b0b0b0;
+}
+
+body.dark-mode .title {
+  color: #e0e0e0;
+}
+
+body.dark-mode .description {
+  color: #b0b0b0;
+}
+
+body.dark-mode .label {
+  color: #e0e0e0;
+}
+
+body.dark-mode .input {
+  background-color: #0B1220;
+  border-color: #1a2a4a;
+  color: #e0e0e0;
+}
+
+body.dark-mode .input:focus {
+  border-color: #7FB3E8;
+  box-shadow: 0 0 0 3px rgba(127, 179, 232, 0.2);
+}
+
+body.dark-mode .select {
+  background-color: #0B1220;
+  border-color: #1a2a4a;
+  color: #e0e0e0;
+}
+
+body.dark-mode .select:focus {
+  border-color: #7FB3E8;
+  box-shadow: 0 0 0 3px rgba(127, 179, 232, 0.2);
+}
+
+body.dark-mode .hint {
+  color: #7FB3E8;
+}
+
+body.dark-mode .passwordToggle {
+  color: #b0b0b0;
+}
+
+body.dark-mode .passwordToggle:hover {
+  color: #7FB3E8;
+}
+
+body.dark-mode .forgotLink {
+  color: #7FB3E8;
+}
+
+body.dark-mode .forgotLink:hover {
+  color: #a0c8ff;
+}
+
+body.dark-mode .submitBtn {
+  background-color: #4A90E2;
+}
+
+body.dark-mode .submitBtn:hover {
+  background-color: #357ABD;
+  box-shadow: 0 4px 12px rgba(74, 144, 226, 0.3);
+}
+
+body.dark-mode .submitBtn:disabled {
+  background-color: #1a2a4a;
+}
+
+body.dark-mode .footer {
+  color: #b0b0b0;
+}
+
+body.dark-mode .footerLink {
+  color: #7FB3E8;
+}
+
+body.dark-mode .footerLink:hover {
+  color: #a0c8ff;
+}
+
+body.dark-mode .error {
+  background-color: rgba(244, 67, 54, 0.15);
+  color: #ff6b6b;
+}
+
+body.dark-mode .success {
+  background-color: rgba(16, 185, 129, 0.15);
+  color: #10b981;
+}
+
+body.dark-mode .backButton {
+  color: #7FB3E8;
+}
+
+body.dark-mode .backButton:hover {
+  color: #a0c8ff;
 }

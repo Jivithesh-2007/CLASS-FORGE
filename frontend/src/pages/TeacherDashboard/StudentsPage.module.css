@@ -32,8 +32,8 @@
 .spinner {
   width: 50px;
   height: 50px;
-  border: 4px solid #f0f0f0;
-  border-top: 4px solid #4f46e5;
+  border: 4px solid var(--border-light);
+  border-top: 4px solid var(--primary-color);
   border-radius: 50%;
   animation: spin 1s linear infinite;
   margin-bottom: 24px;
@@ -46,7 +46,7 @@
 
 .loadingState p {
   font-size: 14px;
-  color: #64748b;
+  color: var(--text-secondary);
   margin: 0;
 }
 
@@ -65,12 +65,12 @@
 .errorState p {
   margin: 0 0 16px 0;
   font-size: 14px;
-  color: #991b1b;
+  color: var(--status-danger);
 }
 
 .retryBtn {
   padding: 10px 20px;
-  background: #dc2626;
+  background: var(--status-danger);
   color: white;
   border: none;
   border-radius: 8px;
@@ -91,7 +91,7 @@
   justify-content: center;
   padding: 80px 40px;
   text-align: center;
-  color: #94a3b8;
+  color: var(--text-tertiary);
 }
 
 .emptyState svg {
@@ -103,13 +103,13 @@
   margin: 0 0 8px 0;
   font-size: 18px;
   font-weight: 600;
-  color: #475569;
+  color: var(--text-secondary);
 }
 
 .emptyState p {
   margin: 0;
   font-size: 14px;
-  color: #94a3b8;
+  color: var(--text-tertiary);
 }
 
 @media (max-width: 1200px) {

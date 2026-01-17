@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { MdPerson, MdEmail, MdSchool, MdSave, MdNotifications, MdSecurity, MdVpnKey, MdLogout } from 'react-icons/md';
+import { MdPerson, MdSecurity } from 'react-icons/md';
 import Sidebar from '../../components/Sidebar/Sidebar';
 import Header from '../../components/Header/Header';
 import { useAuth } from '../../context/AuthContext';
@@ -7,14 +7,17 @@ import { authAPI } from '../../services/api';
 import styles from './Settings.module.css';
 
 const Settings = () => {
-  const { user, logout } = useAuth();
+  const { user, logout, updateUser } = useAuth();
   const [activeTab, setActiveTab] = useState('profile');
   const [formData, setFormData] = useState({
     fullName: user?.fullName || '',
+    lastName: user?.lastName || '',
     department: user?.department || ''
   });
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState({ type: '', text: '' });
+  const [showDeactivateModal, setShowDeactivateModal] = useState(false);
+  const [deactivateLoading, setDeactivateLoading] = useState(false);
 
   const handleChange = (e) => {
     setFormData({
@@ -33,13 +36,9 @@ const Settings = () => {
       const response = await authAPI.updateProfile(formData);
       
       const updatedUser = response.data.user;
-      localStorage.setItem('user', JSON.stringify(updatedUser));
+      updateUser(updatedUser);
       
       setMessage({ type: 'success', text: 'Profile updated successfully!' });
-      
-      setTimeout(() => {
-        window.location.reload();
-      }, 2000);
     } catch (error) {
       setMessage({ 
         type: 'error', 
@@ -50,10 +49,28 @@ const Settings = () => {
     }
   };
 
-  const handleLogout = () => {
-    if (window.confirm('Are you sure you want to logout?')) {
+  const handleDeactivateClick = () => {
+    setShowDeactivateModal(true);
+  };
+
+  const handleConfirmDeactivate = async () => {
+    setDeactivateLoading(true);
+    try {
+      await authAPI.deactivateAccount();
       logout();
+      window.location.href = '/login';
+    } catch (error) {
+      setMessage({ 
+        type: 'error', 
+        text: error.response?.data?.message || 'Failed to deactivate account' 
+      });
+      setDeactivateLoading(false);
+      setShowDeactivateModal(false);
     }
+  };
+
+  const handleCancelDeactivate = () => {
+    setShowDeactivateModal(false);
   };
 
   return (
@@ -73,13 +90,6 @@ const Settings = () => {
                 >
                   <MdPerson className={styles.navIcon} />
                   Profile
-                </button>
-                <button
-                  className={`${styles.navItem} ${activeTab === 'notifications' ? styles.active : ''}`}
-                  onClick={() => setActiveTab('notifications')}
-                >
-                  <MdNotifications className={styles.navIcon} />
-                  Notifications
                 </button>
                 <button
                   className={`${styles.navItem} ${activeTab === 'security' ? styles.active : ''}`}
@@ -140,29 +150,17 @@ const Settings = () => {
                         <label className={styles.label}>LAST NAME</label>
                         <input
                           type="text"
+                          name="lastName"
+                          value={formData.lastName}
+                          onChange={handleChange}
                           className={styles.input}
                           placeholder="Enter your last name"
-                          disabled
+                          required
                         />
                       </div>
                     </div>
 
-                    <div className={styles.formGroup}>
-                      <label className={styles.label}>DEPARTMENT</label>
-                      <select
-                        name="department"
-                        value={formData.department}
-                        onChange={handleChange}
-                        className={styles.select}
-                      >
-                        <option value="">Select Department</option>
-                        <option value="Faculty of Computer Science">Faculty of Computer Science</option>
-                        <option value="Faculty of Engineering">Faculty of Engineering</option>
-                        <option value="Faculty of Business">Faculty of Business</option>
-                        <option value="Faculty of Arts">Faculty of Arts</option>
-                      </select>
-                    </div>
-
+                   
                     <div className={styles.formGroup}>
                       <label className={styles.label}>EMAIL</label>
                       <input
@@ -208,7 +206,7 @@ const Settings = () => {
                         <h4 className={styles.dangerItemTitle}>Deactivate Account</h4>
                         <p className={styles.dangerItemDesc}>Once deactivated, you will lose access to all your project data.</p>
                       </div>
-                      <button className={styles.dangerBtn}>Deactivate</button>
+                      <button className={styles.dangerBtn} onClick={handleDeactivateClick}>Deactivate</button>
                     </div>
                   </div>
                 </div>
@@ -229,6 +227,39 @@ const Settings = () => {
             </div>
           </div>
         </div>
+
+        {/* Deactivate Confirmation Modal */}
+        {showDeactivateModal && (
+          <div className={styles.modalOverlay} onClick={handleCancelDeactivate}>
+            <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
+              <div className={styles.modalHeader}>
+                <h3 className={styles.modalTitle}>Deactivate Account</h3>
+              </div>
+              <div className={styles.modalContent}>
+                <p>Are you sure you want to deactivate your account?</p>
+                <p style={{ marginTop: '12px', color: '#ef4444', fontWeight: '500' }}>
+                  This action cannot be undone. You will lose access to all your project data.
+                </p>
+              </div>
+              <div className={styles.modalFooter}>
+                <button 
+                  className={styles.cancelBtn} 
+                  onClick={handleCancelDeactivate}
+                  disabled={deactivateLoading}
+                >
+                  Cancel
+                </button>
+                <button 
+                  className={styles.confirmBtn} 
+                  onClick={handleConfirmDeactivate}
+                  disabled={deactivateLoading}
+                >
+                  {deactivateLoading ? 'Deactivating...' : 'Deactivate'}
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

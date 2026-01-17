@@ -177,9 +177,9 @@ const ReviewIdeas = () => {
               alignItems: 'center',
               justifyContent: 'space-between',
               animation: 'slideDown 0.3s ease-out',
-              backgroundColor: message.type === 'success' ? '#e8f5e9' : '#ffebee',
-              border: `1px solid ${message.type === 'success' ? '#c8e6c9' : '#ffcdd2'}`,
-              color: message.type === 'success' ? '#2e7d32' : '#c62828'
+              backgroundColor: message.type === 'success' ? 'var(--icon-teal-bg)' : '#ffebee',
+              border: `1px solid ${message.type === 'success' ? 'var(--icon-teal-text)' : '#ffcdd2'}`,
+              color: message.type === 'success' ? 'var(--icon-teal-text)' : 'var(--status-danger)'
             }}>
               <span style={{ fontSize: '14px', fontWeight: '500' }}>{message.text}</span>
               <button

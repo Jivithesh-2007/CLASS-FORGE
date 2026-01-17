@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { MdAdd, MdLightbulb, MdList, MdCheckCircle, MdCancel, MdMerge } from 'react-icons/md';
+import { MdAdd, MdLightbulb } from 'react-icons/md';
 import Sidebar from '../../components/Sidebar/Sidebar';
 import Header from '../../components/Header/Header';
-import StatCard from '../../components/StatCard/StatCard';
 import { ideaAPI } from '../../services/api';
 import styles from './Dashboard.module.css';
 
@@ -50,9 +49,85 @@ const StudentDashboard = () => {
     }
   };
 
+  const StatCardNew = ({ label, value, total, color, trend, onClick }) => {
+    const percentage = total > 0 ? (value / total) * 100 : 0;
+    
+    const colorMap = {
+      blue: { bar: '#4A90E2', icon: '📊', trend: '+2 this week' },
+      green: { bar: '#10b981', icon: '✓', trend: '50% success' },
+      orange: { bar: '#f59e0b', icon: '⏱', trend: 'Awaiting review' },
+      red: { bar: '#ef4444', icon: '✕', trend: '-5% vs last sem' }
+    };
+
+    const config = colorMap[color] || colorMap.blue;
+
+    return (
+      <div 
+        onClick={onClick}
+        style={{
+          backgroundColor: 'white',
+          borderRadius: '12px',
+          padding: '24px',
+          boxShadow: '0 2px 8px rgba(0, 0, 0, 0.08)',
+          border: '1px solid #e5e7eb',
+          cursor: 'pointer',
+          transition: 'all 0.3s ease',
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '16px'
+        }}
+        onMouseEnter={(e) => {
+          e.currentTarget.style.boxShadow = '0 8px 16px rgba(0, 0, 0, 0.12)';
+          e.currentTarget.style.transform = 'translateY(-2px)';
+        }}
+        onMouseLeave={(e) => {
+          e.currentTarget.style.boxShadow = '0 2px 8px rgba(0, 0, 0, 0.08)';
+          e.currentTarget.style.transform = 'translateY(0)';
+        }}
+      >
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+          <div style={{ fontSize: '32px' }}>{config.icon}</div>
+          <span style={{ fontSize: '12px', color: '#6b7280', fontWeight: '500' }}>
+            {trend || config.trend}
+          </span>
+        </div>
+        
+        <div>
+          <div style={{ fontSize: '12px', color: '#9ca3af', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '8px' }}>
+            {label}
+          </div>
+          <div style={{ fontSize: '32px', fontWeight: '700', color: '#1f2937' }}>
+            {value}
+          </div>
+        </div>
+
+        <div>
+          <div style={{
+            height: '6px',
+            backgroundColor: '#e5e7eb',
+            borderRadius: '3px',
+            overflow: 'hidden'
+          }}>
+            <div style={{
+              height: '100%',
+              width: `${percentage}%`,
+              backgroundColor: config.bar,
+              transition: 'width 0.3s ease'
+            }} />
+          </div>
+          <div style={{ fontSize: '11px', color: '#9ca3af', marginTop: '6px' }}>
+            {value} of {total} ideas
+          </div>
+        </div>
+      </div>
+    );
+  };
+
   if (loading) {
     return <div>Loading...</div>;
   }
+
+  const totalIdeas = stats?.totalIdeas || 0;
 
   return (
     <div className={styles.layout}>
@@ -61,36 +136,40 @@ const StudentDashboard = () => {
         <Header />
         <div className={styles.content}>
           <div className={styles.stats}>
-            <div onClick={() => handleStatCardClick('all')} style={{ cursor: 'pointer' }}>
-              <StatCard
+            <div onClick={() => handleStatCardClick('all')}>
+              <StatCardNew
                 label="Total Ideas"
-                value={stats?.totalIdeas || 0}
-                icon={MdList}
+                value={totalIdeas}
+                total={totalIdeas}
                 color="blue"
+                trend="+2 this week"
               />
             </div>
-            <div onClick={() => handleStatCardClick('approved')} style={{ cursor: 'pointer' }}>
-              <StatCard
+            <div onClick={() => handleStatCardClick('approved')}>
+              <StatCardNew
                 label="Approved"
                 value={stats?.approvedIdeas || 0}
-                icon={MdCheckCircle}
+                total={totalIdeas}
                 color="green"
+                trend="50% success"
               />
             </div>
-            <div onClick={() => handleStatCardClick('pending')} style={{ cursor: 'pointer' }}>
-              <StatCard
+            <div onClick={() => handleStatCardClick('pending')}>
+              <StatCardNew
                 label="Pending"
                 value={stats?.pendingIdeas || 0}
-                icon={MdLightbulb}
+                total={totalIdeas}
                 color="orange"
+                trend="Awaiting review"
               />
             </div>
-            <div onClick={() => handleStatCardClick('rejected')} style={{ cursor: 'pointer' }}>
-              <StatCard
+            <div onClick={() => handleStatCardClick('rejected')}>
+              <StatCardNew
                 label="Rejected"
                 value={stats?.rejectedIdeas || 0}
-                icon={MdCancel}
+                total={totalIdeas}
                 color="red"
+                trend="-5% vs last sem"
               />
             </div>
           </div>
@@ -99,7 +178,7 @@ const StudentDashboard = () => {
               <h2 className={styles.sectionTitle}>My Recent Ideas</h2>
               <button className={styles.button} onClick={handleSubmitIdea}>
                 <MdAdd />
-                Submit New
+                Submit Your Idea
               </button>
             </div>
             {recentIdeas.length === 0 ? (
@@ -109,10 +188,6 @@ const StudentDashboard = () => {
                 <div className={styles.emptySubtext}>
                   Submit your first idea
                 </div>
-                <button className={styles.button} onClick={handleSubmitIdea}>
-                  <MdAdd />
-                  Submit Your First Idea
-                </button>
               </div>
             ) : (
               <div className={styles.ideaTable}>

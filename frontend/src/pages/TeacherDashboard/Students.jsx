@@ -292,7 +292,7 @@ function StudentProfilePanel({ student, onClose }) {
 
           <div className="panel-stats">
             <div className="stat-item">
-              <div className="stat-icon" style={{ color: '#6366f1' }}>
+              <div className="stat-icon" style={{ color: 'var(--primary-color)' }}>
                 <MdAssignment size={24} />
               </div>
               <div className="stat-content">
@@ -301,7 +301,7 @@ function StudentProfilePanel({ student, onClose }) {
               </div>
             </div>
             <div className="stat-item">
-              <div className="stat-icon" style={{ color: '#10b981' }}>
+              <div className="stat-icon" style={{ color: 'var(--status-success)' }}>
                 <MdCheckCircle size={24} />
               </div>
               <div className="stat-content">
@@ -310,7 +310,7 @@ function StudentProfilePanel({ student, onClose }) {
               </div>
             </div>
             <div className="stat-item">
-              <div className="stat-icon" style={{ color: '#f59e0b' }}>
+              <div className="stat-icon" style={{ color: 'var(--status-warning)' }}>
                 <MdSchedule size={24} />
               </div>
               <div className="stat-content">
@@ -319,7 +319,7 @@ function StudentProfilePanel({ student, onClose }) {
               </div>
             </div>
             <div className="stat-item">
-              <div className="stat-icon" style={{ color: '#ef4444' }}>
+              <div className="stat-icon" style={{ color: 'var(--status-danger)' }}>
                 <MdCancel size={24} />
               </div>
               <div className="stat-content">
@@ -333,14 +333,14 @@ function StudentProfilePanel({ student, onClose }) {
             <h4>APPROVAL DISTRIBUTION</h4>
             <div className="donut-chart">
               <svg viewBox="0 0 100 100" className="donut-svg">
-                <circle cx="50" cy="50" r="40" fill="none" stroke="#10b981" strokeWidth="12" 
+                <circle cx="50" cy="50" r="40" fill="none" stroke="var(--status-success)" strokeWidth="12" 
                   strokeDasharray={`${(student.approved / student.totalIdeas * 100) * 2.51} 251`} 
                   transform="rotate(-90 50 50)" />
-                <circle cx="50" cy="50" r="40" fill="none" stroke="#f59e0b" strokeWidth="12" 
+                <circle cx="50" cy="50" r="40" fill="none" stroke="var(--status-warning)" strokeWidth="12" 
                   strokeDasharray={`${(student.pending / student.totalIdeas * 100) * 2.51} 251`}
                   strokeDashoffset={`-${(student.approved / student.totalIdeas * 100) * 2.51}`}
                   transform="rotate(-90 50 50)" />
-                <circle cx="50" cy="50" r="40" fill="none" stroke="#ef4444" strokeWidth="12" 
+                <circle cx="50" cy="50" r="40" fill="none" stroke="var(--status-danger)" strokeWidth="12" 
                   strokeDasharray={`${(student.rejected / student.totalIdeas * 100) * 2.51} 251`}
                   strokeDashoffset={`-${((student.approved + student.pending) / student.totalIdeas * 100) * 2.51}`}
                   transform="rotate(-90 50 50)" />
@@ -351,15 +351,15 @@ function StudentProfilePanel({ student, onClose }) {
             </div>
             <div className="distribution-legend">
               <div className="legend-item">
-                <span className="legend-dot" style={{ backgroundColor: '#10b981' }}></span>
+                <span className="legend-dot" style={{ backgroundColor: 'var(--status-success)' }}></span>
                 <span>Approved ({Math.round(student.approved / student.totalIdeas * 100)}%)</span>
               </div>
               <div className="legend-item">
-                <span className="legend-dot" style={{ backgroundColor: '#f59e0b' }}></span>
+                <span className="legend-dot" style={{ backgroundColor: 'var(--status-warning)' }}></span>
                 <span>Pending ({Math.round(student.pending / student.totalIdeas * 100)}%)</span>
               </div>
               <div className="legend-item">
-                <span className="legend-dot" style={{ backgroundColor: '#ef4444' }}></span>
+                <span className="legend-dot" style={{ backgroundColor: 'var(--status-danger)' }}></span>
                 <span>Rejected ({Math.round(student.rejected / student.totalIdeas * 100)}%)</span>
               </div>
             </div>

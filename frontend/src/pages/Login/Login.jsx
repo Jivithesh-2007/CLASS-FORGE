@@ -2,10 +2,12 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { MdVisibility, MdVisibilityOff } from 'react-icons/md';
 import { useAuth } from '../../context/AuthContext';
+import { useTheme } from '../../context/ThemeContext';
 import styles from './Login.module.css';
 const Login = () => {
   const navigate = useNavigate();
   const { login } = useAuth();
+  const { isDarkMode } = useTheme();
   const [formData, setFormData] = useState({
     username: '',
     domain: '@karunya.edu.in',
@@ -50,6 +52,11 @@ const Login = () => {
     <div className={styles.container}>
       <div className={styles.card}>
         <div className={styles.header}>
+          <img 
+            src={isDarkMode ? "/dark-mode-logo.png" : "/light-mode-logo.png"} 
+            alt="ClassForge" 
+            className={styles.logoImage} 
+          />
           <div className={styles.logo}>ClassForge</div>
           <div className={styles.subtitle}>Manage and share your innovative ideas</div>
         </div>

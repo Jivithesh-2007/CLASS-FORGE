@@ -3,22 +3,22 @@ import { NavLink, useNavigate } from 'react-router-dom';
 import { 
   MdGridView,
   MdAddCircleOutline,
-  MdTravelExplore,
   MdLightbulb,
   MdPeople,
   MdNotifications, 
   MdSettings,
   MdLogout,
   MdRateReview,
-  MdCheckCircle,
   MdPersonOutline
 } from 'react-icons/md';
 import { useAuth } from '../../context/AuthContext';
+import { useTheme } from '../../context/ThemeContext';
 import styles from './Sidebar.module.css';
 
 const Sidebar = ({ role }) => {
   const navigate = useNavigate();
   const { logout } = useAuth();
+  const { isDarkMode } = useTheme();
 
   const handleLogout = () => {
     logout();
@@ -56,7 +56,12 @@ const Sidebar = ({ role }) => {
   return (
     <div className={styles.sidebar}>
       <div className={styles.logo}>
-        <div className={styles.logoText}>ClassForge</div>
+        <img 
+          src={isDarkMode ? "/dark-mode-logo.png" : "/light-mode-logo.png"} 
+          alt="ClassForge" 
+          className={styles.logoImage} 
+        />
+      
       </div>
       
       <nav className={styles.nav}>

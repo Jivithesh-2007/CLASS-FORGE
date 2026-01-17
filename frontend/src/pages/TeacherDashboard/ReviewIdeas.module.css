@@ -79,20 +79,20 @@
 }
 
 .submissionItem:hover {
-  background: #f0f4ff;
-  border: 2px solid #4f46e5;
+  background: var(--background);
+  border: 2px solid var(--primary-color);
   border-radius: 8px;
 }
 
 .submissionItem.active {
-  background: #f0f4ff;
-  border: 2px solid #4f46e5;
+  background: var(--background);
+  border: 2px solid var(--primary-color);
   border-radius: 8px;
 }
 
 .submissionItem.selectedForMerge {
-  background: #f0f4ff;
-  border: 2px solid #4f46e5;
+  background: var(--background);
+  border: 2px solid var(--primary-color);
   border-radius: 8px;
 }
 
@@ -107,7 +107,7 @@
   background: transparent;
   border: none;
   cursor: pointer;
-  color: #4f46e5;
+  color: var(--primary-color);
   padding: 4px;
   display: flex;
   align-items: center;
@@ -117,7 +117,7 @@
 }
 
 .checkboxBtn:hover {
-  color: #4338ca;
+  color: var(--primary-dark);
 }
 
 .submissionContent {
@@ -203,12 +203,12 @@
   margin: 0 0 8px 0;
   font-size: 28px;
   font-weight: 700;
-  color: #1f2937;
+  color: var(--text-primary);
 }
 
 .insightHeader p {
   font-size: 13px;
-  color: #9ca3af;
+  color: var(--text-secondary);
   margin: 0;
 }
 
@@ -230,18 +230,18 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  background: white;
-  color: #4f46e5;
+  background: var(--background-alt);
+  color: var(--primary-color);
   padding: 16px 24px;
   border-radius: 10px;
   min-width: 100px;
-  border: 2px solid #e0e7ff;
+  border: 2px solid var(--border-light);
 }
 
 .scoreNumber {
   font-size: 42px;
   font-weight: 700;
-  color: #4f46e5;
+  color: var(--primary-color);
 }
 
 .scoreLabel {
@@ -250,22 +250,22 @@
   text-transform: uppercase;
   letter-spacing: 0.5px;
   margin-top: 4px;
-  color: #6b7280;
+  color: var(--text-secondary);
 }
 
 /* PROJECT CORE CONCEPT */
 .projectCoreSection {
   margin-bottom: 28px;
-  background: #f9fafb;
+  background: var(--background);
   padding: 20px;
   border-radius: 10px;
-  border: 1px solid #e5e7eb;
+  border: 1px solid var(--border-light);
 }
 
 .projectCoreSection h4 {
   font-size: 12px;
   font-weight: 700;
-  color: #9ca3af;
+  color: var(--text-secondary);
   text-transform: uppercase;
   letter-spacing: 0.5px;
   margin: 0 0 12px 0;
@@ -275,14 +275,14 @@
 }
 
 .projectCoreSection h4 svg {
-  color: #6b7280;
+  color: var(--text-secondary);
   flex-shrink: 0;
 }
 
 .projectCoreSection p {
   font-size: 14px;
   line-height: 1.7;
-  color: #6b7280;
+  color: var(--text-secondary);
   margin: 0;
   font-style: italic;
 }
@@ -295,7 +295,7 @@
 .evaluationNotesSection h4 {
   font-size: 12px;
   font-weight: 700;
-  color: #9ca3af;
+  color: var(--text-secondary);
   text-transform: uppercase;
   letter-spacing: 0.5px;
   margin: 0 0 12px 0;
@@ -305,30 +305,30 @@
 }
 
 .evaluationNotesSection h4 svg {
-  color: #6b7280;
+  color: var(--text-secondary);
   flex-shrink: 0;
 }
 
 .evaluationNotesSection textarea {
   width: 100%;
   padding: 12px;
-  border: 1px solid #e5e7eb;
+  border: 1px solid var(--border-light);
   border-radius: 8px;
   font-size: 13px;
   font-family: inherit;
-  color: #6b7280;
+  color: var(--text-secondary);
   resize: vertical;
   min-height: 100px;
-  background: #f9fafb;
+  background: var(--background);
 }
 
 .evaluationNotesSection textarea::placeholder {
-  color: #d1d5db;
+  color: var(--border-color);
 }
 
 .evaluationNotesSection textarea:focus {
   outline: none;
-  border-color: #4f46e5;
+  border-color: var(--primary-color);
   box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
 }
 
@@ -488,8 +488,8 @@
   flex: 1;
   padding: 14px 20px;
   background: white;
-  color: #dc2626;
-  border: 2px solid #dc2626;
+  color: var(--status-danger);
+  border: 2px solid var(--status-danger);
   border-radius: 8px;
   font-size: 14px;
   font-weight: 700;
@@ -510,7 +510,7 @@
 .approveBtn {
   flex: 1;
   padding: 14px 20px;
-  background: #4f46e5;
+  background: var(--primary-color);
   color: white;
   border: none;
   border-radius: 8px;
@@ -527,7 +527,7 @@
 }
 
 .approveBtn:hover:not(:disabled) {
-  background: #4338ca;
+  background: var(--primary-dark);
   box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
 }
 

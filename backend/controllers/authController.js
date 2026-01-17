@@ -44,6 +44,7 @@ const signup = async (req, res) => {
       user: {
         id: user._id,
         fullName: user.fullName,
+        lastName: user.lastName,
         username: user.username,
         email: user.email,
         role: user.role,
@@ -106,6 +107,7 @@ const login = async (req, res) => {
       user: {
         id: user._id,
         fullName: user.fullName,
+        lastName: user.lastName,
         username: user.username,
         email: user.email,
         role: user.role,
@@ -250,7 +252,15 @@ const getProfile = async (req, res) => {
   try {
     res.status(200).json({
       success: true,
-      user: req.user
+      user: {
+        id: req.user._id,
+        fullName: req.user.fullName,
+        lastName: req.user.lastName,
+        username: req.user.username,
+        email: req.user.email,
+        role: req.user.role,
+        department: req.user.department
+      }
     });
   } catch (error) {
     console.error('Get profile error:', error);
@@ -264,7 +274,7 @@ const getProfile = async (req, res) => {
 
 const updateProfile = async (req, res) => {
   try {
-    const { fullName, department } = req.body;
+    const { fullName, lastName, department } = req.body;
     const userId = req.user._id;
 
     const user = await User.findById(userId);
@@ -276,6 +286,7 @@ const updateProfile = async (req, res) => {
     }
 
     if (fullName) user.fullName = fullName;
+    if (lastName) user.lastName = lastName;
     if (department) user.department = department;
 
     await user.save();
@@ -286,6 +297,7 @@ const updateProfile = async (req, res) => {
       user: {
         id: user._id,
         fullName: user.fullName,
+        lastName: user.lastName,
         username: user.username,
         email: user.email,
         role: user.role,
@@ -301,6 +313,34 @@ const updateProfile = async (req, res) => {
   }
 };
 
+const deactivateAccount = async (req, res) => {
+  try {
+    const userId = req.user._id;
+
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: 'User not found'
+      });
+    }
+
+    user.isActive = false;
+    await user.save();
+
+    res.status(200).json({
+      success: true,
+      message: 'Account deactivated successfully'
+    });
+  } catch (error) {
+    console.error('Deactivate account error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Error deactivating account'
+    });
+  }
+};
+
 module.exports = {
   signup,
   login,
@@ -308,5 +348,6 @@ module.exports = {
   verifyOTP,
   resetPassword,
   getProfile,
-  updateProfile
+  updateProfile,
+  deactivateAccount
 };
