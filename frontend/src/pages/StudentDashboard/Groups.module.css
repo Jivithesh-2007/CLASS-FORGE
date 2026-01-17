@@ -255,7 +255,7 @@
 }
 
 .actionBtn:hover {
-  background-color: var(--primary-color);
+  background-color:black;
   color: white;
   transform: scale(1.1);
 }
