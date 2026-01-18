@@ -468,13 +468,27 @@ const getTeacherStats = async (req, res) => {
     const approved = await Idea.countDocuments({ status: 'approved' });
     const rejected = await Idea.countDocuments({ status: 'rejected' });
 
+    // Get department engagement data
+    const departmentStats = await Idea.aggregate([
+      {
+        $group: {
+          _id: '$domain',
+          count: { $sum: 1 }
+        }
+      },
+      {
+        $sort: { count: -1 }
+      }
+    ]);
+
     res.status(200).json({
       success: true,
       stats: {
         totalSubmissions,
         pendingReview,
         approved,
-        rejected
+        rejected,
+        departmentStats
       }
     });
   } catch (error) {

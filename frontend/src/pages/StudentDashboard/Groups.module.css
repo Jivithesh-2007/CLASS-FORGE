@@ -4,10 +4,6 @@
   background-color: var(--background);
 }
 
-:root.dark-mode .layout {
-  background-color: #0f0f0f;
-}
-
 .main {
   flex: 1;
   margin-left: 250px;
@@ -42,18 +38,10 @@
   margin: 0;
 }
 
-:root.dark-mode .pageTitle {
-  color: #ffffff;
-}
-
 .pageSubtitle {
   font-size: 14px;
   color: var(--text-secondary);
   margin: 0;
-}
-
-:root.dark-mode .pageSubtitle {
-  color: #a0a0a0;
 }
 
 .headerRight {
@@ -77,17 +65,9 @@
   white-space: nowrap;
 }
 
-:root.dark-mode .codeButton {
-  background-color: #2a2a2a;
-}
-
 .codeButton:hover {
   background-color: #0f0f1e;
   transform: translateY(-2px);
-}
-
-:root.dark-mode .codeButton:hover {
-  background-color: #1a1a1a;
 }
 
 .createBtn {
@@ -106,17 +86,9 @@
   white-space: nowrap;
 }
 
-:root.dark-mode .createBtn {
-  background-color: #2a2a2a;
-}
-
 .createBtn:hover {
   background-color: #0f0f1e;
   transform: translateY(-2px);
-}
-
-:root.dark-mode .createBtn:hover {
-  background-color: #1a1a1a;
 }
 
 /* Groups Grid */
@@ -131,7 +103,6 @@
   background-color: var(--white);
   border-radius: 12px;
   padding: 24px;
-  border: 1px solid var(--border-light);
   transition: all 0.3s ease;
   display: flex;
   flex-direction: column;
@@ -139,20 +110,10 @@
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
 }
 
-:root.dark-mode .groupCard {
-  background-color: #1a1a1a;
-  border-color: #333333;
-}
-
 .groupCard:hover {
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
   transform: translateY(-4px);
-  border-color: var(--primary-color);
-}
-
-:root.dark-mode .groupCard:hover {
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
-  border-color: #5AA3F0;
+  border:1px solid black;
 }
 
 .cardHeader {
@@ -174,11 +135,6 @@
   flex-shrink: 0;
 }
 
-:root.dark-mode .groupIcon {
-  background-color: rgba(90, 163, 240, 0.2);
-  color: #5AA3F0;
-}
-
 .statusBadge {
   font-size: 10px;
   font-weight: 700;
@@ -191,11 +147,6 @@
   margin-bottom: 6px;
 }
 
-:root.dark-mode .statusBadge {
-  background-color: rgba(16, 185, 129, 0.2);
-  color: #6ee7b7;
-}
-
 .codeSection {
   display: flex;
   align-items: center;
@@ -206,10 +157,6 @@
   width: fit-content;
 }
 
-:root.dark-mode .codeSection {
-  background-color: #2a2a2a;
-}
-
 .groupCodeText {
   font-size: 9px;
   font-weight: 600;
@@ -217,10 +164,6 @@
   letter-spacing: 0.5px;
   text-transform: uppercase;
   white-space: nowrap;
-}
-
-:root.dark-mode .groupCodeText {
-  color: #a0a0a0;
 }
 
 .copyCodeBtn {
@@ -235,17 +178,9 @@
   transition: all 0.3s ease;
 }
 
-:root.dark-mode .copyCodeBtn {
-  color: #a0a0a0;
-}
-
 .copyCodeBtn:hover {
   color: var(--primary-color);
   transform: scale(1.1);
-}
-
-:root.dark-mode .copyCodeBtn:hover {
-  color: #5AA3F0;
 }
 
 .groupName {
@@ -255,10 +190,6 @@
   margin: 0 0 4px 0;
 }
 
-:root.dark-mode .groupName {
-  color: #ffffff;
-}
-
 .groupRole {
   font-size: 11px;
   font-weight: 600;
@@ -266,10 +197,6 @@
   text-transform: uppercase;
   letter-spacing: 0.5px;
   margin: 0 0 12px 0;
-}
-
-:root.dark-mode .groupRole {
-  color: #5AA3F0;
 }
 
 .groupDescription {
@@ -284,10 +211,6 @@
   flex-grow: 1;
 }
 
-:root.dark-mode .groupDescription {
-  color: #a0a0a0;
-}
-
 .groupMembers {
   display: flex;
   align-items: center;
@@ -295,10 +218,6 @@
   margin-bottom: 16px;
   padding-bottom: 16px;
   border-bottom: 1px solid var(--border-light);
-}
-
-:root.dark-mode .groupMembers {
-  border-bottom-color: #333333;
 }
 
 .memberAvatar {
@@ -313,10 +232,6 @@
   font-size: 12px;
   font-weight: 600;
   flex-shrink: 0;
-}
-
-:root.dark-mode .memberAvatar {
-  background: linear-gradient(135deg, #5AA3F0, #4A90E2);
 }
 
 .cardActions {
@@ -339,20 +254,10 @@
   transition: all 0.3s ease;
 }
 
-:root.dark-mode .actionBtn {
-  background-color: #2a2a2a;
-  color: #d0d0d0;
-}
-
 .actionBtn:hover {
-  background-color: var(--primary-color);
+  background-color:black;
   color: white;
   transform: scale(1.1);
-}
-
-:root.dark-mode .actionBtn:hover {
-  background-color: #5AA3F0;
-  color: white;
 }
 
 .deleteBtn {
@@ -360,17 +265,7 @@
   color: #dc2626;
 }
 
-:root.dark-mode .deleteBtn {
-  background-color: rgba(220, 38, 38, 0.2);
-  color: #fca5a5;
-}
-
 .deleteBtn:hover {
-  background-color: #dc2626;
-  color: white;
-}
-
-:root.dark-mode .deleteBtn:hover {
   background-color: #dc2626;
   color: white;
 }
@@ -396,17 +291,9 @@
   color: var(--text-primary);
 }
 
-:root.dark-mode .emptyText {
-  color: #ffffff;
-}
-
 .emptySubtext {
   font-size: 14px;
   color: var(--text-secondary);
-}
-
-:root.dark-mode .emptySubtext {
-  color: #a0a0a0;
 }
 
 /* Responsive Design */
@@ -456,4 +343,123 @@
   .groupCard {
     padding: 16px;
   }
+}
+
+/* Dark Mode Styles */
+body.dark-mode .layout {
+  background-color: #05070F;
+}
+
+body.dark-mode .pageTitle {
+  color: #e0e0e0;
+}
+
+body.dark-mode .pageSubtitle {
+  color: #b0b0b0;
+}
+
+body.dark-mode .codeButton {
+  background-color: #1a2a4a;
+  color: #e0e0e0;
+}
+
+body.dark-mode .codeButton:hover {
+  background-color: #2a3a5a;
+}
+
+body.dark-mode .createBtn {
+  background-color: #1a2a4a;
+  color: #e0e0e0;
+}
+
+body.dark-mode .createBtn:hover {
+  background-color: #2a3a5a;
+}
+
+body.dark-mode .groupCard {
+  background-color: #0E1A3A;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+body.dark-mode .groupCard:hover {
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+  border-color: #7FB3E8;
+}
+
+body.dark-mode .groupIcon {
+  background-color: #1a2a4a;
+  color: #7FB3E8;
+}
+
+body.dark-mode .statusBadge {
+  background-color: rgba(16, 185, 129, 0.15);
+  color: #10b981;
+}
+
+body.dark-mode .codeSection {
+  background-color: #1a2a4a;
+}
+
+body.dark-mode .groupCodeText {
+  color: #b0b0b0;
+}
+
+body.dark-mode .copyCodeBtn {
+  color: #b0b0b0;
+}
+
+body.dark-mode .copyCodeBtn:hover {
+  color: #7FB3E8;
+}
+
+body.dark-mode .groupName {
+  color: #e0e0e0;
+}
+
+body.dark-mode .groupRole {
+  color: #7FB3E8;
+}
+
+body.dark-mode .groupDescription {
+  color: #b0b0b0;
+}
+
+body.dark-mode .groupMembers {
+  border-bottom-color: #1a2a4a;
+}
+
+body.dark-mode .actionBtn {
+  background-color: #1a2a4a;
+  color: #b0b0b0;
+}
+
+body.dark-mode .actionBtn:hover {
+  background-color: #7FB3E8;
+  color: #0E1A3A;
+}
+
+body.dark-mode .deleteBtn {
+  background-color: rgba(220, 38, 38, 0.15);
+  color: #ff6b6b;
+}
+
+body.dark-mode .deleteBtn:hover {
+  background-color: #dc2626;
+  color: white;
+}
+
+body.dark-mode .emptyState {
+  color: #b0b0b0;
+}
+
+body.dark-mode .emptyIcon {
+  color: #1a2a4a;
+}
+
+body.dark-mode .emptyText {
+  color: #e0e0e0;
+}
+
+body.dark-mode .emptySubtext {
+  color: #b0b0b0;
 }

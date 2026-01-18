@@ -80,7 +80,7 @@ const MyIdeas = () => {
     <div className={styles.layout}>
       <Sidebar role="student" />
       <div className={styles.main}>
-        <Header title="My Submissions" />
+        <Header title="My Ideas" />
         <div className={styles.content}>
           <div className={styles.headerSection}>
             <div className={styles.headerLeft}>
@@ -172,22 +172,7 @@ const MyIdeas = () => {
                 <div className={styles.footerSection}>
                   <span className={styles.resultCount}>Showing {startIndex + 1} result{filteredIdeas.length !== 1 ? 's' : ''}</span>
                   <div className={styles.pagination}>
-                    <button 
-                      className={styles.paginationBtn}
-                      onClick={handlePrevPage}
-                      disabled={currentPage === 1}
-                    >
-                      <span>←</span>
-                      <span style={{ marginLeft: '8px' }}>Prev</span>
-                    </button>
-                    <button 
-                      className={styles.paginationBtn}
-                      onClick={handleNextPage}
-                      disabled={currentPage === totalPages}
-                    >
-                      <span style={{ marginRight: '8px' }}>Next</span>
-                      <span>→</span>
-                    </button>
+      
                   </div>
                 </div>
               </div>

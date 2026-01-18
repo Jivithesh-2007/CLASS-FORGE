@@ -76,12 +76,12 @@ const SubmitIdea = () => {
             </div>
 
             {error && (
-              <div className={styles.alert} style={{ backgroundColor: '#ffebee', borderColor: '#ffcdd2', color: '#c62828' }}>
+              <div className={styles.alert} style={{ backgroundColor: '#ffebee', borderColor: '#ffcdd2', color: 'var(--status-danger)' }}>
                 {error}
               </div>
             )}
             {success && (
-              <div className={styles.alert} style={{ backgroundColor: '#e8f5e9', borderColor: '#c8e6c9', color: '#2e7d32' }}>
+              <div className={styles.alert} style={{ backgroundColor: 'var(--icon-teal-bg)', borderColor: 'var(--icon-teal-text)', color: 'var(--icon-teal-text)' }}>
                 {success}
               </div>
             )}

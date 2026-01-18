@@ -4,10 +4,6 @@
   background-color: var(--background);
 }
 
-:root.dark-mode .layout {
-  background-color: #0f0f0f;
-}
-
 .main {
   flex: 1;
   margin-left: 250px;
@@ -42,18 +38,10 @@
   margin: 0;
 }
 
-:root.dark-mode .pageTitle {
-  color: #ffffff;
-}
-
 .pageSubtitle {
   font-size: 14px;
   color: var(--text-secondary);
   margin: 0;
-}
-
-:root.dark-mode .pageSubtitle {
-  color: #a0a0a0;
 }
 
 .submitBtn {
@@ -72,17 +60,9 @@
   white-space: nowrap;
 }
 
-:root.dark-mode .submitBtn {
-  background-color: #2a2a2a;
-}
-
 .submitBtn:hover {
   background-color: #0f0f1e;
   transform: translateY(-2px);
-}
-
-:root.dark-mode .submitBtn:hover {
-  background-color: #1a1a1a;
 }
 
 /* Filter Tabs */
@@ -105,32 +85,15 @@
   transition: all 0.3s ease;
 }
 
-:root.dark-mode .filterTab {
-  background-color: #ffffff;
-  border-color: #e0e0e0;
-  color: #000000;
-}
-
 .filterTab:hover {
-  background-color: #f5f5f5;
-  color: #000000;
-}
-
-:root.dark-mode .filterTab:hover {
-  background-color: #f5f5f5;
-  color: #000000;
+  background-color: #000000;
+  color: #ffffff;
 }
 
 .filterTab.active {
-  background-color: #1a1a2e;
+  background-color: #000000;
   color: white;
-  border-color: #1a1a2e;
-}
-
-:root.dark-mode .filterTab.active {
-  background-color: #1a1a2e;
-  color: #ffffff;
-  border-color: #1a1a2e;
+  border-color: #000000;
 }
 
 /* Table Wrapper */
@@ -140,11 +103,6 @@
   border: 1px solid var(--border-light);
   overflow: hidden;
   margin-bottom: 24px;
-}
-
-:root.dark-mode .tableWrapper {
-  background-color: #1a1a1a;
-  border-color: #333333;
 }
 
 .tableHeader {
@@ -157,11 +115,6 @@
   align-items: center;
 }
 
-:root.dark-mode .tableHeader {
-  background-color: #0f0f0f;
-  border-bottom-color: #333333;
-}
-
 .headerCell {
   font-size: 11px;
   font-weight: 700;
@@ -169,10 +122,6 @@
   text-transform: uppercase;
   letter-spacing: 0.5px;
   white-space: nowrap;
-}
-
-:root.dark-mode .headerCell {
-  color: #666666;
 }
 
 .ideaRow {
@@ -183,10 +132,6 @@
   padding: 20px 24px;
   border-bottom: 1px solid var(--border-light);
   transition: all 0.3s ease;
-}
-
-:root.dark-mode .ideaRow {
-  border-bottom-color: #333333;
 }
 
 .ideaRow:last-child {
@@ -207,10 +152,6 @@
   line-height: 1.4;
 }
 
-:root.dark-mode .ideaTitle {
-  color: #ffffff;
-}
-
 .ideaDescription {
   font-size: 12px;
   color: var(--text-secondary);
@@ -222,10 +163,6 @@
   overflow: hidden;
 }
 
-:root.dark-mode .ideaDescription {
-  color: #a0a0a0;
-}
-
 .authorCell {
   display: flex;
   align-items: center;
@@ -233,10 +170,6 @@
   font-size: 13px;
   font-weight: 500;
   color: var(--text-primary);
-}
-
-:root.dark-mode .authorCell {
-  color: #ffffff;
 }
 
 .authorInitial {
@@ -253,19 +186,10 @@
   flex-shrink: 0;
 }
 
-:root.dark-mode .authorInitial {
-  background-color: #333333;
-  color: #a0a0a0;
-}
-
 .authorName {
   font-size: 13px;
   font-weight: 500;
   color: var(--text-primary);
-}
-
-:root.dark-mode .authorName {
-  color: #ffffff;
 }
 
 .departmentCell {
@@ -274,18 +198,10 @@
   color: var(--text-primary);
 }
 
-:root.dark-mode .departmentCell {
-  color: #ffffff;
-}
-
 .dateCell {
   font-size: 13px;
   font-weight: 500;
   color: var(--text-primary);
-}
-
-:root.dark-mode .dateCell {
-  color: #ffffff;
 }
 
 .statusCell {
@@ -308,19 +224,9 @@
   color: #d97706;
 }
 
-:root.dark-mode .statusPending {
-  background-color: rgba(217, 119, 6, 0.2);
-  color: #fbbf24;
-}
-
 .statusApproved {
   background-color: #d1fae5;
   color: #059669;
-}
-
-:root.dark-mode .statusApproved {
-  background-color: rgba(5, 150, 105, 0.2);
-  color: #6ee7b7;
 }
 
 .statusRejected {
@@ -328,19 +234,9 @@
   color: #dc2626;
 }
 
-:root.dark-mode .statusRejected {
-  background-color: rgba(220, 38, 38, 0.2);
-  color: #fca5a5;
-}
-
 .statusMerged {
   background-color: #dbeafe;
   color: #2563eb;
-}
-
-:root.dark-mode .statusMerged {
-  background-color: rgba(37, 99, 235, 0.2);
-  color: #93c5fd;
 }
 
 /* Footer Section */
@@ -356,20 +252,11 @@
   border-bottom-right-radius: 8px;
 }
 
-:root.dark-mode .footerSection {
-  background-color: #1a1a1a;
-  border-top-color: #333333;
-}
-
 .resultCount {
   font-size: 13px;
   color: var(--text-secondary);
   font-weight: 500;
   grid-column: 1;
-}
-
-:root.dark-mode .resultCount {
-  color: #a0a0a0;
 }
 
 .pagination {
@@ -395,19 +282,7 @@
   min-width: 100px;
 }
 
-:root.dark-mode .paginationBtn {
-  border-color: #333333;
-  color: #000000;
-}
-
 .paginationBtn:hover:not(:disabled) {
-  background-color: #f0f0f0;
-  border-color: #000000;
-  color: #000000;
-  cursor: pointer;
-}
-
-:root.dark-mode .paginationBtn:hover:not(:disabled) {
   background-color: #f0f0f0;
   border-color: #000000;
   color: #000000;
@@ -433,17 +308,9 @@
   color: var(--text-primary);
 }
 
-:root.dark-mode .emptyText {
-  color: #ffffff;
-}
-
 .emptySubtext {
   font-size: 14px;
   color: var(--text-secondary);
-}
-
-:root.dark-mode .emptySubtext {
-  color: #a0a0a0;
 }
 
 /* Responsive Design */
@@ -503,4 +370,123 @@
     padding: 6px 12px;
     font-size: 12px;
   }
+}
+
+/* Dark Mode Styles */
+body.dark-mode .layout {
+  background-color: #05070F;
+}
+
+body.dark-mode .pageTitle {
+  color: #e0e0e0;
+}
+
+body.dark-mode .pageSubtitle {
+  color: #b0b0b0;
+}
+
+body.dark-mode .submitBtn {
+  background-color: #1a2a4a;
+  color: #e0e0e0;
+}
+
+body.dark-mode .submitBtn:hover {
+  background-color: #2a3a5a;
+}
+
+body.dark-mode .filterTab {
+  background-color: #0E1A3A;
+  border-color: #1a2a4a;
+  color: #e0e0e0;
+}
+
+body.dark-mode .filterTab:hover {
+  background-color: #1a2a4a;
+  color: #ffffff;
+}
+
+body.dark-mode .filterTab.active {
+  background-color: #1a2a4a;
+  color: #ffffff;
+  border-color: #7FB3E8;
+}
+
+body.dark-mode .tableWrapper {
+  background-color: #0E1A3A;
+  border-color: #1a2a4a;
+}
+
+body.dark-mode .tableHeader {
+  background-color: #1a2a4a;
+  border-bottom-color: #2a3a5a;
+}
+
+body.dark-mode .headerCell {
+  color: #808080;
+}
+
+body.dark-mode .ideaRow {
+  border-bottom-color: #1a2a4a;
+}
+
+body.dark-mode .ideaTitle {
+  color: #e0e0e0;
+}
+
+body.dark-mode .ideaDescription {
+  color: #b0b0b0;
+}
+
+body.dark-mode .authorCell {
+  color: #e0e0e0;
+}
+
+body.dark-mode .authorInitial {
+  background-color: #1a2a4a;
+  color: #b0b0b0;
+}
+
+body.dark-mode .authorName {
+  color: #e0e0e0;
+}
+
+body.dark-mode .departmentCell {
+  color: #e0e0e0;
+}
+
+body.dark-mode .dateCell {
+  color: #e0e0e0;
+}
+
+body.dark-mode .footerSection {
+  background-color: #0E1A3A;
+  border-top-color: #1a2a4a;
+}
+
+body.dark-mode .resultCount {
+  color: #b0b0b0;
+}
+
+body.dark-mode .paginationBtn {
+  background: none;
+  border-color: #1a2a4a;
+  color: #e0e0e0;
+}
+
+body.dark-mode .paginationBtn:hover:not(:disabled) {
+  background-color: #1a2a4a;
+  border-color: #7FB3E8;
+  color: #7FB3E8;
+}
+
+body.dark-mode .emptyState {
+  color: #b0b0b0;
+}
+
+body.dark-mode .emptyText {
+  color: #e0e0e0;
+}
+
+body.dark-mode .emptySubtext {
+  color: #b0b0b0;
 }

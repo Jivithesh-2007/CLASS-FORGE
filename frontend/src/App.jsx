@@ -29,10 +29,10 @@ import Notifications from './pages/Notifications/Notifications';
 
 function App() {
   return (
-    <ThemeProvider>
-      <AuthProvider>
+    <AuthProvider>
+      <ThemeProvider>
         <Router>
-          <Routes>
+            <Routes>
             <Route path="/" element={<Navigate to="/login" replace />} />
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<Signup />} />
@@ -196,8 +196,8 @@ function App() {
             <Route path="*" element={<Navigate to="/login" replace />} />
           </Routes>
         </Router>
+      </ThemeProvider>
       </AuthProvider>
-    </ThemeProvider>
   );
 }
 

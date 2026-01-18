@@ -8,10 +8,6 @@
   box-shadow: var(--shadow-lg);
 }
 
-:root.dark-mode .chatContainer {
-  background-color: #1a1a1a !important;
-}
-
 .chatHeader {
   display: flex;
   align-items: center;
@@ -21,11 +17,6 @@
   background-color: var(--white);
 }
 
-:root.dark-mode .chatHeader {
-  background-color: #1a1a1a !important;
-  border-bottom-color: #333333 !important;
-}
-
 .groupName {
   font-size: 18px;
   font-weight: 700;
@@ -33,18 +24,10 @@
   margin: 0;
 }
 
-:root.dark-mode .groupName {
-  color: #ffffff !important;
-}
-
 .memberCount {
   font-size: 12px;
   color: var(--text-secondary);
   margin: 4px 0 0 0;
-}
-
-:root.dark-mode .memberCount {
-  color: #d0d0d0 !important;
 }
 
 .closeBtn {
@@ -60,18 +43,9 @@
   transition: var(--transition-fast);
 }
 
-:root.dark-mode .closeBtn {
-  color: #d0d0d0 !important;
-}
-
 .closeBtn:hover {
   background-color: #f5f7fa;
   color: var(--text-primary);
-}
-
-:root.dark-mode .closeBtn:hover {
-  background-color: #2a2a2a !important;
-  color: #ffffff !important;
 }
 
 .messagesContainer {
@@ -89,11 +63,6 @@
   color: var(--text-secondary);
   font-size: 14px;
   margin: auto;
-}
-
-:root.dark-mode .loadingText,
-:root.dark-mode .emptyText {
-  color: #d0d0d0 !important;
 }
 
 .message {
@@ -140,11 +109,6 @@
   border-bottom-left-radius: 4px;
 }
 
-:root.dark-mode .receivedMessage .messageContent {
-  background-color: #2a2a2a !important;
-  color: #ffffff !important;
-}
-
 .senderName {
   font-size: 12px;
   font-weight: 600;
@@ -172,11 +136,6 @@
   background-color: var(--white);
 }
 
-:root.dark-mode .inputContainer {
-  background-color: #1a1a1a !important;
-  border-top-color: #333333 !important;
-}
-
 .messageInput {
   flex: 1;
   padding: 10px 14px;
@@ -188,29 +147,14 @@
   transition: var(--transition-fast);
 }
 
-:root.dark-mode .messageInput {
-  background-color: #2a2a2a !important;
-  border-color: #333333 !important;
-  color: #ffffff !important;
-}
-
 .messageInput:focus {
   outline: none;
   border-color: var(--primary-color);
   box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.1);
 }
 
-:root.dark-mode .messageInput:focus {
-  border-color: #5AA3F0 !important;
-  box-shadow: 0 0 0 3px rgba(90, 163, 240, 0.2) !important;
-}
-
 .messageInput::placeholder {
   color: var(--text-tertiary);
-}
-
-:root.dark-mode .messageInput::placeholder {
-  color: #a0a0a0 !important;
 }
 
 .sendBtn {
@@ -237,10 +181,80 @@
   cursor: not-allowed;
 }
 
-:root.dark-mode .sendBtn {
-  background-color: #5AA3F0 !important;
+/* Dark Mode Styles */
+body.dark-mode .chatContainer {
+  background-color: #0E1A3A;
 }
 
-:root.dark-mode .sendBtn:hover:not(:disabled) {
-  background-color: #4A90E2 !important;
+body.dark-mode .chatHeader {
+  background-color: #0E1A3A;
+  border-bottom-color: #1a2a4a;
+}
+
+body.dark-mode .groupName {
+  color: #e0e0e0;
+}
+
+body.dark-mode .memberCount {
+  color: #b0b0b0;
+}
+
+body.dark-mode .closeBtn {
+  color: #b0b0b0;
+}
+
+body.dark-mode .closeBtn:hover {
+  background-color: #1a2a4a;
+  color: #e0e0e0;
+}
+
+body.dark-mode .loadingText,
+body.dark-mode .emptyText {
+  color: #b0b0b0;
+}
+
+body.dark-mode .receivedMessage .messageContent {
+  background-color: #1a2a4a;
+  color: #e0e0e0;
+}
+
+body.dark-mode .senderName {
+  color: #b0b0b0;
+}
+
+body.dark-mode .messageTime {
+  color: #808080;
+}
+
+body.dark-mode .inputContainer {
+  background-color: #0E1A3A;
+  border-top-color: #1a2a4a;
+}
+
+body.dark-mode .messageInput {
+  background-color: #0B1220;
+  border-color: #1a2a4a;
+  color: #e0e0e0;
+}
+
+body.dark-mode .messageInput:focus {
+  border-color: #7FB3E8;
+  box-shadow: 0 0 0 3px rgba(127, 179, 232, 0.2);
+}
+
+body.dark-mode .messageInput::placeholder {
+  color: #808080;
+}
+
+body.dark-mode .sendBtn {
+  background-color: #7FB3E8;
+  color: #0E1A3A;
+}
+
+body.dark-mode .sendBtn:hover:not(:disabled) {
+  background-color: #a0c8ff;
+}
+
+body.dark-mode .sendBtn:disabled {
+  opacity: 0.5;
 }
