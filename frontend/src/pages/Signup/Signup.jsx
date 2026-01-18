@@ -110,9 +110,7 @@ const Signup = () => {
                 <option value="@karunya.edu">@ karunya.edu</option>
               </select>
             </div>
-            <div className={styles.hint}>
-              Student: @karunya.edu.in | Faculty: @karunya.edu
-            </div>
+            
           </div>
           <div className={styles.formGroup}>
             <label className={styles.label}>Department</label>

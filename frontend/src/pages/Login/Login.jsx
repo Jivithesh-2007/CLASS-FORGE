@@ -52,11 +52,7 @@ const Login = () => {
     <div className={styles.container}>
       <div className={styles.card}>
         <div className={styles.header}>
-          <img 
-            src={isDarkMode ? "/dark-mode-logo.png" : "/light-mode-logo.png"} 
-            alt="ClassForge" 
-            className={styles.logoImage} 
-          />
+         
           <div className={styles.logo}>ClassForge</div>
           <div className={styles.subtitle}>Manage and share your innovative ideas</div>
         </div>
@@ -87,9 +83,7 @@ const Login = () => {
                 <option value="@karunya.edu">@ karunya.edu</option>
               </select>
             </div>
-            <div className={styles.hint}>
-              Student: @karunya.edu.in | Faculty: @karunya.edu
-            </div>
+            
           </div>
           <div className={styles.formGroup}>
             <label className={styles.label}>Password</label>
