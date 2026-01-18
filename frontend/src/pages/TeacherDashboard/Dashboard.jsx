@@ -5,6 +5,12 @@ import Sidebar from '../../components/Sidebar/Sidebar';
 import Header from '../../components/Header/Header';
 import { ideaAPI } from '../../services/api';
 import styles from './TeacherDashboard.module.css';
+import {
+  FaUsers,
+  FaPaperPlane,
+  FaClock,
+  FaCheckCircle,
+} from "react-icons/fa";
 
 const TeacherDashboard = () => {
   const navigate = useNavigate();
@@ -108,13 +114,30 @@ const TeacherDashboard = () => {
 
   const StatCardNew = ({ label, value, total, color, trend, onClick }) => {
     const percentage = total > 0 ? (value / total) * 100 : 0;
-    
-    const colorMap = {
-      blue: { bar: '#4A90E2', icon: '📊', trend: '+12% this week' },
-      teal: { bar: '#14b8a6', icon: '💡', trend: '+18% this week' },
-      orange: { bar: '#f59e0b', icon: '⏱', trend: '-5% vs last week' },
-      green: { bar: '#10b981', icon: '✓', trend: '+2% this week' }
-    };
+
+
+const colorMap = {
+  blue: {
+    bar: "#4A90E2",
+    icon: <FaUsers />,          // Total Students
+    trend: "+12% this week",
+  },
+  purple: {
+    bar: "#8b5cf6",
+    icon: <FaPaperPlane />,     // Ideas Submitted
+    trend: "+18% this week",
+  },
+  orange: {
+    bar: "#f59e0b",
+    icon: <FaClock />,          // Pending Review
+    trend: "-5% vs last week",
+  },
+  green: {
+    bar: "#10b981",
+    icon: <FaCheckCircle />,    // Approval Rate
+    trend: "+2% this week",
+  },
+};
 
     const config = colorMap[color] || colorMap.blue;
 

@@ -5,6 +5,7 @@ import Sidebar from '../../components/Sidebar/Sidebar';
 import Header from '../../components/Header/Header';
 import { ideaAPI } from '../../services/api';
 import styles from './Dashboard.module.css';
+import { FaChartBar, FaCheckCircle, FaClock, FaTimesCircle } from "react-icons/fa";
 
 const StudentDashboard = () => {
   const navigate = useNavigate();
@@ -52,12 +53,31 @@ const StudentDashboard = () => {
   const StatCardNew = ({ label, value, total, color, trend, onClick }) => {
     const percentage = total > 0 ? (value / total) * 100 : 0;
     
-    const colorMap = {
-      blue: { bar: '#4A90E2', icon: '📊', trend: '+2 this week' },
-      green: { bar: '#10b981', icon: '✓', trend: '50% success' },
-      orange: { bar: '#f59e0b', icon: '⏱', trend: 'Awaiting review' },
-      red: { bar: '#ef4444', icon: '✕', trend: '-5% vs last sem' }
-    };
+
+
+const colorMap = {
+  blue: {
+    bar: "#4A90E2",
+    icon: <FaChartBar />,
+    trend: "+2 this week",
+  },
+  green: {
+    bar: "#10b981",
+    icon: <FaCheckCircle />,
+    trend: "50% success",
+  },
+  orange: {
+    bar: "#f59e0b",
+    icon: <FaClock />,
+    trend: "Awaiting review",
+  },
+  red: {
+    bar: "#ef4444",
+    icon: <FaTimesCircle />,
+    trend: "-5% vs last sem",
+  },
+};
+
 
     const config = colorMap[color] || colorMap.blue;
 
