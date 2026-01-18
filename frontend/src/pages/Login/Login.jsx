@@ -4,6 +4,7 @@ import { MdVisibility, MdVisibilityOff } from 'react-icons/md';
 import { useAuth } from '../../context/AuthContext';
 import { useTheme } from '../../context/ThemeContext';
 import styles from './Login.module.css';
+
 const Login = () => {
   const navigate = useNavigate();
   const { login } = useAuth();
@@ -16,6 +17,7 @@ const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+
   const handleChange = (e) => {
     setFormData({
       ...formData,
@@ -23,6 +25,7 @@ const Login = () => {
     });
     setError('');
   };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
@@ -48,11 +51,11 @@ const Login = () => {
       setLoading(false);
     }
   };
+
   return (
     <div className={styles.container}>
       <div className={styles.card}>
         <div className={styles.header}>
-         
           <div className={styles.logo}>ClassForge</div>
           <div className={styles.subtitle}>Manage and share your innovative ideas</div>
         </div>
@@ -83,10 +86,6 @@ const Login = () => {
                 <option value="@karunya.edu">@ karunya.edu</option>
               </select>
             </div>
-<<<<<<< HEAD
-=======
-            
->>>>>>> frontendfix
           </div>
           <div className={styles.formGroup}>
             <label className={styles.label}>Password</label>
@@ -128,4 +127,5 @@ const Login = () => {
     </div>
   );
 };
+
 export default Login;
