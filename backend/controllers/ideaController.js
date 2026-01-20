@@ -1,3 +1,4 @@
+const mongoose = require('mongoose');
 const Idea = require('../models/Idea');
 const User = require('../models/User');
 const Notification = require('../models/Notification');
@@ -78,10 +79,12 @@ const createIdea = async (req, res) => {
 
 const getIdeas = async (req, res) => {
   try {
-    const { status, domain, search } = req.query;
+    const { status, domain, search, all } = req.query;
     const query = {};
 
-    if (req.user.role === 'student') {
+    // If 'all' parameter is passed, show all ideas (for Explore Ideas)
+    // Otherwise, if student, show only their own ideas (for My Ideas)
+    if (req.user.role === 'student' && !all) {
       query.submittedBy = req.user._id;
     }
 
@@ -105,6 +108,7 @@ const getIdeas = async (req, res) => {
       .populate('submittedBy', 'fullName email username department')
       .populate('reviewedBy', 'fullName email')
       .populate('contributors', 'fullName email username')
+      .populate('comments.author', 'fullName username')
       .sort({ createdAt: -1 });
 
     res.status(200).json({
@@ -537,6 +541,123 @@ const getAiInsights = async (req, res) => {
   }
 };
 
+const addComment = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { text } = req.body;
+
+    if (!text || text.trim() === '') {
+      return res.status(400).json({
+        success: false,
+        message: 'Comment text is required'
+      });
+    }
+
+    const idea = await Idea.findById(id);
+    if (!idea) {
+      return res.status(404).json({
+        success: false,
+        message: 'Idea not found'
+      });
+    }
+
+    const comment = {
+      _id: new mongoose.Types.ObjectId(),
+      author: req.user._id,
+      text: text.trim(),
+      createdAt: new Date()
+    };
+
+    idea.comments.push(comment);
+    await idea.save();
+
+    await idea.populate('comments.author', 'fullName username');
+
+    res.status(201).json({
+      success: true,
+      message: 'Comment added successfully',
+      comment: idea.comments[idea.comments.length - 1]
+    });
+  } catch (error) {
+    console.error('Add comment error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Error adding comment',
+      error: error.message
+    });
+  }
+};
+
+const getComments = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const idea = await Idea.findById(id).populate('comments.author', 'fullName username');
+    if (!idea) {
+      return res.status(404).json({
+        success: false,
+        message: 'Idea not found'
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      comments: idea.comments || []
+    });
+  } catch (error) {
+    console.error('Get comments error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Error fetching comments',
+      error: error.message
+    });
+  }
+};
+
+const deleteComment = async (req, res) => {
+  try {
+    const { id, commentId } = req.params;
+
+    const idea = await Idea.findById(id);
+    if (!idea) {
+      return res.status(404).json({
+        success: false,
+        message: 'Idea not found'
+      });
+    }
+
+    const comment = idea.comments.id(commentId);
+    if (!comment) {
+      return res.status(404).json({
+        success: false,
+        message: 'Comment not found'
+      });
+    }
+
+    if (comment.author.toString() !== req.user._id.toString() && req.user.role !== 'teacher' && req.user.role !== 'admin') {
+      return res.status(403).json({
+        success: false,
+        message: 'You can only delete your own comments'
+      });
+    }
+
+    idea.comments.id(commentId).deleteOne();
+    await idea.save();
+
+    res.status(200).json({
+      success: true,
+      message: 'Comment deleted successfully'
+    });
+  } catch (error) {
+    console.error('Delete comment error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Error deleting comment',
+      error: error.message
+    });
+  }
+};
+
 module.exports = {
   createIdea,
   getIdeas,
@@ -548,5 +669,8 @@ module.exports = {
   mergeIdeas,
   getStudentStats,
   getTeacherStats,
-  getAiInsights
+  getAiInsights,
+  addComment,
+  getComments,
+  deleteComment
 };

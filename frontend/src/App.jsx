@@ -11,6 +11,7 @@ import ForgotPassword from './pages/ForgotPassword/ForgotPassword';
 import StudentDashboard from './pages/StudentDashboard/Dashboard';
 import SubmitIdea from './pages/StudentDashboard/SubmitIdea';
 import MyIdeas from './pages/StudentDashboard/MyIdeas';
+import ExploreIdeas from './pages/StudentDashboard/ExploreIdeas';
 import StudentGroups from './pages/StudentDashboard/Groups';
 import StudentSettings from './pages/Settings/Settings';
 
@@ -71,10 +72,10 @@ function App() {
               }
             />
             <Route
-              path="/student-dashboard/explore"
+              path="/student-dashboard/explore-ideas"
               element={
                 <ProtectedRoute allowedRoles={['student']}>
-                  <MyIdeas />
+                  <ExploreIdeas />
                 </ProtectedRoute>
               }
             />

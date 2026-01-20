@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { MdSend, MdClose } from 'react-icons/md';
+import { MdSend, MdClose, MdAttachFile, MdEmojiEmotions, MdMoreVert } from 'react-icons/md';
 import { messageAPI } from '../../services/api';
 import { getSocket } from '../../services/socket';
 import styles from './GroupChat.module.css';
@@ -8,8 +8,10 @@ const GroupChat = ({ group, onClose, currentUser }) => {
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState('');
   const [loading, setLoading] = useState(true);
+  const [isTyping, setIsTyping] = useState(false);
   const messagesEndRef = useRef(null);
   const socketRef = useRef(null);
+  const typingTimeoutRef = useRef(null);
 
   useEffect(() => {
     fetchMessages();
@@ -18,6 +20,7 @@ const GroupChat = ({ group, onClose, currentUser }) => {
     return () => {
       if (socketRef.current) {
         socketRef.current.off('new_message');
+        socketRef.current.off('user_typing');
       }
     };
   }, [group._id]);
@@ -46,6 +49,13 @@ const GroupChat = ({ group, onClose, currentUser }) => {
       socket.on('new_message', (message) => {
         setMessages(prev => [...prev, message]);
       });
+
+      socket.on('user_typing', (data) => {
+        if (data.userId !== currentUser.id) {
+          setIsTyping(true);
+          setTimeout(() => setIsTyping(false), 3000);
+        }
+      });
     }
   };
 
@@ -68,58 +78,151 @@ const GroupChat = ({ group, onClose, currentUser }) => {
     }
   };
 
+  const handleTyping = (e) => {
+    setNewMessage(e.target.value);
+    
+    if (socketRef.current) {
+      socketRef.current.emit('typing', { groupId: group._id, userId: currentUser.id });
+    }
+
+    if (typingTimeoutRef.current) {
+      clearTimeout(typingTimeoutRef.current);
+    }
+  };
+
+  const formatTime = (date) => {
+    return new Date(date).toLocaleTimeString([], {
+      hour: '2-digit',
+      minute: '2-digit'
+    });
+  };
+
+  const formatDate = (date) => {
+    const today = new Date();
+    const messageDate = new Date(date);
+    
+    if (messageDate.toDateString() === today.toDateString()) {
+      return 'Today';
+    }
+    
+    const yesterday = new Date(today);
+    yesterday.setDate(yesterday.getDate() - 1);
+    if (messageDate.toDateString() === yesterday.toDateString()) {
+      return 'Yesterday';
+    }
+    
+    return messageDate.toLocaleDateString();
+  };
+
+  const groupMessagesByDate = () => {
+    const grouped = {};
+    messages.forEach(msg => {
+      const date = formatDate(msg.createdAt);
+      if (!grouped[date]) {
+        grouped[date] = [];
+      }
+      grouped[date].push(msg);
+    });
+    return grouped;
+  };
+
   return (
     <div className={styles.chatContainer}>
       <div className={styles.chatHeader}>
-        <div>
-          <h3 className={styles.groupName}>{group.name}</h3>
-          <p className={styles.memberCount}>{group.members?.length || 0} members</p>
+        <div className={styles.headerInfo}>
+          <div className={styles.groupIcon}>
+            {group.name.charAt(0).toUpperCase()}
+          </div>
+          <div>
+            <h3 className={styles.groupName}>{group.name}</h3>
+            <p className={styles.memberCount}>{group.members?.length || 0} members</p>
+          </div>
         </div>
-        <button className={styles.closeBtn} onClick={onClose}>
-          <MdClose size={24} />
-        </button>
+        <div className={styles.headerActions}>
+          <button className={styles.iconBtn} title="More options">
+            <MdMoreVert size={20} />
+          </button>
+          <button className={styles.closeBtn} onClick={onClose} title="Close">
+            <MdClose size={24} />
+          </button>
+        </div>
       </div>
 
       <div className={styles.messagesContainer}>
         {loading ? (
           <div className={styles.loadingText}>Loading messages...</div>
         ) : messages.length === 0 ? (
-          <div className={styles.emptyText}>No messages yet. Start the conversation!</div>
+          <div className={styles.emptyState}>
+            <div className={styles.emptyIcon}>💬</div>
+            <div className={styles.emptyText}>No messages yet</div>
+            <div className={styles.emptySubtext}>Start the conversation!</div>
+          </div>
         ) : (
-          messages.map((msg) => (
-            <div
-              key={msg._id}
-              className={`${styles.message} ${
-                msg.sender._id === currentUser.id ? styles.sentMessage : styles.receivedMessage
-              }`}
-            >
-              <div className={styles.messageContent}>
-                {msg.sender._id !== currentUser.id && (
-                  <p className={styles.senderName}>{msg.sender.fullName}</p>
-                )}
-                <p className={styles.messageText}>{msg.content}</p>
-                <p className={styles.messageTime}>
-                  {new Date(msg.createdAt).toLocaleTimeString([], {
-                    hour: '2-digit',
-                    minute: '2-digit'
-                  })}
-                </p>
+          <>
+            {Object.entries(groupMessagesByDate()).map(([date, msgs]) => (
+              <div key={date}>
+                <div className={styles.dateSeperator}>
+                  <span>{date}</span>
+                </div>
+                {msgs.map((msg) => (
+                  <div
+                    key={msg._id}
+                    className={`${styles.messageWrapper} ${
+                      msg.sender._id === currentUser.id ? styles.sentWrapper : styles.receivedWrapper
+                    }`}
+                  >
+                    {msg.sender._id !== currentUser.id && (
+                      <div className={styles.senderAvatar}>
+                        {msg.sender.fullName.charAt(0).toUpperCase()}
+                      </div>
+                    )}
+                    <div className={styles.messageContent}>
+                      {msg.sender._id !== currentUser.id && (
+                        <p className={styles.senderName}>{msg.sender.fullName}</p>
+                      )}
+                      <div className={`${styles.messageBubble} ${
+                        msg.sender._id === currentUser.id ? styles.sentBubble : styles.receivedBubble
+                      }`}>
+                        <p className={styles.messageText}>{msg.content}</p>
+                        <p className={styles.messageTime}>{formatTime(msg.createdAt)}</p>
+                      </div>
+                    </div>
+                  </div>
+                ))}
               </div>
-            </div>
-          ))
+            ))}
+            {isTyping && (
+              <div className={styles.typingIndicator}>
+                <span></span>
+                <span></span>
+                <span></span>
+              </div>
+            )}
+          </>
         )}
         <div ref={messagesEndRef} />
       </div>
 
       <form className={styles.inputContainer} onSubmit={handleSendMessage}>
+        <button type="button" className={styles.attachBtn} title="Attach file">
+          <MdAttachFile size={20} />
+        </button>
         <input
           type="text"
           value={newMessage}
-          onChange={(e) => setNewMessage(e.target.value)}
+          onChange={handleTyping}
           placeholder="Type a message..."
           className={styles.messageInput}
         />
-        <button type="submit" className={styles.sendBtn} disabled={!newMessage.trim()}>
+        <button type="button" className={styles.emojiBtn} title="Emoji">
+          <MdEmojiEmotions size={20} />
+        </button>
+        <button 
+          type="submit" 
+          className={styles.sendBtn} 
+          disabled={!newMessage.trim()}
+          title="Send message"
+        >
           <MdSend size={20} />
         </button>
       </form>

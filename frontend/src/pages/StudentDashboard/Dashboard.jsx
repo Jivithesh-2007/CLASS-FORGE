@@ -12,6 +12,7 @@ const StudentDashboard = () => {
   const [stats, setStats] = useState(null);
   const [recentIdeas, setRecentIdeas] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [trends, setTrends] = useState({});
 
   useEffect(() => {
     fetchDashboardData();
@@ -25,11 +26,38 @@ const StudentDashboard = () => {
       ]);
       setStats(statsRes.data.stats);
       setRecentIdeas(ideasRes.data.ideas.slice(0, 6));
+      
+      // Calculate real trends from data
+      calculateTrends(ideasRes.data.ideas, statsRes.data.stats);
     } catch (error) {
       console.error('Error fetching dashboard data:', error);
     } finally {
       setLoading(false);
     }
+  };
+
+  const calculateTrends = (ideas, stats) => {
+    // Calculate ideas added this week
+    const oneWeekAgo = new Date();
+    oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
+    const ideasThisWeek = ideas.filter(idea => new Date(idea.createdAt) > oneWeekAgo).length;
+
+    // Calculate success rate (approved / total)
+    const totalIdeas = stats.totalIdeas || 1;
+    const successRate = Math.round((stats.approvedIdeas / totalIdeas) * 100);
+
+    // Calculate pending count
+    const pendingCount = stats.pendingIdeas || 0;
+
+    // Calculate rejection rate
+    const rejectionRate = Math.round((stats.rejectedIdeas / totalIdeas) * 100);
+
+    setTrends({
+      thisWeek: ideasThisWeek > 0 ? `+${ideasThisWeek} this week` : 'No ideas this week',
+      successRate: `${successRate}% success rate`,
+      pending: pendingCount > 0 ? `${pendingCount} awaiting review` : 'All reviewed',
+      rejectionRate: rejectionRate > 0 ? `-${rejectionRate}% rejection rate` : 'No rejections'
+    });
   };
 
   const handleSubmitIdea = () => {
@@ -162,7 +190,7 @@ const colorMap = {
                 value={totalIdeas}
                 total={totalIdeas}
                 color="blue"
-                trend="+2 this week"
+                trend={trends.thisWeek}
               />
             </div>
             <div onClick={() => handleStatCardClick('approved')}>
@@ -171,7 +199,7 @@ const colorMap = {
                 value={stats?.approvedIdeas || 0}
                 total={totalIdeas}
                 color="green"
-                trend="50% success"
+                trend={trends.successRate}
               />
             </div>
             <div onClick={() => handleStatCardClick('pending')}>
@@ -180,7 +208,7 @@ const colorMap = {
                 value={stats?.pendingIdeas || 0}
                 total={totalIdeas}
                 color="orange"
-                trend="Awaiting review"
+                trend={trends.pending}
               />
             </div>
             <div onClick={() => handleStatCardClick('rejected')}>
@@ -189,7 +217,7 @@ const colorMap = {
                 value={stats?.rejectedIdeas || 0}
                 total={totalIdeas}
                 color="red"
-                trend="-5% vs last sem"
+                trend={trends.rejectionRate}
               />
             </div>
           </div>

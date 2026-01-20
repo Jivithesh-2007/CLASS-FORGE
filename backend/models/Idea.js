@@ -61,6 +61,22 @@ const ideaSchema = new mongoose.Schema({
   mergedFrom: [{
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Idea'
+  }],
+  comments: [{
+    _id: mongoose.Schema.Types.ObjectId,
+    author: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User',
+      required: true
+    },
+    text: {
+      type: String,
+      required: true
+    },
+    createdAt: {
+      type: Date,
+      default: Date.now
+    }
   }]
 }, {
   timestamps: true

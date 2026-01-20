@@ -56,7 +56,10 @@ export const ideaAPI = {
   getAiInsights: (id) => api.get(`/ideas/${id}/ai-insights`),
   mergeIdeas: (data) => api.post('/ideas/merge', data),
   getStudentStats: () => api.get('/ideas/stats/student'),
-  getTeacherStats: () => api.get('/ideas/stats/teacher')
+  getTeacherStats: () => api.get('/ideas/stats/teacher'),
+  addComment: (id, data) => api.post(`/ideas/${id}/comments`, data),
+  getComments: (id) => api.get(`/ideas/${id}/comments`),
+  deleteComment: (id, commentId) => api.delete(`/ideas/${id}/comments/${commentId}`)
 };
 
 export const groupAPI = {

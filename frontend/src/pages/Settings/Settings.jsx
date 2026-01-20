@@ -121,17 +121,7 @@ const Settings = () => {
                   )}
 
                   <form onSubmit={handleSubmit} className={styles.form}>
-                    {/* Avatar Section */}
-                    <div className={styles.avatarSection}>
-                      <div className={styles.avatarPlaceholder}>
-                        <MdPerson className={styles.avatarIcon} />
-                      </div>
-                      <div className={styles.avatarInfo}>
-                        <h3 className={styles.avatarTitle}>Change avatar</h3>
-                        <p className={styles.avatarSubtext}>JPG, GIF or PNG. Max 1MB.</p>
-                      </div>
-                    </div>
-
+               
                     {/* Form Fields */}
                     <div className={styles.formRow}>
                       <div className={styles.formGroup}>
@@ -200,7 +190,6 @@ const Settings = () => {
                   </div>
                   
                   <div className={styles.dangerZone}>
-                    <h3 className={styles.dangerTitle}>Danger Zone</h3>
                     <div className={styles.dangerItem}>
                       <div className={styles.dangerContent}>
                         <h4 className={styles.dangerItemTitle}>Deactivate Account</h4>

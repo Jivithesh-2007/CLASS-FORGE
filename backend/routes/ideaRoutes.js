@@ -11,7 +11,10 @@ const {
   mergeIdeas,
   getStudentStats,
   getTeacherStats,
-  getAiInsights
+  getAiInsights,
+  addComment,
+  getComments,
+  deleteComment
 } = require('../controllers/ideaController');
 const { authMiddleware, roleCheck } = require('../middleware/auth');
 router.use(authMiddleware);
@@ -30,4 +33,10 @@ router.delete('/:id', deleteIdea);
 router.post('/:id/review', roleCheck('teacher', 'admin'), reviewIdea);
 router.get('/:id/similar', roleCheck('teacher', 'admin'), getSimilarIdeas);
 router.get('/:id/ai-insights', roleCheck('teacher', 'admin'), getAiInsights);
+
+// Comment routes
+router.post('/:id/comments', addComment);
+router.get('/:id/comments', getComments);
+router.delete('/:id/comments/:commentId', deleteComment);
+
 module.exports = router;

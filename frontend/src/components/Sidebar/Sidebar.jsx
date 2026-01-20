@@ -29,6 +29,7 @@ const Sidebar = ({ role }) => {
     { path: '/student-dashboard', icon: MdGridView, label: 'Dashboard' },
     { path: '/student-dashboard/submit-idea', icon: MdAddCircleOutline, label: 'Submit Idea' },
     { path: '/student-dashboard/my-ideas', icon: MdLightbulb, label: 'My Ideas' },
+    { path: '/student-dashboard/explore-ideas', icon: MdRateReview, label: 'Explore Ideas' },
     { path: '/student-dashboard/groups', icon: MdPeople, label: 'My Groups' },
     { path: '/student-dashboard/notifications', icon: MdNotifications, label: 'Notifications' },
     { path: '/student-dashboard/settings', icon: MdSettings, label: 'Settings' }

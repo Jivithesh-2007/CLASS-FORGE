@@ -3,6 +3,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { MdAdd } from 'react-icons/md';
 import Sidebar from '../../components/Sidebar/Sidebar';
 import Header from '../../components/Header/Header';
+import IdeaDetailModal from '../../components/IdeaDetailModal/IdeaDetailModal';
 import { ideaAPI } from '../../services/api';
 import styles from './MyIdeas.module.css';
 
@@ -14,6 +15,7 @@ const MyIdeas = () => {
   const [filterStatus, setFilterStatus] = useState(location.state?.filterStatus || 'all');
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
+  const [selectedIdea, setSelectedIdea] = useState(null);
   const itemsPerPage = 10;
 
   useEffect(() => {
@@ -119,12 +121,7 @@ const MyIdeas = () => {
             >
               Rejected
             </button>
-            <button
-              className={`${styles.filterTab} ${filterStatus === 'under_review' ? styles.active : ''}`}
-              onClick={() => setFilterStatus('under_review')}
-            >
-              Under Review
-            </button>
+           
           </div>
 
           {filteredIdeas.length === 0 ? (
@@ -147,7 +144,12 @@ const MyIdeas = () => {
                   <div className={styles.headerCell}>STATUS</div>
                 </div>
                 {paginatedIdeas.map((idea) => (
-                  <div key={idea._id} className={styles.ideaRow}>
+                  <div 
+                    key={idea._id} 
+                    className={styles.ideaRow}
+                    onClick={() => setSelectedIdea(idea)}
+                    style={{ cursor: 'pointer' }}
+                  >
                     <div className={styles.proposalDetails}>
                       <h3 className={styles.ideaTitle}>{idea.title}</h3>
                       <p className={styles.ideaDescription}>{idea.description}</p>
@@ -180,6 +182,14 @@ const MyIdeas = () => {
           )}
         </div>
       </div>
+
+      {selectedIdea && (
+        <IdeaDetailModal 
+          idea={selectedIdea} 
+          onClose={() => setSelectedIdea(null)}
+          showComments={false}
+        />
+      )}
     </div>
   );
 };
