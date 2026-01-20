@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { MdClose, MdSend, MdDelete } from 'react-icons/md';
 import { ideaAPI } from '../../services/api';
 import { useAuth } from '../../context/AuthContext';
+import { getSocket } from '../../services/socket';
 import styles from './IdeaDetailModal.module.css';
 
 const IdeaDetailModal = ({ idea, onClose, showComments = false }) => {
@@ -10,14 +11,28 @@ const IdeaDetailModal = ({ idea, onClose, showComments = false }) => {
   const [newComment, setNewComment] = useState('');
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
+  const [message, setMessage] = useState({ type: '', text: '' });
+  const socketRef = React.useRef(null);
 
   useEffect(() => {
-    if (showComments) {
+    if (showComments && idea && idea._id) {
       fetchComments();
+      setupSocket();
     } else {
       setLoading(false);
     }
+
+    return () => {
+      if (socketRef.current) {
+        socketRef.current.off('new_comment');
+      }
+    };
   }, [idea._id, showComments]);
+
+  const showMessage = (type, text) => {
+    setMessage({ type, text });
+    setTimeout(() => setMessage({ type: '', text: '' }), 3000);
+  };
 
   const fetchComments = async () => {
     try {
@@ -25,22 +40,46 @@ const IdeaDetailModal = ({ idea, onClose, showComments = false }) => {
       setComments(response.data.comments || []);
     } catch (error) {
       console.error('Error fetching comments:', error);
+      showMessage('error', 'Failed to load comments');
     } finally {
       setLoading(false);
     }
   };
 
+  const setupSocket = () => {
+    const socket = getSocket();
+    if (socket) {
+      socketRef.current = socket;
+      socket.emit('join_idea', idea._id.toString());
+      console.log('💬 IdeaDetailModal: Joined idea room:', idea._id.toString());
+      
+      socket.on('new_comment', (comment) => {
+        console.log('💬 IdeaDetailModal: New comment received:', comment);
+        setComments(prev => [...prev, comment]);
+      });
+    } else {
+      console.log('⚠️ IdeaDetailModal: Socket not available');
+    }
+  };
+
   const handleAddComment = async (e) => {
     e.preventDefault();
-    if (!newComment.trim()) return;
+    if (!newComment.trim()) {
+      showMessage('error', 'Please enter a comment');
+      return;
+    }
 
     setSubmitting(true);
     try {
       const response = await ideaAPI.addComment(idea._id, { text: newComment });
-      setComments([...comments, response.data.comment]);
-      setNewComment('');
+      if (response.data.success) {
+        setComments([...comments, response.data.comment]);
+        setNewComment('');
+        showMessage('success', 'Comment added successfully!');
+      }
     } catch (error) {
       console.error('Error adding comment:', error);
+      showMessage('error', error.response?.data?.message || 'Failed to add comment');
     } finally {
       setSubmitting(false);
     }
@@ -50,8 +89,10 @@ const IdeaDetailModal = ({ idea, onClose, showComments = false }) => {
     try {
       await ideaAPI.deleteComment(idea._id, commentId);
       setComments(comments.filter(c => c._id !== commentId));
+      showMessage('success', 'Comment deleted');
     } catch (error) {
       console.error('Error deleting comment:', error);
+      showMessage('error', 'Failed to delete comment');
     }
   };
 
@@ -74,6 +115,12 @@ const IdeaDetailModal = ({ idea, onClose, showComments = false }) => {
             <MdClose size={24} />
           </button>
         </div>
+
+        {message.text && (
+          <div className={`${styles.messageAlert} ${styles[`alert${message.type.charAt(0).toUpperCase() + message.type.slice(1)}`]}`}>
+            {message.text}
+          </div>
+        )}
 
         <div className={styles.modalContent}>
           <div className={styles.ideaSection}>

@@ -20,21 +20,33 @@ const Header = ({ title, subtitle }) => {
   const notifRef = useRef(null);
 
   useEffect(() => {
-    fetchNotifications();
-    
-    const socket = getSocket();
-    if (socket) {
-      socket.on('notification', () => {
-        fetchNotifications();
-      });
+    if (user && user._id) {
+      fetchNotifications();
+      setupSocket();
     }
 
     return () => {
+      const socket = getSocket();
       if (socket) {
         socket.off('notification');
       }
     };
-  }, []);
+  }, [user]);
+
+  const setupSocket = () => {
+    const socket = getSocket();
+    if (socket) {
+      socket.emit('join', user._id.toString());
+      console.log('📢 Header: Joined user room:', user._id.toString());
+      
+      socket.on('notification', (data) => {
+        console.log('📬 Header: Notification received:', data);
+        fetchNotifications();
+      });
+    } else {
+      console.log('⚠️ Header: Socket not available');
+    }
+  };
 
   useEffect(() => {
     const handleClickOutside = (event) => {

@@ -546,6 +546,9 @@ const addComment = async (req, res) => {
     const { id } = req.params;
     const { text } = req.body;
 
+    console.log('📝 Adding comment to idea:', id);
+    console.log('👤 Commenter:', req.user._id, req.user.fullName);
+
     if (!text || text.trim() === '') {
       return res.status(400).json({
         success: false,
@@ -553,13 +556,16 @@ const addComment = async (req, res) => {
       });
     }
 
-    const idea = await Idea.findById(id);
+    const idea = await Idea.findById(id).populate('submittedBy', 'fullName email _id');
     if (!idea) {
       return res.status(404).json({
         success: false,
         message: 'Idea not found'
       });
     }
+
+    console.log('💡 Idea found:', idea.title);
+    console.log('👨‍💼 Idea author:', idea.submittedBy._id, idea.submittedBy.fullName);
 
     const comment = {
       _id: new mongoose.Types.ObjectId(),
@@ -573,13 +579,58 @@ const addComment = async (req, res) => {
 
     await idea.populate('comments.author', 'fullName username');
 
+    // Send notification to idea author if commenter is not the author
+    const ideaAuthorId = idea.submittedBy._id.toString();
+    const commenterId = req.user._id.toString();
+    
+    console.log('🔍 Comparing IDs:', { ideaAuthorId, commenterId, isSame: ideaAuthorId === commenterId });
+
+    if (ideaAuthorId !== commenterId) {
+      try {
+        const notification = new Notification({
+          recipient: idea.submittedBy._id,
+          sender: req.user._id,
+          type: 'comment_added',
+          title: 'New Comment on Your Idea',
+          message: `${req.user.fullName} commented on "${idea.title}"`,
+          relatedIdea: idea._id,
+          isRead: false
+        });
+        await notification.save();
+        console.log('✅ Notification created:', notification._id);
+        console.log('📬 Notification recipient:', notification.recipient);
+
+        const io = req.app.get('io');
+        if (io) {
+          // Emit to idea room for real-time comment update
+          io.to(id).emit('new_comment', idea.comments[idea.comments.length - 1]);
+          console.log('✓ Comment emitted to idea room:', id);
+          
+          // Emit notification to idea author's personal room
+          const recipientRoom = idea.submittedBy._id.toString();
+          io.to(recipientRoom).emit('notification', {
+            type: 'comment_added',
+            message: `${req.user.fullName} commented on "${idea.title}"`,
+            notification: notification
+          });
+          console.log('✓ Notification emitted to user room:', recipientRoom);
+        } else {
+          console.log('⚠ Socket.io not available');
+        }
+      } catch (notifError) {
+        console.error('❌ Error creating notification:', notifError);
+      }
+    } else {
+      console.log('ℹ️ Skipping notification - user commented on own idea');
+    }
+
     res.status(201).json({
       success: true,
       message: 'Comment added successfully',
       comment: idea.comments[idea.comments.length - 1]
     });
   } catch (error) {
-    console.error('Add comment error:', error);
+    console.error('❌ Add comment error:', error);
     res.status(500).json({
       success: false,
       message: 'Error adding comment',

@@ -8,13 +8,31 @@ const API_BASE_URL = 'http://localhost:5001/api';
 
 export default function StudentsPage() {
   const [students, setStudents] = useState([]);
+  const [filteredStudents, setFilteredStudents] = useState([]);
   const [selectedStudent, setSelectedStudent] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [searchQuery, setSearchQuery] = useState('');
 
   useEffect(() => {
     fetchStudents();
   }, []);
+
+  useEffect(() => {
+    // Filter students based on search query
+    if (searchQuery.trim() === '') {
+      setFilteredStudents(students);
+    } else {
+      const query = searchQuery.toLowerCase();
+      const filtered = students.filter(student => 
+        student.name.toLowerCase().includes(query) ||
+        student.code.toLowerCase().includes(query) ||
+        student.email.toLowerCase().includes(query) ||
+        student.department.toLowerCase().includes(query)
+      );
+      setFilteredStudents(filtered);
+    }
+  }, [searchQuery, students]);
 
   const fetchStudents = async () => {
     try {
@@ -109,8 +127,9 @@ export default function StudentsPage() {
               <input
                 type="text"
                 placeholder="Search students by name or ID..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
               />
-              <button className="filter-btn">All ▾</button>
             </div>
           </div>
 
@@ -137,10 +156,17 @@ export default function StudentsPage() {
             </div>
           )}
 
+          {/* NO RESULTS STATE */}
+          {!loading && !error && safeStudents.length > 0 && filteredStudents.length === 0 && (
+            <div className="empty-state">
+              <p>No students match your search</p>
+            </div>
+          )}
+
           {/* GRID */}
-          {!loading && !error && safeStudents.length > 0 && (
+          {!loading && !error && filteredStudents.length > 0 && (
             <div className="students-grid">
-              {safeStudents.map((student) => (
+              {filteredStudents.map((student) => (
                 <div
                   key={student.id}
                   className="student-card"
@@ -252,15 +278,6 @@ function StudentProfilePanel({ student, onClose }) {
       case 'pending': return '#f59e0b';
       case 'rejected': return '#ef4444';
       default: return '#6b7280';
-    }
-  };
-
-  const getStatusIcon = (status) => {
-    switch(status) {
-      case 'approved': return '✓';
-      case 'pending': return '⏱';
-      case 'rejected': return '✕';
-      default: return '•';
     }
   };
 

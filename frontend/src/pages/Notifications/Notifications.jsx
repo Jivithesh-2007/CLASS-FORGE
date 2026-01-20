@@ -4,6 +4,7 @@ import Sidebar from '../../components/Sidebar/Sidebar';
 import Header from '../../components/Header/Header';
 import { useAuth } from '../../context/AuthContext';
 import { notificationAPI } from '../../services/api';
+import { getSocket } from '../../services/socket';
 import styles from '../StudentDashboard/Dashboard.module.css';
 
 const Notifications = () => {
@@ -11,10 +12,35 @@ const Notifications = () => {
   const [notifications, setNotifications] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedNotif, setSelectedNotif] = useState(null);
+  const socketRef = React.useRef(null);
 
   useEffect(() => {
-    fetchNotifications();
-  }, []);
+    if (user && user._id) {
+      fetchNotifications();
+      setupSocket();
+    }
+
+    return () => {
+      if (socketRef.current) {
+        socketRef.current.off('notification');
+      }
+    };
+  }, [user]);
+
+  const setupSocket = () => {
+    const socket = getSocket();
+    if (socket) {
+      socket.emit('join', user._id.toString());
+      console.log('📢 Notifications: Joined user room:', user._id.toString());
+      
+      socket.on('notification', (notification) => {
+        console.log('📬 Notifications: New notification received:', notification);
+        fetchNotifications();
+      });
+    } else {
+      console.log('⚠️ Notifications: Socket not available');
+    }
+  };
 
   const fetchNotifications = async () => {
     try {

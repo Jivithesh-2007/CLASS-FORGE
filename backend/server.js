@@ -77,6 +77,11 @@ io.on('connection', (socket) => {
     console.log(`✓ User ${socket.id} joined group ${groupId}`);
   });
 
+  socket.on('join_idea', (ideaId) => {
+    socket.join(ideaId.toString());
+    console.log(`✓ User ${socket.id} joined idea ${ideaId}`);
+  });
+
   socket.on('disconnect', () => {
     console.log('✗ User disconnected:', socket.id);
   });

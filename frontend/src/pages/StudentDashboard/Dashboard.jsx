@@ -81,31 +81,28 @@ const StudentDashboard = () => {
   const StatCardNew = ({ label, value, total, color, trend, onClick }) => {
     const percentage = total > 0 ? (value / total) * 100 : 0;
     
-
-
-const colorMap = {
-  blue: {
-    bar: "#4A90E2",
-    icon: <FaChartBar />,
-    trend: "+2 this week",
-  },
-  green: {
-    bar: "#10b981",
-    icon: <FaCheckCircle />,
-    trend: "50% success",
-  },
-  orange: {
-    bar: "#f59e0b",
-    icon: <FaClock />,
-    trend: "Awaiting review",
-  },
-  red: {
-    bar: "#ef4444",
-    icon: <FaTimesCircle />,
-    trend: "-5% vs last sem",
-  },
-};
-
+    const colorMap = {
+      blue: {
+        bar: "#4A90E2",
+        icon: <FaChartBar />,
+        trendColor: "#4A90E2",
+      },
+      green: {
+        bar: "#10b981",
+        icon: <FaCheckCircle />,
+        trendColor: "#10b981",
+      },
+      orange: {
+        bar: "#f59e0b",
+        icon: <FaClock />,
+        trendColor: "#f59e0b",
+      },
+      red: {
+        bar: "#ef4444",
+        icon: <FaTimesCircle />,
+        trendColor: "#ef4444",
+      },
+    };
 
     const config = colorMap[color] || colorMap.blue;
 
@@ -134,9 +131,16 @@ const colorMap = {
         }}
       >
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-          <div style={{ fontSize: '32px' }}>{config.icon}</div>
-          <span style={{ fontSize: '12px', color: '#6b7280', fontWeight: '500' }}>
-            {trend || config.trend}
+          <div style={{ fontSize: '32px', color: config.trendColor }}>{config.icon}</div>
+          <span style={{ 
+            fontSize: '12px', 
+            color: config.trendColor, 
+            fontWeight: '600',
+            backgroundColor: `${config.trendColor}15`,
+            padding: '4px 10px',
+            borderRadius: '6px'
+          }}>
+            {trend}
           </span>
         </div>
         

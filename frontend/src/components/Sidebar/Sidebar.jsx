@@ -57,12 +57,12 @@ const Sidebar = ({ role }) => {
   return (
     <div className={styles.sidebar}>
       <div className={styles.logo}>
-        <img 
-          src={isDarkMode ? "/dark-mode-logo.png" : "/light-mode-logo.png"} 
-          alt="ClassForge" 
-          className={styles.logoImage} 
-        />
-      
+        <div className={styles.logoText}>
+          <span className={styles.logoBold}>C</span>
+          <span>lass</span>
+          <span className={styles.logoBold}>F</span>
+          <span>orge</span>
+        </div>
       </div>
       
       <nav className={styles.nav}>

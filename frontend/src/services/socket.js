@@ -10,9 +10,10 @@ export const initSocket = (userId) => {
       reconnectionDelay: 1000
     });
     socket.on('connect', () => {
-      console.log('✓ Socket connected');
+      console.log('✓ Socket connected:', socket.id);
       if (userId) {
-        socket.emit('join', userId);
+        socket.emit('join', userId.toString());
+        console.log('✓ Joined user room:', userId.toString());
       }
     });
     socket.on('disconnect', () => {
@@ -20,6 +21,9 @@ export const initSocket = (userId) => {
     });
     socket.on('new_message', (message) => {
       console.log('✓ New message received:', message);
+    });
+    socket.on('notification', (notification) => {
+      console.log('✓ Notification received via socket:', notification);
     });
   }
   return socket;

@@ -22,7 +22,7 @@ body.dark-mode .sidebar {
   background-color: var(--white);
   display: flex;
   align-items: center;
-  gap: 12px;
+  justify-content: center;
   padding: 16px 12px;
 }
 
@@ -31,15 +31,26 @@ body.dark-mode .logo {
   border-bottom-color: #1a2a4a;
 }
 
-.logoImage {
-  width: 200px;
-  height: 100px;
-  object-fit: contain;
+.logoText {
+  font-size: 24px;
+  font-weight: 700;
+  color: #1a1a2e;
+  letter-spacing: -0.5px;
+  display: flex;
+  align-items: center;
+  gap: 0;
 }
 
 body.dark-mode .logoText {
   color: #ffffff;
 }
+
+.logoBold {
+  font-weight: 900;
+  font-size: 26px;
+  color:black
+}
+
 
 .nav {
   flex: 1;

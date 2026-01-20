@@ -80,12 +80,12 @@
   justify-content: center;
   cursor: pointer;
   transition: all 0.3s ease;
-  color: #2c3e50;
+  color: #000000;
 }
 
 .themeToggle:hover {
-  background-color: #e3f2fd;
-  color: var(--primary-color);
+  background-color: black;
+  color:white;
 }
 
 .iconBtn {
@@ -100,12 +100,12 @@
   cursor: pointer;
   transition: all 0.3s ease;
   position: relative;
-  color: #2c3e50;
+  color: #000000;
 }
 
 .iconBtn:hover {
-  background-color: #e3f2fd;
-  color: var(--primary-color);
+  background-color:black;
+  color:white;
 }
 
 .icon {

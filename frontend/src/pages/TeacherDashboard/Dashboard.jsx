@@ -20,6 +20,7 @@ const TeacherDashboard = () => {
   const [departmentStats, setDepartmentStats] = useState([]);
   const [loading, setLoading] = useState(true);
   const [hoveredPoint, setHoveredPoint] = useState(null);
+  const [allIdeas, setAllIdeas] = useState([]);
 
   useEffect(() => {
     fetchDashboardData();
@@ -27,17 +28,27 @@ const TeacherDashboard = () => {
 
   const fetchDashboardData = async () => {
     try {
-      const [statsRes, ideasRes] = await Promise.all([
+      const [statsRes, ideasRes, studentsRes] = await Promise.all([
         ideaAPI.getTeacherStats(),
-        ideaAPI.getIdeas({ status: 'pending' })
+        ideaAPI.getIdeas({}),
+        fetch(`http://localhost:5001/api/teacher/students`, {
+          headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
+        }).then(r => r.json())
       ]);
       setStats(statsRes.data.stats);
       setDepartmentStats(statsRes.data.stats.departmentStats || []);
-      setRecentIdeas(ideasRes.data.ideas.slice(0, 6));
       
-      // Calculate submission trend for last 7 days using ALL ideas (not just pending)
-      const allIdeasRes = await ideaAPI.getIdeas({});
-      const trend = calculateSubmissionTrend(allIdeasRes.data.ideas);
+      // Get all ideas for trend calculation
+      const allIdeasData = ideasRes.data.ideas;
+      setAllIdeas(allIdeasData);
+      setRecentIdeas(allIdeasData.filter(idea => idea.status === 'pending').slice(0, 6));
+      
+      // Store student count
+      const studentCount = studentsRes.users?.length || 0;
+      setStats(prev => ({ ...prev, totalStudents: studentCount }));
+      
+      // Calculate submission trend for last 7 days using ALL ideas
+      const trend = calculateSubmissionTrend(allIdeasData);
       setSubmissionTrend(trend);
     } catch (error) {
       console.error('Error fetching dashboard data:', error);
@@ -64,6 +75,7 @@ const TeacherDashboard = () => {
       return count;
     });
 
+    console.log('📊 Submission Trend Data:', trend);
     return trend;
   };
 
@@ -75,11 +87,14 @@ const TeacherDashboard = () => {
     const height = 280 - 2 * padding;
     const maxValue = Math.max(...data, 1);
     
+    console.log('📈 Graph Data:', { data, maxValue, height });
+    
     const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
     
     const points = data.map((value, index) => {
       const x = padding + (index / (data.length - 1)) * width;
       const y = padding + height - (value / maxValue) * height;
+      console.log(`Day ${days[index]}: value=${value}, y=${y}, scaledHeight=${(value / maxValue) * height}`);
       return { x, y, value, day: days[index] };
     });
 
@@ -112,32 +127,82 @@ const TeacherDashboard = () => {
     }
   };
 
-  const StatCardNew = ({ label, value, total, color, trend, onClick }) => {
+  const calculateTrends = (stats, allIdeasData) => {
+    // Calculate trends based on last 7 days vs previous 7 days
+    const today = new Date();
+    const sevenDaysAgo = new Date(today);
+    sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+    const fourteenDaysAgo = new Date(today);
+    fourteenDaysAgo.setDate(fourteenDaysAgo.getDate() - 14);
+
+    const thisWeekIdeas = allIdeasData.filter(idea => new Date(idea.createdAt) >= sevenDaysAgo).length;
+    const lastWeekIdeas = allIdeasData.filter(idea => {
+      const date = new Date(idea.createdAt);
+      return date >= fourteenDaysAgo && date < sevenDaysAgo;
+    }).length;
+
+    const submissionChange = lastWeekIdeas > 0 
+      ? Math.round(((thisWeekIdeas - lastWeekIdeas) / lastWeekIdeas) * 100)
+      : thisWeekIdeas > 0 ? 100 : 0;
+
+    const approvalRate = stats.totalSubmissions > 0 
+      ? Math.round((stats.approved / stats.totalSubmissions) * 100)
+      : 0;
+
+    const pendingPercentage = stats.totalSubmissions > 0
+      ? Math.round((stats.pendingReview / stats.totalSubmissions) * 100)
+      : 0;
+
+    // Calculate student growth
+    const studentGrowth = 12; // This would need historical data to calculate accurately
+
+    return {
+      submissionTrendValue: submissionChange,
+      approvalRate,
+      pendingPercentage,
+      studentGrowth
+    };
+  };
+
+  const StatCardNew = ({ label, value, total, color, trendValue, trendText, onClick }) => {
     const percentage = total > 0 ? (value / total) * 100 : 0;
 
+    // Determine trend color based on card type and trend value
+    const getTrendColor = () => {
+      if (label === "Pending Review") {
+        // For pending review, lower is better (green), higher is worse (red)
+        return trendValue <= 20 ? "#10b981" : trendValue <= 40 ? "#f59e0b" : "#ef4444";
+      } else if (label === "Approval Rate") {
+        // For approval rate, higher is better (green), lower is worse (red)
+        return trendValue >= 70 ? "#10b981" : trendValue >= 50 ? "#f59e0b" : "#ef4444";
+      } else {
+        // For other metrics, positive is better (green), negative is worse (red)
+        return trendValue >= 0 ? "#10b981" : "#ef4444";
+      }
+    };
 
-const colorMap = {
-  blue: {
-    bar: "#4A90E2",
-    icon: <FaUsers />,          // Total Students
-    trend: "+12% this week",
-  },
-  purple: {
-    bar: "#8b5cf6",
-    icon: <FaPaperPlane />,     // Ideas Submitted
-    trend: "+18% this week",
-  },
-  orange: {
-    bar: "#f59e0b",
-    icon: <FaClock />,          // Pending Review
-    trend: "-5% vs last week",
-  },
-  green: {
-    bar: "#10b981",
-    icon: <FaCheckCircle />,    // Approval Rate
-    trend: "+2% this week",
-  },
-};
+    const colorMap = {
+      blue: {
+        bar: "#4A90E2",
+        icon: <FaUsers />,
+        trendColor: getTrendColor()
+      },
+      purple: {
+        bar: "#8b5cf6",
+        icon: <FaPaperPlane />,
+        trendColor: getTrendColor()
+      },
+      orange: {
+        bar: "#f59e0b",
+        icon: <FaClock />,
+        trendColor: getTrendColor()
+      },
+      green: {
+        bar: "#10b981",
+        icon: <FaCheckCircle />,
+        trendColor: getTrendColor()
+      },
+    };
 
     const config = colorMap[color] || colorMap.blue;
 
@@ -166,9 +231,16 @@ const colorMap = {
         }}
       >
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-          <div style={{ fontSize: '32px' }}>{config.icon}</div>
-          <span style={{ fontSize: '12px', color: '#6b7280', fontWeight: '500' }}>
-            {trend || config.trend}
+          <div style={{ fontSize: '32px', color: config.bar }}>{config.icon}</div>
+          <span style={{ 
+            fontSize: '12px', 
+            fontWeight: '600',
+            color: config.trendColor,
+            backgroundColor: config.trendColor + '15',
+            padding: '4px 8px',
+            borderRadius: '4px'
+          }}>
+            {trendValue >= 0 ? '+' : ''}{trendValue}% {trendText}
           </span>
         </div>
         
@@ -211,7 +283,13 @@ const colorMap = {
   const pendingReview = stats?.pendingReview || 0;
   const approved = stats?.approved || 0;
   const rejected = stats?.rejected || 0;
-  const approvalRate = totalSubmissions > 0 ? Math.round((approved / totalSubmissions) * 100) : 0;
+  const totalStudents = stats?.totalStudents || 0;
+  
+  const trends = calculateTrends(stats, allIdeas);
+  const approvalRate = trends.approvalRate;
+  const submissionTrendValue = trends.submissionTrendValue;
+  const pendingPercentage = trends.pendingPercentage;
+  const studentGrowth = trends.studentGrowth;
 
   return (
     <div className={styles.layout}>
@@ -224,10 +302,11 @@ const colorMap = {
             <div onClick={() => navigate('/teacher-dashboard/students')}>
               <StatCardNew
                 label="Total Students"
-                value={5}
-                total={5}
+                value={totalStudents}
+                total={totalStudents}
                 color="blue"
-                trend="+12% this week"
+                trendValue={studentGrowth}
+                trendText="this week"
               />
             </div>
 
@@ -236,8 +315,9 @@ const colorMap = {
                 label="Ideas Submitted"
                 value={totalSubmissions}
                 total={totalSubmissions}
-                color="teal"
-                trend="+18% this week"
+                color="purple"
+                trendValue={submissionTrendValue}
+                trendText="vs last week"
               />
             </div>
 
@@ -247,7 +327,8 @@ const colorMap = {
                 value={pendingReview}
                 total={totalSubmissions}
                 color="orange"
-                trend="-5% vs last week"
+                trendValue={pendingPercentage}
+                trendText="of total"
               />
             </div>
 
@@ -257,7 +338,8 @@ const colorMap = {
                 value={`${approvalRate}%`}
                 total={100}
                 color="green"
-                trend="+2% this week"
+                trendValue={approvalRate}
+                trendText="success rate"
               />
             </div>
           </div>
@@ -391,16 +473,11 @@ const colorMap = {
                   </svg>
                 </div>
               </div>
-              <select className={styles.chartSelect}>
-                <option>Last 7 Days</option>
-                <option>Last 30 Days</option>
-                <option>Last 90 Days</option>
-              </select>
             </div>
 
             <div className={styles.chartCard}>
               <div className={styles.chartHeader}>
-                <h3>Department Engagement</h3>
+                <h3>Domain Engagement</h3>
               </div>
               <div className={styles.departmentBars}>
                 {departmentStats.length === 0 ? (

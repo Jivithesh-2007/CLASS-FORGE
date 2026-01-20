@@ -22,7 +22,7 @@ export const AuthProvider = ({ children }) => {
           const response = await authAPI.getProfile();
           setUser(response.data.user);
           setToken(storedToken);
-          initSocket(response.data.user.id);
+          initSocket(response.data.user._id);
         } catch (error) {
           console.error('Auth initialization error:', error);
           logout();
@@ -43,7 +43,7 @@ export const AuthProvider = ({ children }) => {
       setToken(token);
       setUser(user);
       
-      initSocket(user.id);
+      initSocket(user._id);
       
       return { success: true, user };
     } catch (error) {
@@ -64,7 +64,7 @@ export const AuthProvider = ({ children }) => {
       setToken(token);
       setUser(user);
       
-      initSocket(user.id);
+      initSocket(user._id);
       
       return { success: true, user };
     } catch (error) {
