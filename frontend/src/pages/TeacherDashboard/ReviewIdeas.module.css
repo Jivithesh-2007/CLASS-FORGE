@@ -49,8 +49,8 @@
 .badge {
   display: inline-block;
   padding: 4px 12px;
-  background: #e3f2fd;
-  color: #1976d2;
+  background: #f0f0f0;
+  color: #000000;
   border-radius: 12px;
   font-size: 12px;
   font-weight: 700;
@@ -80,19 +80,19 @@
 
 .submissionItem:hover {
   background: var(--background);
-  border: 2px solid var(--primary-color);
+  border: 2px solid #000000;
   border-radius: 8px;
 }
 
 .submissionItem.active {
   background: var(--background);
-  border: 2px solid var(--primary-color);
+  border: 2px solid #000000;
   border-radius: 8px;
 }
 
 .submissionItem.selectedForMerge {
   background: var(--background);
-  border: 2px solid var(--primary-color);
+  border: 2px solid #000000;
   border-radius: 8px;
 }
 
@@ -107,7 +107,7 @@
   background: transparent;
   border: none;
   cursor: pointer;
-  color: var(--primary-color);
+  color: #000000;
   padding: 4px;
   display: flex;
   align-items: center;
@@ -117,7 +117,7 @@
 }
 
 .checkboxBtn:hover {
-  color: var(--primary-dark);
+  color: #333333;
 }
 
 .submissionContent {
@@ -143,8 +143,8 @@
 .domain {
   display: inline-block;
   padding: 2px 8px;
-  background: #e3f2fd;
-  color: #1976d2;
+  background: #f0f0f0;
+  color: #000000;
   border-radius: 4px;
   font-weight: 500;
 }
@@ -215,8 +215,8 @@
 .domainBadge {
   display: inline-block;
   padding: 6px 12px;
-  background: #e3f2fd;
-  color: #1976d2;
+  background: #f0f0f0;
+  color: #000000;
   border-radius: 6px;
   font-size: 11px;
   font-weight: 700;
@@ -231,7 +231,7 @@
   align-items: center;
   justify-content: center;
   background: var(--background-alt);
-  color: var(--primary-color);
+  color: #000000;
   padding: 16px 24px;
   border-radius: 10px;
   min-width: 100px;
@@ -241,7 +241,7 @@
 .scoreNumber {
   font-size: 42px;
   font-weight: 700;
-  color: var(--primary-color);
+  color: #000000;
 }
 
 .scoreLabel {
@@ -328,12 +328,12 @@
 
 .evaluationNotesSection textarea:focus {
   outline: none;
-  border-color: var(--primary-color);
-  box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+  border-color: #000000;
+  box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.1);
 }
 
 .aiBox {
-  background: linear-gradient(135deg, #3730a3 0%, #4f46e5 100%);
+  background: linear-gradient(135deg, #000000, #333333);
   border: none;
   border-radius: 16px;
   padding: 28px;
@@ -423,7 +423,7 @@
   display: block;
   font-size: 18px;
   font-weight: 700;
-  color: #4f46e5;
+  color: #000000;
 }
 
 .feedbackBox {
@@ -458,8 +458,8 @@
 
 .feedbackBox textarea:focus {
   outline: none;
-  border-color: #4f46e5;
-  box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+  border-color: #000000;
+  box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.1);
 }
 
 .actionButtons {
@@ -480,7 +480,7 @@
 }
 
 .footerText strong {
-  color: #4f46e5;
+  color: #000000;
   font-weight: 600;
 }
 
@@ -510,7 +510,7 @@
 .approveBtn {
   flex: 1;
   padding: 14px 20px;
-  background: var(--primary-color);
+  background: #000000;
   color: white;
   border: none;
   border-radius: 8px;
@@ -527,8 +527,8 @@
 }
 
 .approveBtn:hover:not(:disabled) {
-  background: var(--primary-dark);
-  box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
+  background: #333333;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
 }
 
 .loadingPanel {
@@ -539,7 +539,7 @@
   flex: 1;
   padding: 40px;
   text-align: center;
-  background: linear-gradient(135deg, #3730a3 0%, #4f46e5 100%);
+  background: linear-gradient(135deg, #000000, #333333);
 }
 
 .loadingSpinner {
@@ -619,13 +619,13 @@
 }
 
 .sortSelect:hover {
-  border-color: var(--primary-color);
+  border-color: #000000;
 }
 
 .sortSelect:focus {
   outline: none;
-  border-color: var(--primary-color);
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+  border-color: #000000;
+  box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.1);
 }
 
 .dropdownIcon {
@@ -753,7 +753,7 @@
 .viewBtn:hover,
 .moreBtn:hover {
   background: var(--bg-light);
-  color: var(--primary-color);
+  color: #000000;
 }
 
 .emptyState {
@@ -781,7 +781,7 @@
 .backBtn {
   background: transparent;
   border: none;
-  color: var(--primary-color);
+  color: #000000;
   font-size: 14px;
   font-weight: 600;
   cursor: pointer;
@@ -791,7 +791,7 @@
 }
 
 .backBtn:hover {
-  color: #2563eb;
+  color: #333333;
 }
 
 .detailContent {
@@ -875,8 +875,8 @@
 .tag {
   display: inline-block;
   padding: 6px 12px;
-  background: #e3f2fd;
-  color: #1976d2;
+  background: #f0f0f0;
+  color: #000000;
   border-radius: 6px;
   font-size: 12px;
   font-weight: 500;
@@ -954,8 +954,8 @@
 
 .feedbackSection textarea:focus {
   outline: none;
-  border-color: var(--primary-color);
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+  border-color: #000000;
+  box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.1);
 }
 
 .detailActions {
@@ -1171,7 +1171,7 @@
 .aiInsightHeader h3 {
   font-size: 14px;
   font-weight: 700;
-  color: #4f46e5;
+  color: #000000;
   margin: 0;
   text-transform: none;
   letter-spacing: normal;
@@ -1187,7 +1187,7 @@
   flex: 1;
   font-size: 13px;
   line-height: 1.7;
-  color: #4f46e5;
+  color: #000000;
   font-style: italic;
   margin: 0;
 }
@@ -1207,7 +1207,7 @@
 .scoreValue {
   font-size: 32px;
   font-weight: 700;
-  color: #4f46e5;
+  color: #000000;
 }
 
 .scoreLabel {
@@ -1229,12 +1229,12 @@
   display: flex;
   gap: 12px;
   font-size: 13px;
-  color: #4f46e5;
+  color: #000000;
   line-height: 1.5;
 }
 
 .bullet {
-  color: #4f46e5;
+  color: #000000;
   font-weight: 700;
   flex-shrink: 0;
 }
@@ -1272,7 +1272,7 @@
 
 .metricReason {
   font-size: 12px;
-  color: #4f46e5;
+  color: #000000;
   line-height: 1.4;
   margin: 0;
 }
@@ -1443,13 +1443,13 @@
 }
 
 .approveModalBtn {
-  background: #4f46e5;
+  background: #000000;
   color: white;
 }
 
 .approveModalBtn:hover:not(:disabled) {
-  background: #4338ca;
-  box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
+  background: #333333;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
 }
 
 .rejectModalBtn:disabled,
@@ -1486,8 +1486,8 @@
 
 .feedbackInputSection textarea:focus {
   outline: none;
-  border-color: var(--primary-color);
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+  border-color: #000000;
+  box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.1);
 }
 
 .feedbackPreview {
@@ -1578,7 +1578,7 @@
   width: 50px;
   height: 50px;
   border: 4px solid #f0f0f0;
-  border-top: 4px solid #4f46e5;
+  border-top: 4px solid #000000;
   border-radius: 50%;
   animation: spin 1s linear infinite;
   margin-bottom: 24px;
@@ -1620,7 +1620,7 @@
 .selectedCount {
   font-size: 14px;
   font-weight: 600;
-  color: #4f46e5;
+  color: #000000;
 }
 
 .mergeBtn {
@@ -1628,7 +1628,7 @@
   align-items: center;
   gap: 8px;
   padding: 10px 16px;
-  background: #4f46e5;
+  background: #000000;
   color: white;
   border: none;
   border-radius: 8px;
@@ -1639,8 +1639,8 @@
 }
 
 .mergeBtn:hover {
-  background: #4338ca;
-  box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
+  background: #333333;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
 }
 
 /* Merge Modal */
@@ -1748,8 +1748,8 @@
 .mergeInput:focus,
 .mergeTextarea:focus {
   outline: none;
-  border-color: #4f46e5;
-  box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+  border-color: #000000;
+  box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.1);
 }
 
 .mergeTextarea {

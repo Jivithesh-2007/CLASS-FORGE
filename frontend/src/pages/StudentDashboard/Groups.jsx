@@ -1,9 +1,10 @@
-import React, { useState, useEffect } from 'react';
-import { MdAdd, MdGroup, MdPeople, MdEmail, MdDelete, MdExitToApp, MdContentCopy, MdClose, MdChat, MdMoreVert } from 'react-icons/md';
+import { useState, useEffect } from 'react';
+import { MdAdd, MdGroup, MdClose, MdSearch, MdRefresh } from 'react-icons/md';
 import { useAuth } from '../../context/AuthContext';
 import Sidebar from '../../components/Sidebar/Sidebar';
 import Header from '../../components/Header/Header';
 import GroupChat from '../../components/GroupChat/GroupChat';
+import GroupDetailsModal from '../../components/GroupDetailsModal/GroupDetailsModal';
 import { groupAPI } from '../../services/api';
 import styles from './Groups.module.css';
 
@@ -14,29 +15,40 @@ const Groups = () => {
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [showInviteModal, setShowInviteModal] = useState(false);
   const [showJoinModal, setShowJoinModal] = useState(false);
-  const [showChatModal, setShowChatModal] = useState(false);
   const [selectedGroup, setSelectedGroup] = useState(null);
+  const [showGroupDetails, setShowGroupDetails] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
   const [formData, setFormData] = useState({
     name: '',
     description: ''
   });
   const [inviteEmail, setInviteEmail] = useState('');
   const [joinCode, setJoinCode] = useState('');
-  const [copiedCode, setCopiedCode] = useState(null);
   const [message, setMessage] = useState({ type: '', text: '' });
 
   useEffect(() => {
-    fetchGroups();
-  }, []);
+    console.log('🔄 Groups component mounted');
+    console.log('👤 Current user:', user);
+    if (user && user._id) {
+      console.log('📋 Fetching groups for user:', user._id);
+      fetchGroups();
+    } else {
+      console.warn('⚠️ User not authenticated');
+      setLoading(false);
+    }
+  }, [user]);
 
   const fetchGroups = async () => {
     try {
+      console.log('📋 Fetching groups...');
       const response = await groupAPI.getGroups();
+      console.log('✅ Groups fetched:', response.data);
+      console.log('📊 Number of groups:', response.data.groups?.length || 0);
       setGroups(response.data.groups || []);
+      setLoading(false);
     } catch (error) {
-      console.error('Error fetching groups:', error);
+      console.error('❌ Error fetching groups:', error);
       showMessage('error', 'Failed to fetch groups');
-    } finally {
       setLoading(false);
     }
   };
@@ -53,7 +65,8 @@ const Groups = () => {
       setFormData({ name: '', description: '' });
       setShowCreateModal(false);
       showMessage('success', 'Group created successfully!');
-      fetchGroups();
+      // Force refresh groups
+      setTimeout(() => fetchGroups(), 500);
     } catch (error) {
       showMessage('error', error.response?.data?.message || 'Failed to create group');
     }
@@ -74,8 +87,7 @@ const Groups = () => {
   const handleJoinByCode = async (e) => {
     e.preventDefault();
     try {
-      const response = await groupAPI.joinByCode({ groupCode: joinCode });
-      console.log('Join response:', response.data);
+      await groupAPI.joinByCode({ groupCode: joinCode });
       setJoinCode('');
       setShowJoinModal(false);
       showMessage('success', 'Joined group successfully!');
@@ -86,46 +98,52 @@ const Groups = () => {
     }
   };
 
-  const handleLeaveGroup = async (groupId) => {
+  const handleDeleteGroup = async (groupId) => {
+    if (window.confirm('Are you sure you want to delete this group?')) {
+      try {
+        await groupAPI.deleteGroup(groupId);
+        showMessage('success', 'Group deleted successfully');
+        setSelectedGroup(null);
+        fetchGroups();
+      } catch (error) {
+        showMessage('error', error.response?.data?.message || 'Failed to delete group');
+      }
+    }
+  };
+
+  const handleLeaveGroup = async () => {
     try {
-      await groupAPI.leaveGroup(groupId);
+      console.log('👋 Leaving group:', selectedGroup._id);
+      await groupAPI.leaveGroup(selectedGroup._id);
+      console.log('✅ Left group successfully');
       showMessage('success', 'Left group successfully');
+      setSelectedGroup(null);
+      setShowGroupDetails(false);
       fetchGroups();
     } catch (error) {
+      console.error('❌ Error leaving group:', error);
       showMessage('error', error.response?.data?.message || 'Failed to leave group');
     }
   };
 
-  const handleDeleteGroup = async (groupId) => {
-    try {
-      await groupAPI.deleteGroup(groupId);
-      showMessage('success', 'Group deleted successfully');
-      fetchGroups();
-    } catch (error) {
-      showMessage('error', error.response?.data?.message || 'Failed to delete group');
-    }
-  };
+  const filteredGroups = groups.filter(group =>
+    group.name.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
-  const copyToClipboard = (code) => {
-    navigator.clipboard.writeText(code);
-    setCopiedCode(code);
-    setTimeout(() => setCopiedCode(null), 2000);
-  };
-
-  const getGroupRole = (group) => {
-    if (group.founder?._id === user?._id) return 'FOUNDER';
-    return 'CONTRIBUTOR';
-  };
-
-  const getGroupStatus = (group) => {
-    const memberCount = group.members?.length || 0;
-    if (memberCount >= 5) return 'IN PROGRESS';
-    if (memberCount >= 3) return 'PLANNING';
-    return 'ACTIVE';
-  };
+  const isGroupAdmin = selectedGroup && selectedGroup.createdBy?._id === user?._id;
 
   if (loading) {
-    return <div>Loading...</div>;
+    return (
+      <div className={styles.layout}>
+        <Sidebar role="student" />
+        <div className={styles.main}>
+          <Header title="My GROUPS" />
+          <div className={styles.whatsappContainer}>
+            <div className={styles.loadingContainer}>Loading groups...</div>
+          </div>
+        </div>
+      </div>
+    );
   }
 
   return (
@@ -133,235 +151,141 @@ const Groups = () => {
       <Sidebar role="student" />
       <div className={styles.main}>
         <Header title="My GROUPS" />
-        <div className={styles.content}>
-          {message.text && (
-            <div style={{
-              marginBottom: '20px',
-              padding: '16px 20px',
-              borderRadius: '8px',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'space-between',
-              animation: 'slideDown 0.3s ease-out',
-              backgroundColor: message.type === 'success' ? 'var(--icon-teal-bg)' : '#ffebee',
-              border: `1px solid ${message.type === 'success' ? 'var(--icon-teal-text)' : '#ffcdd2'}`,
-              color: message.type === 'success' ? 'var(--icon-teal-text)' : 'var(--status-danger)'
-            }}>
-              <span style={{ fontSize: '14px', fontWeight: '500' }}>{message.text}</span>
-              <button
-                onClick={() => setMessage({ type: '', text: '' })}
-                style={{
-                  background: 'none',
-                  border: 'none',
-                  cursor: 'pointer',
-                  color: 'inherit',
-                  padding: '4px',
-                  display: 'flex',
-                  alignItems: 'center'
-                }}
-              >
-                <MdClose size={18} />
-              </button>
-            </div>
-          )}
+        
+        {message.text && (
+          <div className={`${styles.alert} ${styles[message.type]}`}>
+            <span>{message.text}</span>
+            <button onClick={() => setMessage({ type: '', text: '' })}>
+              <MdClose size={18} />
+            </button>
+          </div>
+        )}
 
-          <style>{`
-            @keyframes slideDown {
-              from {
-                opacity: 0;
-                transform: translateY(-10px);
-              }
-              to {
-                opacity: 1;
-                transform: translateY(0);
-              }
-            }
-          `}</style>
-
-          <div className={styles.headerSection}>
-            <div className={styles.headerLeft}>
-              <h1 className={styles.pageTitle}>Project Groups</h1>
-              <p className={styles.pageSubtitle}>Collaborate with peers on innovation challenges.</p>
+        <div className={styles.whatsappContainer}>
+          {/* Sidebar - Groups List */}
+          <div className={styles.groupsSidebar}>
+            <div className={styles.sidebarHeader}>
+              <h2 className={styles.sidebarTitle}>Chats</h2>
+              <div className={styles.sidebarActions}>
+                <button 
+                  className={styles.iconButton}
+                  onClick={() => fetchGroups()}
+                  title="Refresh groups"
+                >
+                  <MdRefresh size={24} />
+                </button>
+                <button 
+                  className={styles.iconButton}
+                  onClick={() => setShowCreateModal(true)}
+                  title="Create group"
+                >
+                  <MdAdd size={24} />
+                </button>
+                <button 
+                  className={styles.iconButton}
+                  onClick={() => setShowJoinModal(true)}
+                  title="Join group"
+                >
+                  <MdGroup size={24} />
+                </button>
+              </div>
             </div>
-            <div className={styles.headerRight}>
-              <button className={styles.codeButton} onClick={() => setShowJoinModal(true)}>
-                ENTER JOIN CODE
-              </button>
-              <button className={styles.createBtn} onClick={() => setShowCreateModal(true)}>
-                <MdAdd size={18} />
-                Create New Group
-              </button>
+
+            <div className={styles.searchContainer}>
+              <MdSearch size={20} />
+              <input
+                type="text"
+                placeholder="Search groups..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className={styles.searchInput}
+              />
+            </div>
+
+            <div className={styles.groupsList}>
+              {filteredGroups.length === 0 ? (
+                <div className={styles.emptyGroups}>
+                  <MdGroup size={40} />
+                  <p>No groups yet</p>
+                </div>
+              ) : (
+                filteredGroups.map((group) => (
+                  <div
+                    key={group._id}
+                    className={`${styles.groupItem} ${selectedGroup?._id === group._id ? styles.active : ''}`}
+                    onClick={() => setSelectedGroup(group)}
+                  >
+                    <div className={styles.groupItemAvatar}>
+                      {group.name.charAt(0).toUpperCase()}
+                    </div>
+                    <div className={styles.groupItemInfo}>
+                      <div className={styles.groupItemName}>{group.name}</div>
+                      <div className={styles.groupItemMembers}>
+                        {group.members?.length || 0} members
+                      </div>
+                    </div>
+                  </div>
+                ))
+              )}
             </div>
           </div>
 
-          {groups.length === 0 ? (
-            <div className={styles.emptyState}>
-              <MdGroup className={styles.emptyIcon} />
-              <div className={styles.emptyText}>No groups yet</div>
-              <div className={styles.emptySubtext}>Create a group or join one using a code to collaborate with other students</div>
-            </div>
-          ) : (
-            <div className={styles.groupsGrid}>
-              {groups.map((group) => (
-                <div key={group._id} className={styles.groupCard}>
-                  <div className={styles.cardHeader}>
-                    <div className={styles.groupIcon}>
-                      <MdPeople size={24} />
-                    </div>
-                    <div>
-                      <div className={styles.statusBadge}>
-                        {getGroupStatus(group)}
-                      </div>
-                      <div className={styles.codeSection}>
-                        <span className={styles.groupCodeText}>CODE: {group.groupCode}</span>
-                        <button 
-                          onClick={() => copyToClipboard(group.groupCode)}
-                          className={styles.copyCodeBtn}
-                          title="Copy code"
-                        >
-                          <MdContentCopy size={14} />
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-
-                  <h3 className={styles.groupName}>{group.name}</h3>
-                  <p className={styles.groupRole}>{getGroupRole(group)}</p>
-                  <p className={styles.groupDescription}>{group.description}</p>
-
-                  <div className={styles.groupMembers}>
-                    {group.members?.slice(0, 3).map((member, idx) => (
-                      <div key={idx} className={styles.memberAvatar}>
-                        {member.user?.fullName?.charAt(0) || 'U'}
-                      </div>
-                    ))}
-                    {group.members?.length > 3 && (
-                      <div className={styles.memberAvatar}>
-                        +{group.members.length - 3}
-                      </div>
-                    )}
-                  </div>
-
-                  <div className={styles.cardActions}>
-                    {group.members?.length >= 2 && (
-                      <button 
-                        onClick={() => { setSelectedGroup(group); setShowChatModal(true); }}
-                        className={styles.actionBtn}
-                        title="Chat"
-                      >
-                        <MdChat size={18} />
-                      </button>
-                    )}
-                    <button 
-                      onClick={() => { setSelectedGroup(group); setShowInviteModal(true); }}
-                      className={styles.actionBtn}
-                      title="Invite"
-                    >
-                      <MdEmail size={18} />
-                    </button>
-                    {group.founder?._id === user?._id && (
-                      <button 
-                        onClick={() => handleDeleteGroup(group._id)}
-                        className={`${styles.actionBtn} ${styles.deleteBtn}`}
-                        title="Delete group"
-                      >
-                        <MdDelete size={18} />
-                      </button>
-                    )}
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
+          {/* Chat Area */}
+          <div className={styles.chatArea}>
+            {selectedGroup ? (
+              <GroupChat 
+                group={selectedGroup}
+                currentUser={user}
+                onShowDetails={() => setShowGroupDetails(true)}
+              />
+            ) : (
+              <div className={styles.emptyChat}>
+                <h3>Select a group to start chatting</h3>
+                <p>Choose a group from the list or create a new one</p>
+              </div>
+            )}
+          </div>
         </div>
       </div>
 
+      {/* Create Group Modal */}
       {showCreateModal && (
-        <div style={{
-          position: 'fixed',
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
-          backgroundColor: 'rgba(0,0,0,0.5)',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          zIndex: 1000
-        }}>
-          <div style={{
-            backgroundColor: 'var(--white)',
-            padding: '32px',
-            borderRadius: 'var(--radius-md)',
-            width: '90%',
-            maxWidth: '500px',
-            boxShadow: 'var(--shadow-xl)'
-          }}>
-            <h3 style={{ marginBottom: '20px', fontSize: '20px', fontWeight: '600' }}>Create New Group</h3>
-            <form onSubmit={handleCreateGroup}>
-              <div style={{ marginBottom: '20px' }}>
-                <label style={{ display: 'block', marginBottom: '8px', fontWeight: '500' }}>Group Name</label>
+        <div className={styles.modalOverlay}>
+          <div className={styles.modal}>
+            <div className={styles.modalHeader}>
+              <h3>Create New Group</h3>
+              <button onClick={() => setShowCreateModal(false)}>
+                <MdClose size={24} />
+              </button>
+            </div>
+            <form onSubmit={handleCreateGroup} className={styles.modalForm}>
+              <div className={styles.formGroup}>
+                <label>Group Name</label>
                 <input
                   type="text"
                   value={formData.name}
                   onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                  style={{
-                    width: '100%',
-                    padding: '12px',
-                    border: '1px solid var(--border-color)',
-                    borderRadius: 'var(--radius)',
-                    fontSize: '14px',
-                    boxSizing: 'border-box'
-                  }}
+                  placeholder="Enter group name"
                   required
                 />
               </div>
-              <div style={{ marginBottom: '20px' }}>
-                <label style={{ display: 'block', marginBottom: '8px', fontWeight: '500' }}>Description</label>
+              <div className={styles.formGroup}>
+                <label>Description</label>
                 <textarea
                   value={formData.description}
                   onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                  style={{
-                    width: '100%',
-                    padding: '12px',
-                    border: '1px solid var(--border-color)',
-                    borderRadius: 'var(--radius)',
-                    fontSize: '14px',
-                    minHeight: '100px',
-                    boxSizing: 'border-box'
-                  }}
+                  placeholder="Enter group description"
                   required
                 />
               </div>
-              <div style={{ display: 'flex', gap: '12px' }}>
-                <button
-                  type="submit"
-                  style={{
-                    flex: 1,
-                    padding: '12px',
-                    backgroundColor: 'black',
-                    color: 'white',
-                    border: 'none',
-                    borderRadius: 'var(--radius)',
-                    cursor: 'pointer',
-                    fontWeight: '600'
-                  }}
-                >
+              <div className={styles.modalActions}>
+                <button type="submit" className={styles.primaryBtn}>
                   Create Group
                 </button>
-                <button
-                  type="button"
+                <button 
+                  type="button" 
+                  className={styles.secondaryBtn}
                   onClick={() => setShowCreateModal(false)}
-                  style={{
-                    flex: 1,
-                    padding: '12px',
-                    backgroundColor: '#ccc',
-                    color: 'var(--text-primary)',
-                    border: 'none',
-                    borderRadius: 'var(--radius)',
-                    cursor: 'pointer',
-                    fontWeight: '600'
-                  }}
                 >
                   Cancel
                 </button>
@@ -371,80 +295,36 @@ const Groups = () => {
         </div>
       )}
 
+      {/* Join Group Modal */}
       {showJoinModal && (
-        <div style={{
-          position: 'fixed',
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
-          backgroundColor: 'rgba(0,0,0,0.5)',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          zIndex: 1000
-        }}>
-          <div style={{
-            backgroundColor: 'var(--white)',
-            padding: '32px',
-            borderRadius: 'var(--radius-md)',
-            width: '90%',
-            maxWidth: '500px',
-            boxShadow: 'var(--shadow-xl)'
-          }}>
-            <h3 style={{ marginBottom: '20px', fontSize: '20px', fontWeight: '600' }}>Join Group</h3>
-            <form onSubmit={handleJoinByCode}>
-              <div style={{ marginBottom: '20px' }}>
-                <label style={{ display: 'block', marginBottom: '8px', fontWeight: '500' }}>Group Code</label>
+        <div className={styles.modalOverlay}>
+          <div className={styles.modal}>
+            <div className={styles.modalHeader}>
+              <h3>Join Group</h3>
+              <button onClick={() => setShowJoinModal(false)}>
+                <MdClose size={24} />
+              </button>
+            </div>
+            <form onSubmit={handleJoinByCode} className={styles.modalForm}>
+              <div className={styles.formGroup}>
+                <label>Group Code</label>
                 <input
                   type="text"
                   value={joinCode}
                   onChange={(e) => setJoinCode(e.target.value.toUpperCase())}
-                  placeholder="Enter 6-character group code"
-                  style={{
-                    width: '100%',
-                    padding: '12px',
-                    border: '1px solid var(--border-color)',
-                    borderRadius: 'var(--radius)',
-                    fontSize: '14px',
-                    textTransform: 'uppercase',
-                    letterSpacing: '2px',
-                    textAlign: 'center',
-                    boxSizing: 'border-box'
-                  }}
+                  placeholder="Enter 6-character code"
                   maxLength="6"
                   required
                 />
               </div>
-              <div style={{ display: 'flex', gap: '12px' }}>
-                <button
-                  type="submit"
-                  style={{
-                    flex: 1,
-                    padding: '12px',
-                    backgroundColor:'black',
-                    color: 'white',
-                    border: 'none',
-                    borderRadius: 'var(--radius)',
-                    cursor: 'pointer',
-                    fontWeight: '600'
-                  }}
-                >
+              <div className={styles.modalActions}>
+                <button type="submit" className={styles.primaryBtn}>
                   Join Group
                 </button>
-                <button
-                  type="button"
-                  onClick={() => { setShowJoinModal(false); setJoinCode(''); }}
-                  style={{
-                    flex: 1,
-                    padding: '12px',
-                    backgroundColor: '#ccc',
-                    color: 'var(--text-primary)',
-                    border: 'none',
-                    borderRadius: 'var(--radius)',
-                    cursor: 'pointer',
-                    fontWeight: '600'
-                  }}
+                <button 
+                  type="button" 
+                  className={styles.secondaryBtn}
+                  onClick={() => setShowJoinModal(false)}
                 >
                   Cancel
                 </button>
@@ -454,76 +334,35 @@ const Groups = () => {
         </div>
       )}
 
-      {showInviteModal && (
-        <div style={{
-          position: 'fixed',
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
-          backgroundColor: 'rgba(0,0,0,0.5)',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          zIndex: 1000
-        }}>
-          <div style={{
-            backgroundColor: 'var(--white)',
-            padding: '32px',
-            borderRadius: 'var(--radius-md)',
-            width: '90%',
-            maxWidth: '500px',
-            boxShadow: 'var(--shadow-xl)'
-          }}>
-            <h3 style={{ marginBottom: '20px', fontSize: '20px', fontWeight: '600' }}>Invite Member</h3>
-            <form onSubmit={handleInviteMember}>
-              <div style={{ marginBottom: '20px' }}>
-                <label style={{ display: 'block', marginBottom: '8px', fontWeight: '500' }}>Email Address</label>
+      {/* Invite Member Modal */}
+      {showInviteModal && selectedGroup && (
+        <div className={styles.modalOverlay}>
+          <div className={styles.modal}>
+            <div className={styles.modalHeader}>
+              <h3>Invite Member</h3>
+              <button onClick={() => setShowInviteModal(false)}>
+                <MdClose size={24} />
+              </button>
+            </div>
+            <form onSubmit={handleInviteMember} className={styles.modalForm}>
+              <div className={styles.formGroup}>
+                <label>Email Address</label>
                 <input
                   type="email"
                   value={inviteEmail}
                   onChange={(e) => setInviteEmail(e.target.value)}
                   placeholder="student@karunya.edu.in"
-                  style={{
-                    width: '100%',
-                    padding: '12px',
-                    border: '1px solid var(--border-color)',
-                    borderRadius: 'var(--radius)',
-                    fontSize: '14px',
-                    boxSizing: 'border-box'
-                  }}
                   required
                 />
               </div>
-              <div style={{ display: 'flex', gap: '12px' }}>
-                <button
-                  type="submit"
-                  style={{
-                    flex: 1,
-                    padding: '12px',
-                    backgroundColor: 'var(--primary-color)',
-                    color: 'white',
-                    border: 'none',
-                    borderRadius: 'var(--radius)',
-                    cursor: 'pointer',
-                    fontWeight: '600'
-                  }}
-                >
+              <div className={styles.modalActions}>
+                <button type="submit" className={styles.primaryBtn}>
                   Send Invitation
                 </button>
-                <button
-                  type="button"
-                  onClick={() => { setShowInviteModal(false); setInviteEmail(''); }}
-                  style={{
-                    flex: 1,
-                    padding: '12px',
-                    backgroundColor: '#ccc',
-                    color: 'var(--text-primary)',
-                    border: 'none',
-                    borderRadius: 'var(--radius)',
-                    cursor: 'pointer',
-                    fontWeight: '600'
-                  }}
+                <button 
+                  type="button" 
+                  className={styles.secondaryBtn}
+                  onClick={() => setShowInviteModal(false)}
                 >
                   Cancel
                 </button>
@@ -533,37 +372,22 @@ const Groups = () => {
         </div>
       )}
 
-      {showChatModal && selectedGroup && (
-        <div style={{
-          position: 'fixed',
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
-          backgroundColor: 'rgba(0,0,0,0.5)',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          zIndex: 1001
-        }}>
-          <div style={{
-            backgroundColor: 'var(--white)',
-            borderRadius: 'var(--radius-md)',
-            width: '90%',
-            maxWidth: '600px',
-            height: '80vh',
-            maxHeight: '600px',
-            boxShadow: 'var(--shadow-xl)',
-            display: 'flex',
-            flexDirection: 'column'
-          }}>
-            <GroupChat 
-              group={selectedGroup} 
-              onClose={() => { setShowChatModal(false); setSelectedGroup(null); }}
-              currentUser={user}
-            />
-          </div>
-        </div>
+      {/* Group Details Modal */}
+      {showGroupDetails && selectedGroup && (
+        <GroupDetailsModal
+          group={selectedGroup}
+          isAdmin={isGroupAdmin}
+          onClose={() => setShowGroupDetails(false)}
+          onInvite={() => {
+            setShowGroupDetails(false);
+            setShowInviteModal(true);
+          }}
+          onDelete={() => {
+            handleDeleteGroup(selectedGroup._id);
+            setShowGroupDetails(false);
+          }}
+          onLeave={handleLeaveGroup}
+        />
       )}
     </div>
   );

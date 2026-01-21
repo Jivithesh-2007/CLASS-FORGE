@@ -27,7 +27,8 @@
 }
 
 .breadcrumbApp {
-  color: var(--text-secondary);
+  color: #000000;
+  font-weight: 700;
 }
 
 
@@ -155,13 +156,14 @@
   width: 40px;
   height: 40px;
   border-radius: 50%;
-  background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
-  color: white;
+  background: #f0f0f0;
+  color: #000000;
   display: flex;
   align-items: center;
   justify-content: center;
   font-weight: 600;
   font-size: 16px;
+  border: 1px solid #e0e0e0;
 }
 
 .profileInfo {
@@ -243,7 +245,7 @@
 
 .menuItem:hover {
   background-color: #f5f7fa;
-  color: var(--primary-color);
+  color: #000000;
 }
 
 

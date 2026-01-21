@@ -15,7 +15,7 @@ const Login = () => {
     password: ''
   });
   const [showPassword, setShowPassword] = useState(false);
-  const [error, setError] = useState('');
+  const [message, setMessage] = useState({ type: '', text: '' });
   const [loading, setLoading] = useState(false);
 
   const handleChange = (e) => {
@@ -23,31 +23,43 @@ const Login = () => {
       ...formData,
       [e.target.name]: e.target.value
     });
-    setError('');
+    // Only clear message if it's a success message
+    if (message.type === 'success') {
+      setMessage({ type: '', text: '' });
+    }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError('');
+    setMessage({ type: '', text: '' });
     setLoading(true);
     const email = formData.username + formData.domain;
     try {
+      console.log('🔐 Attempting login with:', email);
       const result = await login({ email, password: formData.password });
+      console.log('📋 Login result:', result);
+      
       if (result.success) {
-        const role = result.user.role;
-        if (role === 'student') {
-          navigate('/student-dashboard');
-        } else if (role === 'teacher') {
-          navigate('/teacher-dashboard');
-        } else if (role === 'admin') {
-          navigate('/admin-dashboard');
-        }
+        console.log('✅ Login successful');
+        setMessage({ type: 'success', text: 'Login successful! Redirecting...' });
+        setTimeout(() => {
+          const role = result.user.role;
+          if (role === 'student') {
+            navigate('/student-dashboard');
+          } else if (role === 'teacher') {
+            navigate('/teacher-dashboard');
+          } else if (role === 'admin') {
+            navigate('/admin-dashboard');
+          }
+        }, 1500);
       } else {
-        setError(result.message);
+        console.log('❌ Login failed:', result.message);
+        setMessage({ type: 'error', text: result.message || 'Login failed. Please try again.' });
+        setLoading(false);
       }
     } catch (err) {
-      setError('An error occurred. Please try again.');
-    } finally {
+      console.error('💥 Login error:', err);
+      setMessage({ type: 'error', text: 'An error occurred. Please try again.' });
       setLoading(false);
     }
   };
@@ -61,7 +73,11 @@ const Login = () => {
         </div>
         <div className={styles.title}>Welcome back</div>
         <div className={styles.description}>Login to your account</div>
-        {error && <div className={styles.error}>{error}</div>}
+        {message.text && (
+          <div className={`${styles.message} ${styles[message.type]}`}>
+            {message.text}
+          </div>
+        )}
         <form className={styles.form} onSubmit={handleSubmit}>
           <div className={styles.formGroup}>
             <label className={styles.label}>Username</label>

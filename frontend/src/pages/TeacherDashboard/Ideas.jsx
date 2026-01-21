@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import Sidebar from '../../components/Sidebar/Sidebar';
 import Header from '../../components/Header/Header';
+import IdeaDetailModal from '../../components/IdeaDetailModal/IdeaDetailModal';
 import { ideaAPI } from '../../services/api';
 import styles from './TeacherDashboard.module.css';
 
@@ -9,6 +10,7 @@ const Ideas = () => {
   const [filteredIdeas, setFilteredIdeas] = useState([]);
   const [filterStatus, setFilterStatus] = useState('all');
   const [loading, setLoading] = useState(true);
+  const [selectedIdea, setSelectedIdea] = useState(null);
 
   useEffect(() => {
     fetchIdeas();
@@ -24,11 +26,16 @@ const Ideas = () => {
 
   const fetchIdeas = async () => {
     try {
-      const [approvedRes, rejectedRes] = await Promise.all([
+      const [approvedRes, rejectedRes, mergedRes] = await Promise.all([
         ideaAPI.getIdeas({ status: 'approved' }),
-        ideaAPI.getIdeas({ status: 'rejected' })
+        ideaAPI.getIdeas({ status: 'rejected' }),
+        ideaAPI.getIdeas({ status: 'merged' })
       ]);
-      const allIdeas = [...(approvedRes.data.ideas || []), ...(rejectedRes.data.ideas || [])];
+      const allIdeas = [
+        ...(approvedRes.data.ideas || []), 
+        ...(rejectedRes.data.ideas || []),
+        ...(mergedRes.data.ideas || [])
+      ];
       setIdeas(allIdeas);
       setFilteredIdeas(allIdeas);
     } catch (error) {
@@ -86,6 +93,12 @@ const Ideas = () => {
               >
                 Rejected
               </button>
+              <button
+                className={`${styles.filterTab} ${filterStatus === 'merged' ? styles.active : ''}`}
+                onClick={() => setFilterStatus('merged')}
+              >
+                Merged
+              </button>
             </div>
 
             {filteredIdeas.length === 0 ? (
@@ -107,7 +120,12 @@ const Ideas = () => {
                   <div className={styles.headerCell}>STATUS</div>
                 </div>
                 {filteredIdeas.map((idea) => (
-                  <div key={idea._id} className={styles.ideaRow}>
+                  <div 
+                    key={idea._id} 
+                    className={styles.ideaRow}
+                    onClick={() => setSelectedIdea(idea)}
+                    style={{ cursor: 'pointer' }}
+                  >
                     <div className={styles.proposalDetails}>
                       <h3 className={styles.ideaRowTitleText}>{idea.title}</h3>
                       <p className={styles.ideaRowDescription}>{idea.description}</p>
@@ -124,7 +142,7 @@ const Ideas = () => {
                     </div>
                     <div className={styles.statusCell}>
                       <span className={`${styles.status} ${getStatusClass(idea.status)}`}>
-                        {idea.status.charAt(0).toUpperCase() + idea.status.slice(1)}
+                        {idea.status === 'pending' ? 'Under Review' : idea.status.charAt(0).toUpperCase() + idea.status.slice(1)}
                       </span>
                     </div>
                   </div>
@@ -134,6 +152,15 @@ const Ideas = () => {
           </div>
         </div>
       </div>
+
+      {/* Idea Detail Modal */}
+      {selectedIdea && (
+        <IdeaDetailModal 
+          idea={selectedIdea} 
+          onClose={() => setSelectedIdea(null)}
+          showComments={true}
+        />
+      )}
     </div>
   );
 };

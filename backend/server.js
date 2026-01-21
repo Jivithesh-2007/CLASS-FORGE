@@ -11,6 +11,8 @@ const notificationRoutes = require('./routes/notificationRoutes');
 const adminRoutes = require('./routes/adminRoutes');
 const teacherRoutes = require('./routes/teacherRoutes');
 const messageRoutes = require('./routes/messageRoutes');
+
+// ClassForge Backend Server - Restart
 const app = express();
 const server = http.createServer(app);
 const io = new Server(server, {
@@ -49,6 +51,7 @@ const corsOptions = {
 app.use(cors(corsOptions));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use('/uploads', express.static('uploads'));
 app.set('io', io);
 app.use('/api/auth', authRoutes);
 app.use('/api/ideas', ideaRoutes);

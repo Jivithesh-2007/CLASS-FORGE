@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { MdCheckCircle, MdDelete, MdDoneAll, MdClose } from 'react-icons/md';
 import Sidebar from '../../components/Sidebar/Sidebar';
 import Header from '../../components/Header/Header';
@@ -12,7 +12,7 @@ const Notifications = () => {
   const [notifications, setNotifications] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedNotif, setSelectedNotif] = useState(null);
-  const socketRef = React.useRef(null);
+  const socketRef = useRef(null);
 
   useEffect(() => {
     if (user && user._id) {
@@ -44,11 +44,15 @@ const Notifications = () => {
 
   const fetchNotifications = async () => {
     try {
+      console.log('📋 Fetching notifications...');
       const response = await notificationAPI.getNotifications();
+      console.log('✅ Notifications fetched:', response.data);
+      console.log('📊 Total notifications:', response.data.notifications?.length || 0);
+      console.log('📊 Unread count:', response.data.unreadCount || 0);
       setNotifications(response.data.notifications);
+      setLoading(false);
     } catch (error) {
-      console.error('Error fetching notifications:', error);
-    } finally {
+      console.error('❌ Error fetching notifications:', error);
       setLoading(false);
     }
   };

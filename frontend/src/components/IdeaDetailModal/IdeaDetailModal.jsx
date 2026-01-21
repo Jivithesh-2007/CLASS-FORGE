@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { MdClose, MdSend, MdDelete } from 'react-icons/md';
+import { MdClose, MdSend, MdDelete, MdDeleteOutline } from 'react-icons/md';
 import { ideaAPI } from '../../services/api';
 import { useAuth } from '../../context/AuthContext';
 import { getSocket } from '../../services/socket';
@@ -12,6 +12,8 @@ const IdeaDetailModal = ({ idea, onClose, showComments = false }) => {
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const [message, setMessage] = useState({ type: '', text: '' });
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [deleting, setDeleting] = useState(false);
   const socketRef = React.useRef(null);
 
   useEffect(() => {
@@ -96,6 +98,23 @@ const IdeaDetailModal = ({ idea, onClose, showComments = false }) => {
     }
   };
 
+  const handleDeleteIdea = async () => {
+    setDeleting(true);
+    try {
+      await ideaAPI.deleteIdea(idea._id);
+      showMessage('success', 'Idea deleted successfully');
+      setTimeout(() => {
+        setShowDeleteConfirm(false);
+        onClose();
+        window.location.reload();
+      }, 1500);
+    } catch (error) {
+      console.error('Error deleting idea:', error);
+      showMessage('error', error.response?.data?.message || 'Failed to delete idea');
+      setDeleting(false);
+    }
+  };
+
   const getStatusClass = (status) => {
     switch (status) {
       case 'pending': return styles.statusPending;
@@ -106,14 +125,36 @@ const IdeaDetailModal = ({ idea, onClose, showComments = false }) => {
     }
   };
 
+  const getMergedIdeas = async () => {
+    if (!idea.mergedInto) return null;
+    try {
+      const response = await ideaAPI.getIdeaById(idea.mergedInto);
+      return response.data.idea;
+    } catch (error) {
+      console.error('Error fetching merged idea:', error);
+      return null;
+    }
+  };
+
   return (
     <div className={styles.modalOverlay} onClick={onClose}>
       <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
         <div className={styles.modalHeader}>
           <h2 className={styles.modalTitle}>{idea.title}</h2>
-          <button className={styles.closeBtn} onClick={onClose}>
-            <MdClose size={24} />
-          </button>
+          <div className={styles.headerActions}>
+            {user.role === 'teacher' && (
+              <button 
+                className={styles.deleteBtn} 
+                onClick={() => setShowDeleteConfirm(true)}
+                title="Delete idea"
+              >
+                <MdDeleteOutline size={20} />
+              </button>
+            )}
+            <button className={styles.closeBtn} onClick={onClose}>
+              <MdClose size={24} />
+            </button>
+          </div>
         </div>
 
         {message.text && (
@@ -127,7 +168,11 @@ const IdeaDetailModal = ({ idea, onClose, showComments = false }) => {
             <div className={styles.ideaMeta}>
               <div className={styles.metaItem}>
                 <span className={styles.metaLabel}>Submitted by</span>
-                <span className={styles.metaValue}>{idea.submittedBy?.fullName}</span>
+                <span className={styles.metaValue}>
+                  {idea.contributors && idea.contributors.length > 0
+                    ? idea.contributors.map(c => c.fullName || c).join(', ')
+                    : idea.submittedBy?.fullName}
+                </span>
               </div>
               <div className={styles.metaItem}>
                 <span className={styles.metaLabel}>Domain</span>
@@ -136,7 +181,7 @@ const IdeaDetailModal = ({ idea, onClose, showComments = false }) => {
               <div className={styles.metaItem}>
                 <span className={styles.metaLabel}>Status</span>
                 <span className={`${styles.status} ${getStatusClass(idea.status)}`}>
-                  {idea.status.charAt(0).toUpperCase() + idea.status.slice(1)}
+                  {idea.status === 'pending' ? 'Under Review' : idea.status.charAt(0).toUpperCase() + idea.status.slice(1)}
                 </span>
               </div>
               <div className={styles.metaItem}>
@@ -234,6 +279,39 @@ const IdeaDetailModal = ({ idea, onClose, showComments = false }) => {
             </div>
           )}
         </div>
+
+        {/* Delete Confirmation Modal */}
+        {showDeleteConfirm && (
+          <div className={styles.confirmOverlay} onClick={() => !deleting && setShowDeleteConfirm(false)}>
+            <div className={styles.confirmModal} onClick={(e) => e.stopPropagation()}>
+              <div className={styles.confirmHeader}>
+                <h3 className={styles.confirmTitle}>Delete Idea</h3>
+              </div>
+              <div className={styles.confirmContent}>
+                <p>Are you sure you want to delete this idea?</p>
+                <p style={{ marginTop: '12px', color: '#ef4444', fontWeight: '500' }}>
+                  This action cannot be undone. The idea and all its comments will be permanently deleted.
+                </p>
+              </div>
+              <div className={styles.confirmFooter}>
+                <button 
+                  className={styles.cancelBtn}
+                  onClick={() => setShowDeleteConfirm(false)}
+                  disabled={deleting}
+                >
+                  Cancel
+                </button>
+                <button 
+                  className={styles.confirmDeleteBtn}
+                  onClick={handleDeleteIdea}
+                  disabled={deleting}
+                >
+                  {deleting ? 'Deleting...' : 'Delete Idea'}
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

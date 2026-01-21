@@ -16,29 +16,33 @@ const Signup = () => {
   });
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [error, setError] = useState('');
+  const [message, setMessage] = useState({ type: '', text: '' });
   const [loading, setLoading] = useState(false);
   const handleChange = (e) => {
     setFormData({
       ...formData,
       [e.target.name]: e.target.value
     });
-    setError('');
+    // Only clear message if it's a success message
+    if (message.type === 'success') {
+      setMessage({ type: '', text: '' });
+    }
   };
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError('');
+    setMessage({ type: '', text: '' });
     if (formData.password !== formData.confirmPassword) {
-      setError('Passwords do not match');
+      setMessage({ type: 'error', text: 'Passwords do not match' });
       return;
     }
     if (formData.password.length < 6) {
-      setError('Password must be at least 6 characters');
+      setMessage({ type: 'error', text: 'Password must be at least 6 characters' });
       return;
     }
     setLoading(true);
     const email = formData.username + formData.domain;
     try {
+      console.log('📝 Attempting signup with:', email);
       const result = await signup({
         fullName: formData.fullName,
         username: formData.username,
@@ -46,21 +50,29 @@ const Signup = () => {
         department: formData.department,
         password: formData.password
       });
+      console.log('📋 Signup result:', result);
+      
       if (result.success) {
-        const role = result.user.role;
-        if (role === 'student') {
-          navigate('/student-dashboard');
-        } else if (role === 'teacher') {
-          navigate('/teacher-dashboard');
-        } else if (role === 'admin') {
-          navigate('/admin-dashboard');
-        }
+        console.log('✅ Signup successful');
+        setMessage({ type: 'success', text: 'Account created successfully! Redirecting...' });
+        setTimeout(() => {
+          const role = result.user.role;
+          if (role === 'student') {
+            navigate('/student-dashboard');
+          } else if (role === 'teacher') {
+            navigate('/teacher-dashboard');
+          } else if (role === 'admin') {
+            navigate('/admin-dashboard');
+          }
+        }, 1500);
       } else {
-        setError(result.message);
+        console.log('❌ Signup failed:', result.message);
+        setMessage({ type: 'error', text: result.message || 'Signup failed. Please try again.' });
+        setLoading(false);
       }
     } catch (err) {
-      setError('An error occurred. Please try again.');
-    } finally {
+      console.error('💥 Signup error:', err);
+      setMessage({ type: 'error', text: 'An error occurred. Please try again.' });
       setLoading(false);
     }
   };
@@ -73,7 +85,11 @@ const Signup = () => {
         </div>
         <div className={styles.title}>Create Account</div>
         <div className={styles.description}>Sign up to start submitting your ideas</div>
-        {error && <div className={styles.error}>{error}</div>}
+        {message.text && (
+          <div className={`${styles.message} ${styles[message.type]}`}>
+            {message.text}
+          </div>
+        )}
         <form className={styles.form} onSubmit={handleSubmit}>
           <div className={styles.formGroup}>
             <label className={styles.label}>Full Name</label>

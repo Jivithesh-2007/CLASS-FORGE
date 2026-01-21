@@ -341,6 +341,58 @@ const deactivateAccount = async (req, res) => {
   }
 };
 
+const sendEmail = async (req, res) => {
+  try {
+    const { to, subject, message } = req.body;
+
+    if (!to || !subject || !message) {
+      return res.status(400).json({
+        success: false,
+        message: 'Email, subject, and message are required'
+      });
+    }
+
+    const nodemailer = require('nodemailer');
+    const transporter = nodemailer.createTransport({
+      service: process.env.EMAIL_SERVICE,
+      auth: {
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASSWORD
+      }
+    });
+
+    const mailOptions = {
+      from: process.env.EMAIL_FROM,
+      to: to,
+      subject: subject,
+      html: `
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
+          <h2 style="color: #4A90E2;">ClassForge - Message from ${req.user.fullName}</h2>
+          <div style="background-color: #f5f5f5; padding: 20px; margin: 20px 0; border-left: 4px solid #4A90E2;">
+            <p style="white-space: pre-wrap; word-wrap: break-word;">${message}</p>
+          </div>
+          <hr style="margin: 30px 0; border: none; border-top: 1px solid #ddd;">
+          <p style="color: #888; font-size: 12px;">ClassForge - Idea Submission Portal</p>
+        </div>
+      `
+    };
+
+    await transporter.sendMail(mailOptions);
+
+    res.status(200).json({
+      success: true,
+      message: 'Email sent successfully'
+    });
+  } catch (error) {
+    console.error('Send email error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Error sending email',
+      error: error.message
+    });
+  }
+};
+
 module.exports = {
   signup,
   login,
@@ -349,5 +401,6 @@ module.exports = {
   resetPassword,
   getProfile,
   updateProfile,
-  deactivateAccount
+  deactivateAccount,
+  sendEmail
 };

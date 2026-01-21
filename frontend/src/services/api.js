@@ -94,6 +94,11 @@ export const teacherAPI = {
 
 export const messageAPI = {
   sendMessage: (data) => api.post('/messages', data),
+  sendMessageWithFile: (formData) => api.post('/messages/upload', formData, {
+    headers: {
+      'Content-Type': 'multipart/form-data'
+    }
+  }),
   getGroupMessages: (groupId, params) => api.get(`/messages/${groupId}`, { params }),
   markMessageAsRead: (messageId) => api.put(`/messages/${messageId}/read`)
 };

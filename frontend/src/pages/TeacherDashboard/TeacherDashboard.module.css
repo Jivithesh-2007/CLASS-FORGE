@@ -93,8 +93,8 @@
 }
 
 .statIcon.iconBlue {
-  background: var(--icon-blue-bg);
-  color: var(--icon-blue-text);
+  background: #f0f0f0;
+  color: #000000;
 }
 
 .statTrend {
@@ -177,7 +177,7 @@
 }
 
 .trendSvg path:first-of-type {
-  stroke: var(--primary-color);
+  stroke: #000000;
   stroke-width: 3;
   fill: none;
   stroke-linecap: round;
@@ -262,7 +262,7 @@
 }
 
 .summaryBlue {
-  background: var(--gradient-blue);
+  background: linear-gradient(135deg, #000000, #333333);
 }
 
 .summaryOrange {
@@ -550,8 +550,8 @@
 
 
 .statusMerged {
-  background-color: var(--icon-blue-bg);
-  color: var(--icon-blue-text);
+  background-color: #f0f0f0;
+  color: #000000;
 }
 
 

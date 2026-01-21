@@ -1,8 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { MdNotifications, MdPerson, MdLogout, MdKeyboardArrowDown, MdClose, MdDarkMode, MdLightMode } from 'react-icons/md';
+import { MdNotifications, MdPerson, MdLogout, MdKeyboardArrowDown, MdClose } from 'react-icons/md';
 import { useAuth } from '../../context/AuthContext';
-import { useTheme } from '../../context/ThemeContext';
 
 import { notificationAPI } from '../../services/api';
 import { getSocket } from '../../services/socket';
@@ -10,7 +9,6 @@ import styles from './Header.module.css';
 
 const Header = ({ title, subtitle }) => {
   const { user, logout } = useAuth();
-  const { isDarkMode, toggleTheme } = useTheme();
   const navigate = useNavigate();
   const [unreadCount, setUnreadCount] = useState(0);
   const [showProfileMenu, setShowProfileMenu] = useState(false);
@@ -137,14 +135,6 @@ const Header = ({ title, subtitle }) => {
       </div>
       
       <div className={styles.actions}>
-        <button 
-          className={styles.themeToggle} 
-          onClick={toggleTheme}
-          title={isDarkMode ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
-        >
-          {isDarkMode ? <MdLightMode className={styles.icon} /> : <MdDarkMode className={styles.icon} />}
-        </button>
-
         <div className={styles.notificationWrapper} ref={notifRef}>
           <button className={styles.iconBtn} onClick={() => setShowNotifications(!showNotifications)}>
             <MdNotifications className={styles.icon} />

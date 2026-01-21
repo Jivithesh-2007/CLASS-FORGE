@@ -134,6 +134,7 @@ const getIdeaById = async (req, res) => {
       .populate('submittedBy', 'fullName email username department')
       .populate('reviewedBy', 'fullName email')
       .populate('contributors', 'fullName email username')
+      .populate('comments.author', 'fullName username')
       .populate('groupId', 'name');
 
     if (!idea) {
@@ -366,7 +367,8 @@ const mergeIdeas = async (req, res) => {
     }
 
     const ideas = await Idea.find({ _id: { $in: ideaIds } })
-      .populate('submittedBy', 'email fullName');
+      .populate('submittedBy', 'email fullName')
+      .populate('comments.author', 'fullName username');
 
     if (ideas.length !== ideaIds.length) {
       return res.status(404).json({
@@ -379,6 +381,9 @@ const mergeIdeas = async (req, res) => {
       idea.contributors.map(c => c.toString())
     ))];
 
+    // Combine all comments from both ideas
+    const allComments = ideas.flatMap(idea => idea.comments || []);
+
     const mergedIdea = new Idea({
       title: title || ideas[0].title,
       description: description || ideas.map(i => i.description).join('\n\n'),
@@ -386,14 +391,17 @@ const mergeIdeas = async (req, res) => {
       tags: tags || [...new Set(ideas.flatMap(i => i.tags))],
       submittedBy: req.user._id,
       contributors: allContributors,
+      comments: allComments,
       status: 'approved'
     });
 
     await mergedIdea.save();
+    await mergedIdea.populate('comments.author', 'fullName username');
 
     for (const idea of ideas) {
       idea.status = 'merged';
       idea.mergedInto = mergedIdea._id;
+      idea.mergedFrom = ideaIds.filter(id => id !== idea._id.toString());
       await idea.save();
 
       const notification = new Notification({

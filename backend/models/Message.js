@@ -13,8 +13,13 @@ const messageSchema = new mongoose.Schema({
   },
   content: {
     type: String,
-    required: true,
     trim: true
+  },
+  attachment: {
+    name: String,
+    url: String,
+    size: Number,
+    type: String
   },
   isRead: {
     type: Boolean,

@@ -54,6 +54,7 @@ const createGroup = async (req, res) => {
 };
 const getGroups = async (req, res) => {
   try {
+    console.log(`📋 Fetching groups for user: ${req.user._id}`);
     const groups = await Group.find({
       'members.user': req.user._id,
       isActive: true
@@ -61,6 +62,7 @@ const getGroups = async (req, res) => {
       .populate('createdBy', 'fullName email username')
       .populate('members.user', 'fullName email username')
       .sort({ createdAt: -1 });
+    console.log(`✅ Found ${groups.length} groups for user ${req.user._id}`);
     res.status(200).json({
       success: true,
       count: groups.length,
@@ -265,6 +267,8 @@ const rejectInvite = async (req, res) => {
 const leaveGroup = async (req, res) => {
   try {
     const { id } = req.params;
+    console.log(`👋 User ${req.user._id} attempting to leave group ${id}`);
+    
     const group = await Group.findById(id);
     if (!group) {
       return res.status(404).json({
@@ -289,6 +293,8 @@ const leaveGroup = async (req, res) => {
     }
     group.members.splice(memberIndex, 1);
     await group.save();
+    console.log(`✅ User ${req.user._id} left group ${group.name}`);
+    
     res.status(200).json({
       success: true,
       message: 'Left group successfully'

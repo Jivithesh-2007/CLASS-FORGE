@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { MdCalendarToday, MdAssignment, MdCheckCircle, MdSchedule, MdCancel } from 'react-icons/md';
 import Sidebar from '../../components/Sidebar/Sidebar';
 import Header from '../../components/Header/Header';
+import StudentDetail from '../../components/StudentDetail/StudentDetail';
 import './Students.css';
 
 const API_BASE_URL = 'http://localhost:5001/api';
@@ -78,7 +79,9 @@ export default function StudentsPage() {
 
         return {
           id: user._id,
+          _id: user._id,
           name: user.fullName,
+          fullName: user.fullName,
           code: user.username || 'N/A',
           department: user.department || 'N/A',
           totalIdeas: total,
@@ -93,10 +96,16 @@ export default function StudentsPage() {
           degree: 'Student',
           year: 'SENIOR',
           approved: approved,
+          approvedIdeas: approved,
           pending: studentIdeas.filter(i => i.status === 'pending').length,
+          pendingIdeas: studentIdeas.filter(i => i.status === 'pending').length,
           rejected: studentIdeas.filter(i => i.status === 'rejected').length,
+          rejectedIdeas: studentIdeas.filter(i => i.status === 'rejected').length,
           email: user.email,
-          createdAt: user.createdAt
+          createdAt: user.createdAt,
+          recentIdeas: studentIdeas.slice(0, 5),
+          program: user.program || 'B.Tech',
+          studentId: user.username
         };
       });
 
@@ -209,246 +218,15 @@ export default function StudentsPage() {
             </div>
           )}
 
-          {/* PANEL (ALWAYS MOUNTED → NEVER BLANK) */}
-          <StudentProfilePanel
-            student={selectedStudent}
-            onClose={() => setSelectedStudent(null)}
-          />
+          {/* STUDENT DETAIL PANEL */}
+          {selectedStudent && (
+            <StudentDetail
+              student={selectedStudent}
+              onClose={() => setSelectedStudent(null)}
+            />
+          )}
         </div>
       </div>
     </div>
   );
 }
-
-function StudentProfilePanel({ student, onClose }) {
-  const [ideas, setIdeas] = useState([]);
-  const [showMessageModal, setShowMessageModal] = useState(false);
-  const [messageText, setMessageText] = useState('');
-  const [sendingMessage, setSendingMessage] = useState(false);
-
-  useEffect(() => {
-    if (student) {
-      fetchStudentIdeas();
-    }
-  }, [student]);
-
-  const fetchStudentIdeas = async () => {
-    try {
-      const token = localStorage.getItem('token');
-      const response = await fetch(`${API_BASE_URL}/ideas`, {
-        headers: { 'Authorization': `Bearer ${token}` }
-      });
-      if (response.ok) {
-        const data = await response.json();
-        const studentIdeas = data.ideas?.filter(idea => 
-          idea.submittedBy?._id === student.id || idea.submittedBy === student.id
-        ) || [];
-        setIdeas(studentIdeas.slice(0, 3));
-      }
-    } catch (err) {
-      console.warn('Could not fetch ideas:', err);
-    }
-  };
-
-  const handleSendMessage = async () => {
-    if (!messageText.trim()) {
-      alert('Please enter a message');
-      return;
-    }
-
-    setSendingMessage(true);
-    try {
-      // Simulate sending message with a delay
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      alert(`Message sent to ${student.name}!`);
-      setMessageText('');
-      setShowMessageModal(false);
-    } catch (err) {
-      console.error('Error sending message:', err);
-      alert('Error sending message');
-    } finally {
-      setSendingMessage(false);
-    }
-  };
-
-  const getStatusColor = (status) => {
-    switch(status) {
-      case 'approved': return '#10b981';
-      case 'pending': return '#f59e0b';
-      case 'rejected': return '#ef4444';
-      default: return '#6b7280';
-    }
-  };
-
-  return (
-    <div className={`profile-panel ${student ? 'open' : ''}`}>
-      <div className="panel-header">
-        <h2>Student Profile</h2>
-        <button onClick={onClose} className="close-btn">✕</button>
-      </div>
-      {!student ? (
-        <div className="panel-empty">
-          <p>Select a student to view statistics</p>
-        </div>
-      ) : (
-        <div className="panel-content">
-          <div className="panel-profile">
-            <div className="profile-avatar">
-              <img src={student.avatar} alt={student.name} />
-            </div>
-            <div className="profile-info">
-              <h3>{student.name}</h3>
-              <p className="degree">B.Tech in {student.department}</p>
-              <div className="badges">
-                <span>{student.code}</span>
-                <span>{student.year}</span>
-              </div>
-            </div>
-          </div>
-
-          <div className="panel-stats">
-            <div className="stat-item">
-              <div className="stat-icon" style={{ color: 'var(--primary-color)' }}>
-                <MdAssignment size={24} />
-              </div>
-              <div className="stat-content">
-                <strong>{student.totalIdeas}</strong>
-                <span>Total Ideas</span>
-              </div>
-            </div>
-            <div className="stat-item">
-              <div className="stat-icon" style={{ color: 'var(--status-success)' }}>
-                <MdCheckCircle size={24} />
-              </div>
-              <div className="stat-content">
-                <strong>{student.approved}</strong>
-                <span>Approved</span>
-              </div>
-            </div>
-            <div className="stat-item">
-              <div className="stat-icon" style={{ color: 'var(--status-warning)' }}>
-                <MdSchedule size={24} />
-              </div>
-              <div className="stat-content">
-                <strong>{student.pending}</strong>
-                <span>Pending Review</span>
-              </div>
-            </div>
-            <div className="stat-item">
-              <div className="stat-icon" style={{ color: 'var(--status-danger)' }}>
-                <MdCancel size={24} />
-              </div>
-              <div className="stat-content">
-                <strong>{student.rejected}</strong>
-                <span>Rejected</span>
-              </div>
-            </div>
-          </div>
-
-          <div className="approval-distribution">
-            <h4>APPROVAL DISTRIBUTION</h4>
-            <div className="donut-chart">
-              <svg viewBox="0 0 100 100" className="donut-svg">
-                <circle cx="50" cy="50" r="40" fill="none" stroke="var(--status-success)" strokeWidth="12" 
-                  strokeDasharray={`${(student.approved / student.totalIdeas * 100) * 2.51} 251`} 
-                  transform="rotate(-90 50 50)" />
-                <circle cx="50" cy="50" r="40" fill="none" stroke="var(--status-warning)" strokeWidth="12" 
-                  strokeDasharray={`${(student.pending / student.totalIdeas * 100) * 2.51} 251`}
-                  strokeDashoffset={`-${(student.approved / student.totalIdeas * 100) * 2.51}`}
-                  transform="rotate(-90 50 50)" />
-                <circle cx="50" cy="50" r="40" fill="none" stroke="var(--status-danger)" strokeWidth="12" 
-                  strokeDasharray={`${(student.rejected / student.totalIdeas * 100) * 2.51} 251`}
-                  strokeDashoffset={`-${((student.approved + student.pending) / student.totalIdeas * 100) * 2.51}`}
-                  transform="rotate(-90 50 50)" />
-                <text x="50" y="50" textAnchor="middle" dy="0.3em" className="donut-text">
-                  Approved: {student.approved}
-                </text>
-              </svg>
-            </div>
-            <div className="distribution-legend">
-              <div className="legend-item">
-                <span className="legend-dot" style={{ backgroundColor: 'var(--status-success)' }}></span>
-                <span>Approved ({Math.round(student.approved / student.totalIdeas * 100)}%)</span>
-              </div>
-              <div className="legend-item">
-                <span className="legend-dot" style={{ backgroundColor: 'var(--status-warning)' }}></span>
-                <span>Pending ({Math.round(student.pending / student.totalIdeas * 100)}%)</span>
-              </div>
-              <div className="legend-item">
-                <span className="legend-dot" style={{ backgroundColor: 'var(--status-danger)' }}></span>
-                <span>Rejected ({Math.round(student.rejected / student.totalIdeas * 100)}%)</span>
-              </div>
-            </div>
-          </div>
-
-          <div className="recent-ideas">
-            <div className="recent-header">
-              <h4>RECENT IDEAS</h4>
-              <a href="#" className="view-all">View all</a>
-            </div>
-            {ideas.length > 0 ? (
-              <div className="ideas-list">
-                {ideas.map((idea) => (
-                  <div key={idea._id} className="idea-item">
-                    <div className="idea-content">
-                      <h5>{idea.title}</h5>
-                      <p className="idea-domain">{idea.domain} • {new Date(idea.createdAt).toLocaleDateString('en-US', { year: '2-digit', month: '2-digit', day: '2-digit' })}</p>
-                    </div>
-                    <span className={`idea-status ${idea.status}`}>{idea.status}</span>
-                  </div>
-                ))}
-              </div>
-            ) : (
-              <p className="no-ideas">No ideas submitted yet</p>
-            )}
-          </div>
-
-          <div className="panel-actions">
-            <button className="primary" onClick={() => setShowMessageModal(true)}>Send Message</button>
-          </div>
-        </div>
-      )}
-
-      {showMessageModal && (
-        <div className="message-modal-overlay" onClick={() => setShowMessageModal(false)}>
-          <div className="message-modal" onClick={(e) => e.stopPropagation()}>
-            <div className="modal-header">
-              <h3>Send Message to {student?.name}</h3>
-              <button className="modal-close" onClick={() => setShowMessageModal(false)}>✕</button>
-            </div>
-            <div className="modal-body">
-              <textarea
-                placeholder="Type your message here..."
-                value={messageText}
-                onChange={(e) => setMessageText(e.target.value)}
-                className="message-textarea"
-              />
-            </div>
-            <div className="modal-footer">
-              <button className="btn-cancel" onClick={() => setShowMessageModal(false)}>Cancel</button>
-              <button 
-                className="btn-send" 
-                onClick={handleSendMessage}
-                disabled={sendingMessage}
-              >
-                {sendingMessage ? 'Sending...' : 'Send'}
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-    </div>
-  );
-}
-
-function Stat({ label, value }) {
-  return (
-    <div className="stat-box">
-      <strong>{value}</strong>
-      <span>{label}</span>
-    </div>
-  );
-}
-
-export { StudentProfilePanel };

@@ -1,14 +1,13 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { MdSend, MdClose, MdAttachFile, MdEmojiEmotions, MdMoreVert } from 'react-icons/md';
+import { useState, useEffect, useRef } from 'react';
+import { MdSend, MdClose, MdMoreVert } from 'react-icons/md';
 import { messageAPI } from '../../services/api';
 import { getSocket } from '../../services/socket';
 import styles from './GroupChat.module.css';
 
-const GroupChat = ({ group, onClose, currentUser }) => {
+const GroupChat = ({ group, onClose, currentUser, onShowDetails }) => {
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState('');
   const [loading, setLoading] = useState(true);
-  const [isTyping, setIsTyping] = useState(false);
   const messagesEndRef = useRef(null);
   const socketRef = useRef(null);
   const typingTimeoutRef = useRef(null);
@@ -46,15 +45,12 @@ const GroupChat = ({ group, onClose, currentUser }) => {
       socketRef.current = socket;
       socket.emit('join_group', group._id);
       
+      // Remove any existing listeners to prevent duplicates
+      socket.off('new_message');
+      
       socket.on('new_message', (message) => {
+        console.log('📨 New message received:', message);
         setMessages(prev => [...prev, message]);
-      });
-
-      socket.on('user_typing', (data) => {
-        if (data.userId !== currentUser.id) {
-          setIsTyping(true);
-          setTimeout(() => setIsTyping(false), 3000);
-        }
       });
     }
   };
@@ -68,10 +64,19 @@ const GroupChat = ({ group, onClose, currentUser }) => {
     if (!newMessage.trim()) return;
 
     try {
-      await messageAPI.sendMessage({
+      const messageData = {
         groupId: group._id,
         content: newMessage
-      });
+      };
+
+      console.log('📤 Sending message:', messageData);
+      const response = await messageAPI.sendMessage(messageData);
+
+      // Don't add message here - let socket listener handle it
+      if (response.data && response.data.data) {
+        console.log('✓ Message sent successfully');
+      }
+
       setNewMessage('');
     } catch (error) {
       console.error('Error sending message:', error);
@@ -128,6 +133,7 @@ const GroupChat = ({ group, onClose, currentUser }) => {
 
   return (
     <div className={styles.chatContainer}>
+      {/* Chat Header */}
       <div className={styles.chatHeader}>
         <div className={styles.headerInfo}>
           <div className={styles.groupIcon}>
@@ -139,7 +145,11 @@ const GroupChat = ({ group, onClose, currentUser }) => {
           </div>
         </div>
         <div className={styles.headerActions}>
-          <button className={styles.iconBtn} title="More options">
+          <button 
+            className={styles.iconBtn} 
+            onClick={onShowDetails}
+            title="Group details"
+          >
             <MdMoreVert size={20} />
           </button>
           <button className={styles.closeBtn} onClick={onClose} title="Close">
@@ -148,12 +158,12 @@ const GroupChat = ({ group, onClose, currentUser }) => {
         </div>
       </div>
 
+      {/* Messages Container */}
       <div className={styles.messagesContainer}>
         {loading ? (
           <div className={styles.loadingText}>Loading messages...</div>
         ) : messages.length === 0 ? (
           <div className={styles.emptyState}>
-            <div className={styles.emptyIcon}>💬</div>
             <div className={styles.emptyText}>No messages yet</div>
             <div className={styles.emptySubtext}>Start the conversation!</div>
           </div>
@@ -183,7 +193,9 @@ const GroupChat = ({ group, onClose, currentUser }) => {
                       <div className={`${styles.messageBubble} ${
                         msg.sender._id === currentUser.id ? styles.sentBubble : styles.receivedBubble
                       }`}>
-                        <p className={styles.messageText}>{msg.content}</p>
+                        {msg.content && (
+                          <p className={styles.messageText}>{msg.content}</p>
+                        )}
                         <p className={styles.messageTime}>{formatTime(msg.createdAt)}</p>
                       </div>
                     </div>
@@ -191,22 +203,13 @@ const GroupChat = ({ group, onClose, currentUser }) => {
                 ))}
               </div>
             ))}
-            {isTyping && (
-              <div className={styles.typingIndicator}>
-                <span></span>
-                <span></span>
-                <span></span>
-              </div>
-            )}
           </>
         )}
         <div ref={messagesEndRef} />
       </div>
 
+      {/* Input Container */}
       <form className={styles.inputContainer} onSubmit={handleSendMessage}>
-        <button type="button" className={styles.attachBtn} title="Attach file">
-          <MdAttachFile size={20} />
-        </button>
         <input
           type="text"
           value={newMessage}
@@ -214,9 +217,7 @@ const GroupChat = ({ group, onClose, currentUser }) => {
           placeholder="Type a message..."
           className={styles.messageInput}
         />
-        <button type="button" className={styles.emojiBtn} title="Emoji">
-          <MdEmojiEmotions size={20} />
-        </button>
+
         <button 
           type="submit" 
           className={styles.sendBtn} 

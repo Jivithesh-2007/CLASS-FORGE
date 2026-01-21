@@ -169,31 +169,37 @@ const TeacherDashboard = () => {
 
     // Determine trend color based on card type and trend value
     const getTrendColor = () => {
-      if (label === "Pending Review") {
-        // For pending review, lower is better (green), higher is worse (red)
-        return trendValue <= 20 ? "#10b981" : trendValue <= 40 ? "#f59e0b" : "#ef4444";
+      if (label === "Total Students") {
+        // Blue for students
+        return trendValue >= 0 ? "#3b82f6" : "#ef4444";
+      } else if (label === "Ideas Submitted") {
+        // Orange for submissions
+        return trendValue >= 0 ? "#f97316" : "#ef4444";
+      } else if (label === "Pending Review") {
+        // Purple for pending review, lower is better (green), higher is worse (red)
+        return trendValue <= 20 ? "#a855f7" : trendValue <= 40 ? "#f59e0b" : "#ef4444";
       } else if (label === "Approval Rate") {
-        // For approval rate, higher is better (green), lower is worse (red)
+        // Green for approval rate, higher is better (green), lower is worse (red)
         return trendValue >= 70 ? "#10b981" : trendValue >= 50 ? "#f59e0b" : "#ef4444";
       } else {
-        // For other metrics, positive is better (green), negative is worse (red)
+        // Default
         return trendValue >= 0 ? "#10b981" : "#ef4444";
       }
     };
 
     const colorMap = {
       blue: {
-        bar: "#4A90E2",
+        bar: "#3b82f6",
         icon: <FaUsers />,
         trendColor: getTrendColor()
       },
       purple: {
-        bar: "#8b5cf6",
+        bar: "#a855f7",
         icon: <FaPaperPlane />,
         trendColor: getTrendColor()
       },
       orange: {
-        bar: "#f59e0b",
+        bar: "#f97316",
         icon: <FaClock />,
         trendColor: getTrendColor()
       },
@@ -235,10 +241,10 @@ const TeacherDashboard = () => {
           <span style={{ 
             fontSize: '12px', 
             fontWeight: '600',
-            color: config.trendColor,
-            backgroundColor: config.trendColor + '15',
-            padding: '4px 8px',
-            borderRadius: '4px'
+            color: config.trendColor === '#f59e0b' ? '#10b981' : config.trendColor,
+            backgroundColor: (config.trendColor === '#f59e0b' ? '#10b981' : config.trendColor) + '20',
+            padding: '6px 12px',
+            borderRadius: '6px'
           }}>
             {trendValue >= 0 ? '+' : ''}{trendValue}% {trendText}
           </span>
@@ -315,7 +321,7 @@ const TeacherDashboard = () => {
                 label="Ideas Submitted"
                 value={totalSubmissions}
                 total={totalSubmissions}
-                color="purple"
+                color="orange"
                 trendValue={submissionTrendValue}
                 trendText="vs last week"
               />
@@ -326,7 +332,7 @@ const TeacherDashboard = () => {
                 label="Pending Review"
                 value={pendingReview}
                 total={totalSubmissions}
-                color="orange"
+                color="purple"
                 trendValue={pendingPercentage}
                 trendText="of total"
               />
@@ -354,15 +360,9 @@ const TeacherDashboard = () => {
               <div className={styles.chartPlaceholder}>
                 <div className={styles.trendChart}>
                   <svg viewBox="0 0 900 350" className={styles.trendSvg}>
-                    <defs>
-                      <linearGradient id="trendGradient" x1="0%" y1="0%" x2="0%" y2="100%">
-                        <stop offset="0%" style={{ stopColor: '#000000', stopOpacity: 0.15 }} />
-                        <stop offset="100%" style={{ stopColor: '#000000', stopOpacity: 0.02 }} />
-                      </linearGradient>
-                    </defs>
                     {(() => {
-                      const { path, points, maxValue } = generateCurvePoints(submissionTrend);
-                      if (!path || points.length === 0) {
+                      const data = submissionTrend;
+                      if (!data || data.length === 0) {
                         return (
                           <text x="450" y="175" textAnchor="middle" fill="var(--text-secondary)" fontSize="14">
                             No submission data available
@@ -370,103 +370,125 @@ const TeacherDashboard = () => {
                         );
                       }
 
-                      // Y-axis labels
-                      const yLabels = [0, Math.ceil(maxValue / 3), Math.ceil((maxValue * 2) / 3), maxValue];
-                      
+                      const maxValue = Math.max(...data, 1);
+                      const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+                      const barWidth = 70;
+                      const barGap = 30;
+                      const padding = 70;
+                      const chartHeight = 280;
+                      const chartWidth = 900 - 2 * padding;
+
                       return (
                         <>
                           {/* Y-axis */}
-                          <line x1="70" y1="50" x2="70" y2="300" stroke="var(--border-light)" strokeWidth="2" />
+                          <line x1="70" y1="50" x2="70" y2="300" stroke="#000000" strokeWidth="2" />
                           {/* X-axis */}
-                          <line x1="70" y1="300" x2="870" y2="300" stroke="var(--border-light)" strokeWidth="2" />
+                          <line x1="70" y1="300" x2="870" y2="300" stroke="#000000" strokeWidth="2" />
                           
                           {/* Y-axis labels and grid lines */}
-                          {yLabels.map((label, idx) => {
+                          {[0, Math.ceil(maxValue / 3), Math.ceil((maxValue * 2) / 3), maxValue].map((label, idx) => {
+                            const yLabels = [0, Math.ceil(maxValue / 3), Math.ceil((maxValue * 2) / 3), maxValue];
                             const y = 300 - (idx / (yLabels.length - 1)) * 250;
                             return (
                               <g key={`y-${idx}`}>
-                                <line x1="60" y1={y} x2="70" y2={y} stroke="var(--border-light)" strokeWidth="1" />
-                                <text x="55" y={y + 5} textAnchor="end" fontSize="13" fill="var(--text-secondary)" fontWeight="500">
+                                <line x1="60" y1={y} x2="70" y2={y} stroke="#000000" strokeWidth="1" />
+                                <text x="55" y={y + 5} textAnchor="end" fontSize="13" fill="#000000" fontWeight="500">
                                   {label}
                                 </text>
                                 {idx > 0 && (
-                                  <line x1="70" y1={y} x2="870" y2={y} stroke="var(--border-color)" strokeWidth="1" strokeDasharray="4" />
+                                  <line x1="70" y1={y} x2="870" y2={y} stroke="#e0e0e0" strokeWidth="1" strokeDasharray="4" />
+                                )}
+                              </g>
+                            );
+                          })}
+
+                          {/* Bars */}
+                          {data.map((value, idx) => {
+                            const barX = 70 + (idx * (barWidth + barGap)) + barGap;
+                            const barHeight = (value / maxValue) * 250;
+                            const barY = 300 - barHeight;
+                            
+                            return (
+                              <g key={`bar-${idx}`}>
+                                <rect
+                                  x={barX}
+                                  y={barY}
+                                  width={barWidth}
+                                  height={barHeight}
+                                  fill="#000000"
+                                  rx="4"
+                                  style={{ cursor: 'pointer' }}
+                                  onMouseEnter={() => setHoveredPoint(idx)}
+                                  onMouseLeave={() => setHoveredPoint(null)}
+                                />
+                                {hoveredPoint === idx && (
+                                  <g>
+                                    {/* Pointer triangle pointing down */}
+                                    <polygon
+                                      points={`${barX + barWidth / 2},${barY - 18} ${barX + barWidth / 2 - 10},${barY - 28} ${barX + barWidth / 2 + 10},${barY - 28}`}
+                                      fill="#ffffff"
+                                      stroke="#000000"
+                                      strokeWidth="2"
+                                      strokeLinejoin="round"
+                                    />
+                                    {/* Tooltip box */}
+                                    <rect 
+                                      x={barX + barWidth / 2 - 60} 
+                                      y={barY - 85} 
+                                      width="120" 
+                                      height="60" 
+                                      fill="#ffffff" 
+                                      stroke="#000000" 
+                                      strokeWidth="2"
+                                      rx="8"
+                                    />
+                                    {/* Number */}
+                                    <text 
+                                      x={barX + barWidth / 2} 
+                                      y={barY - 52} 
+                                      textAnchor="middle" 
+                                      fontSize="18" 
+                                      fontWeight="700"
+                                      fill="#000000"
+                                    >
+                                      {value}
+                                    </text>
+                                    {/* Label */}
+                                    <text 
+                                      x={barX + barWidth / 2} 
+                                      y={barY - 32} 
+                                      textAnchor="middle" 
+                                      fontSize="13" 
+                                      fill="#666666"
+                                      fontWeight="500"
+                                    >
+                                      submissions
+                                    </text>
+                                  </g>
                                 )}
                               </g>
                             );
                           })}
 
                           {/* X-axis labels */}
-                          {points.map((point, idx) => (
-                            <text key={`x-${idx}`} x={point.x} y="325" textAnchor="middle" fontSize="13" fill="var(--text-secondary)" fontWeight="500">
-                              {point.day}
-                            </text>
-                          ))}
+                          {days.map((day, idx) => {
+                            const barX = 70 + (idx * (barWidth + barGap)) + barGap + barWidth / 2;
+                            return (
+                              <text key={`x-${idx}`} x={barX} y="325" textAnchor="middle" fontSize="13" fill="#000000" fontWeight="500">
+                                {day}
+                              </text>
+                            );
+                          })}
 
                           {/* Y-axis label */}
-                          <text x="20" y="175" textAnchor="middle" fontSize="12" fill="var(--text-secondary)" fontWeight="500" transform="rotate(-90 20 175)">
+                          <text x="20" y="175" textAnchor="middle" fontSize="12" fill="#000000" fontWeight="500" transform="rotate(-90 20 175)">
                             Submissions
                           </text>
 
                           {/* X-axis label */}
-                          <text x="470" y="345" textAnchor="middle" fontSize="12" fill="var(--text-secondary)" fontWeight="500">
+                          <text x="470" y="345" textAnchor="middle" fontSize="12" fill="#000000" fontWeight="500">
                             Days
                           </text>
-
-                          {/* Gradient fill under the curve */}
-                          <path d={`${path} L ${points[points.length - 1].x},300 L 70,300 Z`} fill="url(#trendGradient)" />
-                          
-                          {/* Smooth curve line */}
-                          <path d={path} stroke="var(--primary-color)" strokeWidth="4" fill="none" strokeLinecap="round" strokeLinejoin="round" />
-                          
-                          {/* Interactive data points with hover */}
-                          {points.map((point, idx) => (
-                            <g key={idx}>
-                              <circle 
-                                cx={point.x} 
-                                cy={point.y} 
-                                r="5" 
-                                fill="var(--primary-color)"
-                                style={{ cursor: 'pointer' }}
-                                onMouseEnter={() => setHoveredPoint(idx)}
-                                onMouseLeave={() => setHoveredPoint(null)}
-                              />
-                              {hoveredPoint === idx && (
-                                <g>
-                                  <rect 
-                                    x={point.x - 60} 
-                                    y={point.y - 60} 
-                                    width="120" 
-                                    height="55" 
-                                    fill="var(--background-alt)" 
-                                    stroke="var(--primary-color)" 
-                                    strokeWidth="2"
-                                    rx="8"
-                                    filter="drop-shadow(0 4px 12px rgba(0,0,0,0.15))"
-                                  />
-                                  <text 
-                                    x={point.x} 
-                                    y={point.y - 35} 
-                                    textAnchor="middle" 
-                                    fontSize="13" 
-                                    fontWeight="700"
-                                    fill="var(--text-primary)"
-                                  >
-                                    {point.day}
-                                  </text>
-                                  <text 
-                                    x={point.x} 
-                                    y={point.y - 12} 
-                                    textAnchor="middle" 
-                                    fontSize="12" 
-                                    fill="var(--text-secondary)"
-                                  >
-                                    {point.value} submissions
-                                  </text>
-                                </g>
-                              )}
-                            </g>
-                          ))}
                         </>
                       );
                     })()}
@@ -481,7 +503,7 @@ const TeacherDashboard = () => {
               </div>
               <div className={styles.departmentBars}>
                 {departmentStats.length === 0 ? (
-                  <div style={{ padding: '20px', textAlign: 'center', color: 'var(--text-secondary)' }}>
+                  <div style={{ padding: '20px', textAlign: 'center', color: '#666666' }}>
                     No department data available
                   </div>
                 ) : (
@@ -495,11 +517,11 @@ const TeacherDashboard = () => {
                             className={styles.bar} 
                             style={{ 
                               width: `${(dept.count / maxCount) * 100}%`, 
-                              background: 'var(--primary-color)' 
+                              background: '#000000' 
                             }}
                           ></div>
                         </div>
-                        <span style={{ fontSize: '12px', color: 'var(--text-secondary)', marginLeft: '8px' }}>
+                        <span style={{ fontSize: '12px', color: '#666666', marginLeft: '8px' }}>
                           {dept.count}
                         </span>
                       </div>
@@ -508,8 +530,8 @@ const TeacherDashboard = () => {
                 )}
               </div>
               <div className={styles.chartFooter}>
-                <MdTrendingUp size={16} style={{ color: 'var(--success-color)' }} />
-                <span>
+                <MdTrendingUp size={16} style={{ color: '#10b981' }} />
+                <span style={{ color: '#666666' }}>
                   {departmentStats.length > 0 
                     ? `${departmentStats[0]._id} leading with ${departmentStats[0].count} ideas`
                     : 'No data available'
@@ -583,7 +605,7 @@ const TeacherDashboard = () => {
                     </div>
                     <div className={styles.statusCell}>
                       <span className={`${styles.status} ${getStatusClass(idea.status)}`}>
-                        {idea.status.charAt(0).toUpperCase() + idea.status.slice(1)}
+                        {idea.status === 'pending' ? 'Under Review' : idea.status.charAt(0).toUpperCase() + idea.status.slice(1)}
                       </span>
                     </div>
                   </div>
