@@ -1,10 +1,24 @@
-import { MdClose, MdContentCopy, MdLogout } from 'react-icons/md';
+import { useState } from 'react';
+import { MdClose, MdContentCopy, MdLogout, MdDelete } from 'react-icons/md';
 import styles from './GroupDetailsModal.module.css';
 
 const GroupDetailsModal = ({ group, isAdmin, onClose, onInvite, onDelete, onLeave }) => {
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [deleting, setDeleting] = useState(false);
+
   const copyToClipboard = (text) => {
     navigator.clipboard.writeText(text);
     alert('Copied to clipboard!');
+  };
+
+  const handleDeleteClick = async () => {
+    setDeleting(true);
+    try {
+      await onDelete();
+      setShowDeleteConfirm(false);
+    } finally {
+      setDeleting(false);
+    }
   };
 
   return (
@@ -72,11 +86,13 @@ const GroupDetailsModal = ({ group, isAdmin, onClose, onInvite, onDelete, onLeav
               <button onClick={onInvite} className={styles.actionBtn}>
                 <span>Invite Member</span>
               </button>
-              {isAdmin && (
-                <button onClick={onDelete} className={`${styles.actionBtn} ${styles.danger}`}>
-                  <span>Delete Group</span>
-                </button>
-              )}
+              <button 
+                onClick={() => setShowDeleteConfirm(true)} 
+                className={`${styles.actionBtn} ${styles.danger}`}
+              >
+                <MdDelete size={18} />
+                <span>Delete Group</span>
+              </button>
               <button onClick={onLeave} className={`${styles.actionBtn} ${styles.exit}`}>
                 <MdLogout size={18} />
                 <span>Exit Group</span>
@@ -85,6 +101,39 @@ const GroupDetailsModal = ({ group, isAdmin, onClose, onInvite, onDelete, onLeav
           </div>
         </div>
       </div>
+
+      {/* Delete Confirmation Modal */}
+      {showDeleteConfirm && (
+        <div className={styles.confirmOverlay} onClick={() => !deleting && setShowDeleteConfirm(false)}>
+          <div className={styles.confirmModal} onClick={(e) => e.stopPropagation()}>
+            <div className={styles.confirmHeader}>
+              <h3 className={styles.confirmTitle}>Delete Group</h3>
+            </div>
+            <div className={styles.confirmContent}>
+              <p>Are you sure you want to delete this group?</p>
+              <p style={{ marginTop: '12px', color: '#ef4444', fontWeight: '500' }}>
+                This action cannot be undone. All messages and group data will be permanently deleted.
+              </p>
+            </div>
+            <div className={styles.confirmFooter}>
+              <button 
+                className={styles.cancelBtn}
+                onClick={() => setShowDeleteConfirm(false)}
+                disabled={deleting}
+              >
+                Cancel
+              </button>
+              <button 
+                className={styles.confirmDeleteBtn}
+                onClick={handleDeleteClick}
+                disabled={deleting}
+              >
+                {deleting ? 'Deleting...' : 'Delete Group'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

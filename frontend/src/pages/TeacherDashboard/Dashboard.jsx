@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { MdTrendingUp } from 'react-icons/md';
+import { MdTrendingUp, MdPeople, MdAssignment, MdSchedule } from 'react-icons/md';
 import Sidebar from '../../components/Sidebar/Sidebar';
 import Header from '../../components/Header/Header';
+import { useAuth } from '../../context/AuthContext';
 import { ideaAPI } from '../../services/api';
 import styles from './TeacherDashboard.module.css';
 import {
@@ -14,6 +15,7 @@ import {
 
 const TeacherDashboard = () => {
   const navigate = useNavigate();
+  const { user } = useAuth();
   const [stats, setStats] = useState(null);
   const [recentIdeas, setRecentIdeas] = useState([]);
   const [submissionTrend, setSubmissionTrend] = useState([]);
@@ -24,6 +26,13 @@ const TeacherDashboard = () => {
 
   useEffect(() => {
     fetchDashboardData();
+    
+    // Set up polling to refresh data every 30 seconds for real-time updates
+    const interval = setInterval(() => {
+      fetchDashboardData();
+    }, 30000);
+    
+    return () => clearInterval(interval);
   }, []);
 
   const fetchDashboardData = async () => {
@@ -303,6 +312,84 @@ const TeacherDashboard = () => {
       <div className={styles.main}>
         <Header title="Dashboard" />
         <div className={styles.content}>
+          <div style={{
+            background: 'linear-gradient(135deg, #000000 0%, #1a1a1a 100%)',
+            color: '#ffffff',
+            padding: '40px 32px',
+            borderRadius: '16px',
+            marginBottom: '32px',
+            position: 'relative',
+            overflow: 'hidden',
+            boxShadow: '0 8px 32px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.1)',
+            border: '1px solid rgba(255, 255, 255, 0.05)'
+          }}>
+            {/* Decorative background elements */}
+            <div style={{
+              position: 'absolute',
+              top: '-50%',
+              right: '-10%',
+              width: '300px',
+              height: '300px',
+              background: 'radial-gradient(circle, rgba(255, 255, 255, 0.05) 0%, transparent 70%)',
+              borderRadius: '50%',
+              pointerEvents: 'none'
+            }} />
+            <div style={{
+              position: 'absolute',
+              bottom: '-30%',
+              left: '-5%',
+              width: '250px',
+              height: '250px',
+              background: 'radial-gradient(circle, rgba(255, 255, 255, 0.03) 0%, transparent 70%)',
+              borderRadius: '50%',
+              pointerEvents: 'none'
+            }} />
+            
+            {/* Content */}
+            <div style={{ position: 'relative', zIndex: 1 }}>
+              <p style={{ 
+                margin: '0 0 12px 0', 
+                fontSize: '13px', 
+                color: '#999999', 
+                fontWeight: '600',
+                textTransform: 'uppercase',
+                letterSpacing: '1px'
+              }}>
+                Welcome Back
+              </p>
+              <h1 style={{ 
+                margin: '0', 
+                fontSize: '42px', 
+                fontWeight: '800', 
+                color: '#ffffff',
+                letterSpacing: '-0.5px',
+                lineHeight: '1.2'
+              }}>
+                {user?.fullName || 'Teacher'}
+              </h1>
+              <div style={{
+                marginTop: '16px',
+                display: 'flex',
+                gap: '24px',
+                fontSize: '13px',
+                color: '#aaaaaa',
+                alignItems: 'center'
+              }}>
+                <span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                  <MdPeople size={16} color="#ffffff" />
+                  {stats?.totalStudents || 0} Students
+                </span>
+                <span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                  <MdAssignment size={16} color="#ffffff" />
+                  {stats?.totalSubmissions || 0} Submissions
+                </span>
+                <span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                  <MdSchedule size={16} color="#ffffff" />
+                  {stats?.pendingReview || 0} Pending Review
+                </span>
+              </div>
+            </div>
+          </div>
           {/* TOP STAT CARDS */}
           <div className={styles.statsGrid}>
             <div onClick={() => navigate('/teacher-dashboard/students')}>

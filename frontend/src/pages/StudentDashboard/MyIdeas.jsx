@@ -78,10 +78,6 @@ const MyIdeas = () => {
     navigate('/student-dashboard/submit-idea');
   };
 
-  if (loading) {
-    return <div>Loading...</div>;
-  }
-
   return (
     <div className={styles.layout}>
       <Sidebar role="student" />

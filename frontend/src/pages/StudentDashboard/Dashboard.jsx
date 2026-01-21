@@ -1,18 +1,23 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { MdAdd, MdLightbulb } from 'react-icons/md';
+import { MdBarChart, MdCheckCircle, MdPending, MdThumbDown } from 'react-icons/md';
 import Sidebar from '../../components/Sidebar/Sidebar';
 import Header from '../../components/Header/Header';
+import IdeaDetailModal from '../../components/IdeaDetailModal/IdeaDetailModal';
+import { useAuth } from '../../context/AuthContext';
 import { ideaAPI } from '../../services/api';
 import styles from './Dashboard.module.css';
 import { FaChartBar, FaCheckCircle, FaClock, FaTimesCircle } from "react-icons/fa";
 
 const StudentDashboard = () => {
   const navigate = useNavigate();
+  const { user } = useAuth();
   const [stats, setStats] = useState(null);
   const [recentIdeas, setRecentIdeas] = useState([]);
   const [loading, setLoading] = useState(true);
   const [trends, setTrends] = useState({});
+  const [selectedIdea, setSelectedIdea] = useState(null);
 
   useEffect(() => {
     fetchDashboardData();
@@ -187,6 +192,84 @@ const StudentDashboard = () => {
       <div className={styles.main}>
         <Header />
         <div className={styles.content}>
+          <div style={{
+            background: 'linear-gradient(135deg, #000000 0%, #1a1a1a 100%)',
+            color: '#ffffff',
+            padding: '40px 32px',
+            borderRadius: '16px',
+            marginBottom: '32px',
+            position: 'relative',
+            overflow: 'hidden',
+            boxShadow: '0 8px 32px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.1)',
+            border: '1px solid rgba(255, 255, 255, 0.05)'
+          }}>
+            {/* Decorative background elements */}
+            <div style={{
+              position: 'absolute',
+              top: '-50%',
+              right: '-10%',
+              width: '300px',
+              height: '300px',
+              background: 'radial-gradient(circle, rgba(255, 255, 255, 0.05) 0%, transparent 70%)',
+              borderRadius: '50%',
+              pointerEvents: 'none'
+            }} />
+            <div style={{
+              position: 'absolute',
+              bottom: '-30%',
+              left: '-5%',
+              width: '250px',
+              height: '250px',
+              background: 'radial-gradient(circle, rgba(255, 255, 255, 0.03) 0%, transparent 70%)',
+              borderRadius: '50%',
+              pointerEvents: 'none'
+            }} />
+            
+            {/* Content */}
+            <div style={{ position: 'relative', zIndex: 1 }}>
+              <p style={{ 
+                margin: '0 0 12px 0', 
+                fontSize: '13px', 
+                color: '#999999', 
+                fontWeight: '600',
+                textTransform: 'uppercase',
+                letterSpacing: '1px'
+              }}>
+                Welcome Back
+              </p>
+              <h1 style={{ 
+                margin: '0', 
+                fontSize: '42px', 
+                fontWeight: '800', 
+                color: '#ffffff',
+                letterSpacing: '-0.5px',
+                lineHeight: '1.2'
+              }}>
+                {user?.fullName || 'User'}
+              </h1>
+              <div style={{
+                marginTop: '16px',
+                display: 'flex',
+                gap: '24px',
+                fontSize: '13px',
+                color: '#aaaaaa',
+                alignItems: 'center'
+              }}>
+                <span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                  <MdBarChart size={16} color="#ffffff" />
+                  {stats?.totalIdeas || 0} Ideas Submitted
+                </span>
+                <span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                  <MdCheckCircle size={16} color="#ffffff" />
+                  {stats?.approvedIdeas || 0} Approved
+                </span>
+                <span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                  <MdPending size={16} color="#ffffff" />
+                  {stats?.pendingIdeas || 0} Pending
+                </span>
+              </div>
+            </div>
+          </div>
           <div className={styles.stats}>
             <div onClick={() => handleStatCardClick('all')}>
               <StatCardNew
@@ -251,7 +334,7 @@ const StudentDashboard = () => {
                   <div className={styles.headerCell}>STATUS</div>
                 </div>
                 {recentIdeas.map((idea) => (
-                  <div key={idea._id} className={styles.ideaRow}>
+                  <div key={idea._id} className={styles.ideaRow} onClick={() => setSelectedIdea(idea)} style={{ cursor: 'pointer' }}>
                     <div className={styles.proposalDetails}>
                       <h3 className={styles.ideaRowTitleText}>{idea.title}</h3>
                       <p className={styles.ideaRowDescription}>{idea.description}</p>
@@ -278,6 +361,13 @@ const StudentDashboard = () => {
           </div>
         </div>
       </div>
+      {selectedIdea && (
+        <IdeaDetailModal 
+          idea={selectedIdea} 
+          onClose={() => setSelectedIdea(null)}
+          showComments={false}
+        />
+      )}
     </div>
   );
 };

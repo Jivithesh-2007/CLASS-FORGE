@@ -94,24 +94,6 @@ const Notifications = () => {
     }
   };
 
-  if (loading) {
-    return (
-      <div className={styles.layout}>
-        <Sidebar role={user?.role} />
-        <div className={styles.main}>
-          <Header title="Notifications"/>
-          <div className={styles.content}>
-            <div className={styles.section}>
-              <div className={styles.emptyState}>
-                <div className={styles.emptyText}>Loading notifications...</div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
   return (
     <div className={styles.layout}>
       <Sidebar role={user?.role} />
@@ -127,43 +109,6 @@ const Notifications = () => {
                   Mark All as Read
                 </button>
               )}
-            </div>
-            
-            {/* Debug info */}
-            <div style={{ padding: '12px', backgroundColor: '#f0f0f0', borderRadius: '8px', marginBottom: '16px', fontSize: '12px' }}>
-              <p>Loading: {loading.toString()}</p>
-              <p>Notifications count: {notifications?.length || 0}</p>
-              <p>User ID: {user?._id}</p>
-              <button 
-                onClick={async () => {
-                  try {
-                    const response = await fetch('http://localhost:5001/api/notifications/test/create', {
-                      method: 'POST',
-                      headers: {
-                        'Authorization': `Bearer ${localStorage.getItem('token')}`,
-                        'Content-Type': 'application/json'
-                      }
-                    });
-                    const data = await response.json();
-                    console.log('Test notification created:', data);
-                    fetchNotifications();
-                  } catch (error) {
-                    console.error('Error creating test notification:', error);
-                  }
-                }}
-                style={{
-                  marginTop: '8px',
-                  padding: '8px 16px',
-                  backgroundColor: '#4A90E2',
-                  color: 'white',
-                  border: 'none',
-                  borderRadius: '4px',
-                  cursor: 'pointer',
-                  fontSize: '12px'
-                }}
-              >
-                Create Test Notification
-              </button>
             </div>
             
             {notifications.length === 0 ? (
