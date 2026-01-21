@@ -26,12 +26,14 @@ const Ideas = () => {
 
   const fetchIdeas = async () => {
     try {
-      const [approvedRes, rejectedRes, mergedRes] = await Promise.all([
+      const [pendingRes, approvedRes, rejectedRes, mergedRes] = await Promise.all([
+        ideaAPI.getIdeas({ status: 'pending' }),
         ideaAPI.getIdeas({ status: 'approved' }),
         ideaAPI.getIdeas({ status: 'rejected' }),
         ideaAPI.getIdeas({ status: 'merged' })
       ]);
       const allIdeas = [
+        ...(pendingRes.data.ideas || []),
         ...(approvedRes.data.ideas || []), 
         ...(rejectedRes.data.ideas || []),
         ...(mergedRes.data.ideas || [])
@@ -82,6 +84,12 @@ const Ideas = () => {
                 All
               </button>
               <button
+                className={`${styles.filterTab} ${filterStatus === 'pending' ? styles.active : ''}`}
+                onClick={() => setFilterStatus('pending')}
+              >
+                Pending
+              </button>
+              <button
                 className={`${styles.filterTab} ${filterStatus === 'approved' ? styles.active : ''}`}
                 onClick={() => setFilterStatus('approved')}
               >
@@ -106,7 +114,7 @@ const Ideas = () => {
                 <div className={styles.emptyText}>No ideas found</div>
                 <div className={styles.emptySubtext}>
                   {filterStatus === 'all' 
-                    ? 'No approved or rejected ideas yet' 
+                    ? 'No ideas yet' 
                     : `No ${filterStatus} ideas`}
                 </div>
               </div>

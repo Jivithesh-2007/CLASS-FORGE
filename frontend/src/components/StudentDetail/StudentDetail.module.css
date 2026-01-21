@@ -32,8 +32,7 @@
   justify-content: space-between;
   position: sticky;
   top: 0;
-  background: rgba(255, 255, 255, 0.8);
-  backdrop-filter: blur(8px);
+  background: #ffffff;
   z-index: 10;
   gap: 12px;
 }
@@ -42,28 +41,30 @@
   background: transparent;
   border: none;
   cursor: pointer;
-  color: #000000;
-  padding: 8px;
+  color: #ef4444;
+  padding: 12px;
   display: flex;
   align-items: center;
   justify-content: center;
   border-radius: 8px;
   transition: all 0.2s ease;
   flex-shrink: 0;
+  min-width: 48px;
+  min-height: 48px;
 }
 
 .backBtn:hover {
-  background: #f0f0f0;
-  color: #000000;
+  background: #fee2e2;
+  color: #dc2626;
   transform: scale(1.1);
 }
 
 .title {
   margin: 0;
-  font-size: 20px;
+  font-size: 18px;
   font-weight: 700;
   color: var(--text-primary);
-  flex: 1;
+  flex: 0;
   text-align: center;
 }
 
@@ -71,19 +72,21 @@
   background: transparent;
   border: none;
   cursor: pointer;
-  color: #000000;
-  padding: 8px;
+  color: #ef4444;
+  padding: 12px;
   display: flex;
   align-items: center;
   justify-content: center;
   border-radius: 8px;
   transition: all 0.2s ease;
   flex-shrink: 0;
+  min-width: 48px;
+  min-height: 48px;
 }
 
 .closeBtn:hover {
-  background: #f0f0f0;
-  color: #000000;
+  background: #fee2e2;
+  color: #dc2626;
   transform: scale(1.1);
 }
 

@@ -33,11 +33,15 @@ const MyIdeas = () => {
 
   const fetchIdeas = async () => {
     try {
-      const response = await ideaAPI.getIdeas({});
-      setIdeas(response.data.ideas);
-      setFilteredIdeas(response.data.ideas);
+      // Don't pass 'all: true' - this will fetch only current user's ideas
+      const response = await ideaAPI.getIdeas();
+      console.log('📋 Fetched ideas:', response.data.ideas?.length || 0);
+      setIdeas(response.data.ideas || []);
+      setFilteredIdeas(response.data.ideas || []);
     } catch (error) {
       console.error('Error fetching ideas:', error);
+      setIdeas([]);
+      setFilteredIdeas([]);
     } finally {
       setLoading(false);
     }
@@ -172,7 +176,7 @@ const MyIdeas = () => {
                   </div>
                 ))}
                 <div className={styles.footerSection}>
-                  <span className={styles.resultCount}>Showing {startIndex + 1} result{filteredIdeas.length !== 1 ? 's' : ''}</span>
+                  <span className={styles.resultCount}>Showing {startIndex + 1}-{Math.min(endIndex, filteredIdeas.length)} of {filteredIdeas.length} result{filteredIdeas.length !== 1 ? 's' : ''}</span>
                   <div className={styles.pagination}>
       
                   </div>

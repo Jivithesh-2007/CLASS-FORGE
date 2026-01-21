@@ -16,6 +16,7 @@ const Notifications = () => {
 
   useEffect(() => {
     if (user && user._id) {
+      console.log('🔄 useEffect triggered, fetching notifications...');
       fetchNotifications();
       setupSocket();
     }
@@ -44,15 +45,23 @@ const Notifications = () => {
 
   const fetchNotifications = async () => {
     try {
-      console.log('📋 Fetching notifications...');
+      console.log('📋 Fetching notifications for user:', user?._id);
       const response = await notificationAPI.getNotifications();
-      console.log('✅ Notifications fetched:', response.data);
-      console.log('📊 Total notifications:', response.data.notifications?.length || 0);
-      console.log('📊 Unread count:', response.data.unreadCount || 0);
-      setNotifications(response.data.notifications);
+      console.log('✅ Full response:', response);
+      console.log('✅ Response data:', response.data);
+      console.log('📊 Notifications array:', response.data?.notifications);
+      console.log('📊 Total notifications:', response.data?.notifications?.length || 0);
+      console.log('📊 Unread count:', response.data?.unreadCount || 0);
+      
+      const notifs = response.data?.notifications || [];
+      console.log('Setting notifications to:', notifs);
+      setNotifications(notifs);
       setLoading(false);
     } catch (error) {
       console.error('❌ Error fetching notifications:', error);
+      console.error('❌ Error response:', error.response);
+      console.error('❌ Error message:', error.message);
+      setNotifications([]);
       setLoading(false);
     }
   };
@@ -86,7 +95,21 @@ const Notifications = () => {
   };
 
   if (loading) {
-    return <div>Loading...</div>;
+    return (
+      <div className={styles.layout}>
+        <Sidebar role={user?.role} />
+        <div className={styles.main}>
+          <Header title="Notifications"/>
+          <div className={styles.content}>
+            <div className={styles.section}>
+              <div className={styles.emptyState}>
+                <div className={styles.emptyText}>Loading notifications...</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
   }
 
   return (
@@ -105,6 +128,44 @@ const Notifications = () => {
                 </button>
               )}
             </div>
+            
+            {/* Debug info */}
+            <div style={{ padding: '12px', backgroundColor: '#f0f0f0', borderRadius: '8px', marginBottom: '16px', fontSize: '12px' }}>
+              <p>Loading: {loading.toString()}</p>
+              <p>Notifications count: {notifications?.length || 0}</p>
+              <p>User ID: {user?._id}</p>
+              <button 
+                onClick={async () => {
+                  try {
+                    const response = await fetch('http://localhost:5001/api/notifications/test/create', {
+                      method: 'POST',
+                      headers: {
+                        'Authorization': `Bearer ${localStorage.getItem('token')}`,
+                        'Content-Type': 'application/json'
+                      }
+                    });
+                    const data = await response.json();
+                    console.log('Test notification created:', data);
+                    fetchNotifications();
+                  } catch (error) {
+                    console.error('Error creating test notification:', error);
+                  }
+                }}
+                style={{
+                  marginTop: '8px',
+                  padding: '8px 16px',
+                  backgroundColor: '#4A90E2',
+                  color: 'white',
+                  border: 'none',
+                  borderRadius: '4px',
+                  cursor: 'pointer',
+                  fontSize: '12px'
+                }}
+              >
+                Create Test Notification
+              </button>
+            </div>
+            
             {notifications.length === 0 ? (
               <div className={styles.emptyState}>
                 <div className={styles.emptyText}>No notifications</div>

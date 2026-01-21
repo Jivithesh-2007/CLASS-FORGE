@@ -177,11 +177,11 @@ Generated on: ${new Date().toLocaleDateString()}
       {/* Header */}
       <div className={styles.header}>
         <button onClick={onClose} className={styles.backBtn} title="Back to Students">
-          <MdArrowBack size={24} />
+          <MdArrowBack size={24} color="#ef4444" />
         </button>
         <h2 className={styles.title}>Student Profile</h2>
         <button onClick={onClose} className={styles.closeBtn} title="Close">
-          <MdClose size={24} />
+          <MdClose size={24} color="#ef4444" />
         </button>
       </div>
 
