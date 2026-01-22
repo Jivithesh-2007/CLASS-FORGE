@@ -101,6 +101,10 @@ const Login = () => {
                 <option value="@karunya.edu.in">@ karunya.edu.in</option>
                 <option value="@karunya.edu">@ karunya.edu</option>
               </select>
+            
+            </div>
+                <div className={styles.hint}>
+              Student: @karunya.edu.in | Faculty: @karunya.edu
             </div>
           </div>
           <div className={styles.formGroup}>
