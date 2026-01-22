@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { MdNotifications, MdPerson, MdLogout, MdKeyboardArrowDown, MdDarkMode, MdLightMode } from 'react-icons/md';
+import { MdNotifications, MdPerson, MdLogout, MdKeyboardArrowDown } from 'react-icons/md';
 import { useAuth } from '../../context/AuthContext';
 import NotificationPanel from '../NotificationPanel/NotificationPanel';
 import { notificationAPI } from '../../services/api';
@@ -13,7 +13,6 @@ const Header = ({ title, subtitle }) => {
   const [unreadCount, setUnreadCount] = useState(0);
   const [showProfileMenu, setShowProfileMenu] = useState(false);
   const [showNotifications, setShowNotifications] = useState(false);
-  const [isDarkMode, setIsDarkMode] = useState(false);
   const profileRef = useRef(null);
 
   useEffect(() => {
@@ -35,15 +34,6 @@ const Header = ({ title, subtitle }) => {
       };
     }
   }, [user]);
-
-  useEffect(() => {
-    // Check for saved dark mode preference
-    const savedDarkMode = localStorage.getItem('darkMode') === 'true';
-    setIsDarkMode(savedDarkMode);
-    if (savedDarkMode) {
-      document.body.classList.add('dark-mode');
-    }
-  }, []);
 
   const setupSocket = () => {
     const socket = getSocket();
@@ -93,17 +83,7 @@ const Header = ({ title, subtitle }) => {
     navigate('/login');
   };
 
-  const toggleDarkMode = () => {
-    const newDarkMode = !isDarkMode;
-    setIsDarkMode(newDarkMode);
-    localStorage.setItem('darkMode', newDarkMode);
-    
-    if (newDarkMode) {
-      document.body.classList.add('dark-mode');
-    } else {
-      document.body.classList.remove('dark-mode');
-    }
-  };
+
 
   const getInitials = (name) => {
     if (!name) return 'U';
@@ -127,14 +107,6 @@ const Header = ({ title, subtitle }) => {
         </div>
         
         <div className={styles.actions}>
-          <button 
-            className={styles.iconBtn} 
-            onClick={toggleDarkMode}
-            title={isDarkMode ? 'Light Mode' : 'Dark Mode'}
-          >
-            {isDarkMode ? <MdLightMode className={styles.icon} /> : <MdDarkMode className={styles.icon} />}
-          </button>
-
           <button 
             className={styles.iconBtn} 
             onClick={() => setShowNotifications(!showNotifications)}

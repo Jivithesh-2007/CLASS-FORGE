@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { 
   MdGridView,
@@ -8,9 +8,7 @@ import {
   MdSettings,
   MdLogout,
   MdRateReview,
-  MdPersonOutline,
-  MdDarkMode,
-  MdLightMode
+  MdPersonOutline
 } from 'react-icons/md';
 import { useAuth } from '../../context/AuthContext';
 import styles from './Sidebar.module.css';
@@ -18,25 +16,6 @@ import styles from './Sidebar.module.css';
 const Sidebar = ({ role }) => {
   const navigate = useNavigate();
   const { logout } = useAuth();
-  const [isDarkMode, setIsDarkMode] = useState(false);
-
-  useEffect(() => {
-    // Check for saved dark mode preference
-    const savedDarkMode = localStorage.getItem('darkMode') === 'true';
-    setIsDarkMode(savedDarkMode);
-  }, []);
-
-  const toggleDarkMode = () => {
-    const newDarkMode = !isDarkMode;
-    setIsDarkMode(newDarkMode);
-    localStorage.setItem('darkMode', newDarkMode);
-    
-    if (newDarkMode) {
-      document.body.classList.add('dark-mode');
-    } else {
-      document.body.classList.remove('dark-mode');
-    }
-  };
 
   const handleLogout = () => {
     logout();
@@ -96,10 +75,6 @@ const Sidebar = ({ role }) => {
       </nav>
       
       <div className={styles.footer}>
-        <button className={styles.themeToggleBtn} onClick={toggleDarkMode} title={isDarkMode ? 'Light Mode' : 'Dark Mode'}>
-          {isDarkMode ? <MdLightMode className={styles.themeIcon} /> : <MdDarkMode className={styles.themeIcon} />}
-          <span className={styles.themeLabel}>{isDarkMode ? 'Light' : 'Dark'}</span>
-        </button>
         <button className={styles.logoutBtn} onClick={handleLogout}>
           <MdLogout className={styles.logoutIcon} />
           Logout
