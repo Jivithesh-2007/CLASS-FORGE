@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { MdClose, MdCheckCircle, MdSchedule, MdCancel, MdFileDownload, MdSend, MdCheckBox, MdCheckBoxOutlineBlank, MdArrowBack } from 'react-icons/md';
+import { jsPDF } from 'jspdf';
 import IdeaDetailModal from '../IdeaDetailModal/IdeaDetailModal';
 import styles from './StudentDetail.module.css';
 
@@ -134,42 +135,171 @@ const StudentDetail = ({ student, onClose }) => {
   };
 
   const handleDownloadPDF = () => {
-    const doc = `
-Student Profile Report
-======================
+    const doc = new jsPDF();
+    const pageWidth = doc.internal.pageSize.getWidth();
+    const pageHeight = doc.internal.pageSize.getHeight();
+    let yPosition = 20;
+    const margin = 15;
+    const lineHeight = 7;
+    const contentWidth = pageWidth - 2 * margin;
 
-Name: ${student.fullName}
-Department: ${student.department}
-Student ID: ${student.studentId || student._id.slice(0, 8)}
-Year: ${student.year || 'N/A'}
+    // Helper function to add text with wrapping
+    const addWrappedText = (text, fontSize, fontStyle = 'normal', maxWidth = contentWidth) => {
+      doc.setFontSize(fontSize);
+      doc.setFont(undefined, fontStyle);
+      const lines = doc.splitTextToSize(text, maxWidth);
+      lines.forEach((line) => {
+        if (yPosition > pageHeight - 15) {
+          doc.addPage();
+          yPosition = 20;
+        }
+        doc.text(line, margin, yPosition);
+        yPosition += lineHeight;
+      });
+      return yPosition;
+    };
 
-Statistics
-==========
-Total Ideas: ${student.totalIdeas}
-Approved: ${student.approvedIdeas}
-Pending Review: ${student.pendingIdeas}
-Rejected: ${student.rejectedIdeas}
-Approval Rate: ${student.totalIdeas > 0 ? Math.round((student.approvedIdeas / student.totalIdeas) * 100) : 0}%
+    // Header
+    doc.setFillColor(0, 0, 0);
+    doc.rect(0, 0, pageWidth, 30, 'F');
+    doc.setTextColor(255, 255, 255);
+    doc.setFontSize(20);
+    doc.setFont(undefined, 'bold');
+    doc.text('CLASSFORGE', margin, 15);
+    doc.setFontSize(10);
+    doc.text('Student Profile Report', margin, 23);
 
-Recent Ideas
-============
-${student.recentIdeas?.map(idea => `
-- ${idea.title}
-  Domain: ${idea.domain}
-  Status: ${idea.status}
-  Date: ${new Date(idea.createdAt).toLocaleDateString()}
-`).join('\n') || 'No ideas submitted'}
+    yPosition = 40;
+    doc.setTextColor(0, 0, 0);
 
-Generated on: ${new Date().toLocaleDateString()}
-    `;
+    // Title
+    doc.setFontSize(16);
+    doc.setFont(undefined, 'bold');
+    doc.text('Student Profile Report', margin, yPosition);
+    yPosition += 12;
 
-    const element = document.createElement('a');
-    element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(doc));
-    element.setAttribute('download', `${student.fullName}_Report.txt`);
-    element.style.display = 'none';
-    document.body.appendChild(element);
-    element.click();
-    document.body.removeChild(element);
+    // Divider
+    doc.setDrawColor(200, 200, 200);
+    doc.line(margin, yPosition, pageWidth - margin, yPosition);
+    yPosition += 8;
+
+    // Student Information Section
+    doc.setFontSize(12);
+    doc.setFont(undefined, 'bold');
+    doc.text('Student Information', margin, yPosition);
+    yPosition += 8;
+
+    doc.setFontSize(10);
+    doc.setFont(undefined, 'normal');
+    const studentInfo = [
+      `Full Name: ${student.fullName}`,
+      `Student ID: ${student.studentId || student._id.slice(0, 8)}`,
+      `Department: ${student.department}`,
+      `Program: ${student.program || 'B.Tech'}`,
+      `Year: ${student.year || 'N/A'}`,
+      `Email: ${student.email}`,
+      `Status: ${student.status || 'Active'}`
+    ];
+
+    studentInfo.forEach((info) => {
+      if (yPosition > pageHeight - 20) {
+        doc.addPage();
+        yPosition = 20;
+      }
+      doc.text(info, margin, yPosition);
+      yPosition += 7;
+    });
+
+    yPosition += 5;
+
+    // Statistics Section
+    doc.setFontSize(12);
+    doc.setFont(undefined, 'bold');
+    doc.text('Idea Statistics', margin, yPosition);
+    yPosition += 8;
+
+    doc.setFontSize(10);
+    doc.setFont(undefined, 'normal');
+    const stats = [
+      `Total Ideas Submitted: ${student.totalIdeas}`,
+      `Approved Ideas: ${student.approvedIdeas}`,
+      `Pending Review: ${student.pendingIdeas}`,
+      `Rejected Ideas: ${student.rejectedIdeas}`,
+      `Approval Rate: ${student.totalIdeas > 0 ? Math.round((student.approvedIdeas / student.totalIdeas) * 100) : 0}%`
+    ];
+
+    stats.forEach((stat) => {
+      if (yPosition > pageHeight - 20) {
+        doc.addPage();
+        yPosition = 20;
+      }
+      doc.text(stat, margin, yPosition);
+      yPosition += 7;
+    });
+
+    yPosition += 5;
+
+    // Recent Ideas Section
+    if (student.recentIdeas && student.recentIdeas.length > 0) {
+      doc.setFontSize(12);
+      doc.setFont(undefined, 'bold');
+      doc.text('Recent Ideas', margin, yPosition);
+      yPosition += 8;
+
+      doc.setFontSize(9);
+      student.recentIdeas.forEach((idea, index) => {
+        if (yPosition > pageHeight - 30) {
+          doc.addPage();
+          yPosition = 20;
+        }
+
+        // Idea number and title
+        doc.setFont(undefined, 'bold');
+        doc.text(`${index + 1}. ${idea.title}`, margin, yPosition);
+        yPosition += 6;
+
+        // Idea details
+        doc.setFont(undefined, 'normal');
+        doc.setTextColor(100, 100, 100);
+        const ideaDetails = [
+          `Domain: ${idea.domain}`,
+          `Status: ${idea.status.toUpperCase()}`,
+          `Date: ${new Date(idea.createdAt).toLocaleDateString('en-US', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric'
+          })}`
+        ];
+
+        ideaDetails.forEach((detail) => {
+          if (yPosition > pageHeight - 20) {
+            doc.addPage();
+            yPosition = 20;
+          }
+          doc.text(detail, margin + 5, yPosition);
+          yPosition += 5;
+        });
+
+        doc.setTextColor(0, 0, 0);
+        yPosition += 3;
+      });
+    }
+
+    // Footer
+    yPosition = pageHeight - 15;
+    doc.setFontSize(8);
+    doc.setTextColor(150, 150, 150);
+    doc.text(`Generated on ${new Date().toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    })}`, margin, yPosition);
+    doc.text(`© 2024 ClassForge Systems. All Rights Reserved.`, pageWidth - margin - 60, yPosition);
+
+    // Save the PDF
+    doc.save(`${student.fullName}_Report.pdf`);
   };
 
   return (
@@ -177,12 +307,9 @@ Generated on: ${new Date().toLocaleDateString()}
       {/* Header */}
       <div className={styles.header}>
         <button onClick={onClose} className={styles.backBtn} title="Back to Students">
-          <MdArrowBack size={24} color="#ef4444" />
+          <MdArrowBack size={24} color="#9ca3af" />
         </button>
         <h2 className={styles.title}>Student Profile</h2>
-        <button onClick={onClose} className={styles.closeBtn} title="Close">
-          <MdClose size={24} color="#ef4444" />
-        </button>
       </div>
 
       <div className={styles.scrollContainer}>

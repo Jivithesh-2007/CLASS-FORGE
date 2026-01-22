@@ -642,19 +642,19 @@
   }
 }
 
-/* Dark Mode Styles */
+/* Dark Mode Styles - Deep Charcoal Palette (Slate-950/900) */
 body.dark-mode .layout {
-  background-color: #05070F;
+  background-color: #0f172a;
 }
 
 body.dark-mode .statCard {
-  background: #0E1A3A;
-  border-color: #1a2a4a;
+  background: #1e293b;
+  border-color: #334155;
 }
 
 body.dark-mode .statCard:hover {
-  border-color: #7FB3E8;
-  box-shadow: 0 4px 12px rgba(127, 179, 232, 0.2);
+  border-color: #6366f1;
+  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.2);
 }
 
 body.dark-mode .statIcon.iconPurple {
@@ -678,52 +678,52 @@ body.dark-mode .statIcon.iconBlue {
 }
 
 body.dark-mode .statLabel {
-  color: #b0b0b0;
+  color: #cbd5e1;
 }
 
 body.dark-mode .statValue {
-  color: #e0e0e0;
+  color: #f1f5f9;
 }
 
 body.dark-mode .chartCard {
-  background: #0E1A3A;
-  border-color: #1a2a4a;
+  background: #1e293b;
+  border-color: #334155;
 }
 
 body.dark-mode .chartHeader h3 {
-  color: #e0e0e0;
+  color: #f1f5f9;
 }
 
 body.dark-mode .chartHeader p {
-  color: #b0b0b0;
+  color: #cbd5e1;
 }
 
 body.dark-mode .chartSelect {
-  background: #0B1220;
-  border-color: #1a2a4a;
-  color: #b0b0b0;
+  background: #0f172a;
+  border-color: #334155;
+  color: #cbd5e1;
 }
 
 body.dark-mode .barLabel {
-  color: #b0b0b0;
+  color: #cbd5e1;
 }
 
 body.dark-mode .barContainer {
-  background: #1a2a4a;
+  background: #334155;
 }
 
 body.dark-mode .bar {
-  background: #000000;
+  background: #6366f1;
 }
 
 body.dark-mode .chartFooter {
-  color: #b0b0b0;
-  border-top-color: #1a2a4a;
+  color: #cbd5e1;
+  border-top-color: #334155;
 }
 
 body.dark-mode .section {
-  background-color: #0E1A3A;
-  border-color: #1a2a4a;
+  background-color: #1e293b;
+  border-color: #334155;
 }
 
 body.dark-mode .section:hover {
@@ -731,87 +731,87 @@ body.dark-mode .section:hover {
 }
 
 body.dark-mode .sectionHeader {
-  border-bottom-color: #1a2a4a;
+  border-bottom-color: #334155;
 }
 
 body.dark-mode .sectionTitle {
-  color: #e0e0e0;
+  color: #f1f5f9;
 }
 
 body.dark-mode .sectionSubtitle {
-  color: #b0b0b0;
+  color: #cbd5e1;
 }
 
 body.dark-mode .filterTab {
-  background-color: #0E1A3A;
-  border-color: #1a2a4a;
-  color: #e0e0e0;
+  background-color: transparent;
+  border-color: transparent;
+  color: #cbd5e1;
 }
 
 body.dark-mode .filterTab:hover {
-  background-color: #1a2a4a;
-  color: #ffffff;
+  background-color: #334155;
+  color: #f1f5f9;
 }
 
 body.dark-mode .filterTab.active {
-  background-color: #1a2a4a;
-  color: #ffffff;
-  border-color: #7FB3E8;
+  background-color: transparent;
+  color: #6366f1;
+  border-color: #6366f1;
 }
 
 body.dark-mode .tableHeader {
-  border-bottom-color: #1a2a4a;
+  border-bottom-color: #334155;
 }
 
 body.dark-mode .headerCell {
-  color: #808080;
+  color: #94a3b8;
 }
 
 body.dark-mode .ideaRow {
-  border-bottom-color: #1a2a4a;
+  border-bottom-color: #334155;
 }
 
 body.dark-mode .ideaRowTitleText {
-  color: #e0e0e0;
+  color: #f1f5f9;
 }
 
 body.dark-mode .ideaRowDescription {
-  color: #b0b0b0;
+  color: #cbd5e1;
 }
 
 body.dark-mode .authorCell {
-  color: #e0e0e0;
+  color: #f1f5f9;
 }
 
 body.dark-mode .authorInitial {
-  background-color: #1a2a4a;
-  color: #b0b0b0;
+  background-color: #334155;
+  color: #cbd5e1;
 }
 
 body.dark-mode .authorName {
-  color: #e0e0e0;
+  color: #f1f5f9;
 }
 
 body.dark-mode .departmentCell {
-  color: #e0e0e0;
+  color: #f1f5f9;
 }
 
 body.dark-mode .dateCell {
-  color: #e0e0e0;
+  color: #f1f5f9;
 }
 
 body.dark-mode .emptyState {
-  color: #b0b0b0;
+  color: #cbd5e1;
 }
 
 body.dark-mode .emptyIcon {
-  color: #1a2a4a;
+  color: #334155;
 }
 
 body.dark-mode .emptyText {
-  color: #e0e0e0;
+  color: #f1f5f9;
 }
 
 body.dark-mode .emptySubtext {
-  color: #b0b0b0;
+  color: #cbd5e1;
 }

@@ -1,60 +1,180 @@
-:root {
-  --white: #ffffff;
-  --black: #000000;
-  --text-primary: #000000;
-  --text-secondary: #666666;
-  --border-color: #e0e0e0;
-  --primary-color: #000000;
-  --primary-dark: #333333;
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 
 .container {
-  min-height: 100vh;
-  background: #ffffff;
   display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 20px;
+  height: 100vh;
+  background: #ffffff;
+  overflow: hidden;
 }
 
-.card {
-  background-color: #ffffff;
-  border-radius: 16px;
-  padding: 48px;
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.03);
-  width: 100%;
-  max-width: 450px;
-  border: 1px solid rgba(0, 0, 0, 0.05);
+.leftPanel {
+  flex: 1;
+  background: #000000;
+  color: #ffffff;
+  padding: 60px 40px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-width: 400px;
+  overflow: hidden;
 }
 
-.header {
-  text-align: center;
-  margin-bottom: 32px;
+.leftContent {
+  display: flex;
+  flex-direction: column;
 }
 
 .logo {
-  font-size: 32px;
+  width: 40px;
+  height: 40px;
+  border: 2px solid #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
   font-weight: 700;
-  color: #000000;
-  margin-bottom: 8px;
+  margin-bottom: 16px;
 }
 
-.subtitle {
+.brandName {
   font-size: 14px;
-  color: #666666;
+  font-weight: 600;
+  letter-spacing: 2px;
+  margin-bottom: 40px;
+  color: #ffffff;
 }
 
-.title {
-  font-size: 24px;
-  font-weight: 600;
-  color: #000000;
-  margin-top: 24px;
-  margin-bottom: 8px;
+.tagline {
+  font-size: 48px;
+  font-weight: 400;
+  line-height: 1.2;
+  margin-bottom: 24px;
+  font-family: 'Georgia', serif;
+}
+
+.impact {
+  font-style: italic;
 }
 
 .description {
   font-size: 14px;
+  line-height: 1.6;
+  color: #cccccc;
+  margin-bottom: 60px;
+  max-width: 300px;
+}
+
+.stats {
+  display: flex;
+  gap: 60px;
+  margin-bottom: 80px;
+}
+
+.stat {
+  display: flex;
+  flex-direction: column;
+}
+
+.statLabel {
+  font-size: 11px;
+  letter-spacing: 1px;
+  color: #999999;
+  margin-bottom: 8px;
+}
+
+.statValue {
+  font-size: 24px;
+  font-weight: 600;
+  color: #ffffff;
+}
+
+.copyright {
+  font-size: 10px;
+  letter-spacing: 0.5px;
   color: #666666;
+  line-height: 1.6;
+}
+
+.rightPanel {
+  flex: 1;
+  background: #ffffff;
+  padding: 60px 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 400px;
+  overflow: hidden;
+  height: 100vh;
+}
+
+.formContainer {
+  width: 100%;
+  max-width: 380px;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  padding-right: 10px;
+}
+
+.formContainer::-webkit-scrollbar {
+  width: 6px;
+}
+
+.formContainer::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.formContainer::-webkit-scrollbar-thumb {
+  background: #e0e0e0;
+  border-radius: 3px;
+}
+
+.formContainer::-webkit-scrollbar-thumb:hover {
+  background: #999999;
+}
+
+.title {
+  font-size: 32px;
+  font-weight: 400;
+  color: #000000;
+  margin-bottom: 12px;
+  font-family: 'Georgia', serif;
+}
+
+.subtitle {
+  font-size: 13px;
+  color: #999999;
+  margin-bottom: 32px;
+  line-height: 1.6;
+}
+
+.quote {
+  background: #f5f5f5;
+  border-left: 3px solid #000000;
+  padding: 20px;
+  margin-bottom: 32px;
+  font-size: 13px;
+  line-height: 1.8;
+  color: #333333;
+  font-style: italic;
+}
+
+.quote p {
+  margin: 0;
+}
+
+.quoteAttribution {
+  font-style: normal;
+  font-weight: 600;
+  margin-top: 12px;
+  font-size: 11px;
+  letter-spacing: 1px;
+  color: #000000;
 }
 
 .form {
@@ -62,13 +182,14 @@
 }
 
 .formGroup {
-  margin-bottom: 20px;
+  margin-bottom: 24px;
 }
 
 .label {
   display: block;
-  font-size: 14px;
-  font-weight: 500;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 1px;
   color: #000000;
   margin-bottom: 8px;
 }
@@ -78,145 +199,57 @@
   gap: 8px;
 }
 
-input.input,
-input[type="text"].input,
-input[type="password"].input,
-input[type="email"].input,
-textarea.input {
+.input {
   width: 100%;
-  padding: 12px 16px;
-  border: 1px solid #e0e0e0 !important;
-  border-radius: 8px;
-  font-size: 14px;
+  padding: 12px 14px;
+  border: 1px solid #e0e0e0;
+  border-radius: 0;
+  font-size: 13px;
+  background: #ffffff;
+  color: #000000;
   transition: all 0.3s ease;
-  background-color: #ffffff !important;
-  background: #ffffff !important;
-  color: #000000 !important;
+  font-family: inherit;
+}
+
+.input::placeholder {
+  color: #cccccc;
+}
+
+.input:focus {
+  outline: none;
+  border-color: #000000;
+  background: #ffffff;
+}
+
+.select {
+  padding: 12px 14px;
+  border: 1px solid #e0e0e0;
+  border-radius: 0;
+  font-size: 13px;
+  background: #ffffff;
+  color: #000000;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  min-width: 140px;
+  font-family: inherit;
   -webkit-appearance: none;
   -moz-appearance: none;
   appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%23000000' d='M1 1l5 5 5-5'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+  background-size: 12px;
+  padding-right: 32px;
 }
 
-input.input::placeholder,
-input[type="text"].input::placeholder,
-input[type="password"].input::placeholder,
-input[type="email"].input::placeholder,
-textarea.input::placeholder {
-  color: #999999;
-}
-
-input.input:focus,
-input[type="text"].input:focus,
-input[type="password"].input:focus,
-input[type="email"].input:focus,
-textarea.input:focus {
+.select:focus {
   outline: none;
-  border-color: #000000 !important;
-  box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.05) !important;
-  background-color: #ffffff !important;
-  background: #ffffff !important;
+  border-color: #000000;
 }
 
-input.input:hover,
-input[type="text"].input:hover,
-input[type="password"].input:hover,
-input[type="email"].input:hover,
-textarea.input:hover {
-  border-color: #999999 !important;
-  background-color: #ffffff !important;
-  background: #ffffff !important;
-}
-
-/* Force ALL select/dropdown elements to be white ALWAYS - MAXIMUM OVERRIDE */
-select,
-select.select,
-select[class*="select"],
-.select,
-[class*="select"] select,
-div[class*="select"],
-button[role="combobox"],
-[role="combobox"] {
-  padding: 12px 16px !important;
-  padding-right: 40px !important;
-  border: 1px solid #e0e0e0 !important;
-  border-radius: 8px !important;
-  font-size: 14px !important;
-  background-color: #ffffff !important;
-  background: #ffffff !important;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 16 16'%3E%3Cpath fill='%23000000' d='M4.427 6.427l3.396 3.396a.25.25 0 00.354 0l3.396-3.396A.25.25 0 0011.396 6H4.604a.25.25 0 00-.177.427z'/%3E%3C/svg%3E") !important;
-  background-repeat: no-repeat !important;
-  background-position: right 12px center !important;
-  background-size: 16px !important;
-  color: #000000 !important;
-  cursor: pointer !important;
-  transition: all 0.3s ease !important;
-  min-width: 180px !important;
-  -webkit-appearance: none !important;
-  -moz-appearance: none !important;
-  appearance: none !important;
-}
-
-/* Input wrapper - also force white */
-.inputWrapper select,
-.inputWrapper [class*="select"],
-.inputWrapper button {
-  background-color: #ffffff !important;
-  background: #ffffff !important;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 16 16'%3E%3Cpath fill='%23000000' d='M4.427 6.427l3.396 3.396a.25.25 0 00.354 0l3.396-3.396A.25.25 0 0011.396 6H4.604a.25.25 0 00-.177.427z'/%3E%3C/svg%3E") !important;
-  background-repeat: no-repeat !important;
-  background-position: right 12px center !important;
-  background-size: 16px !important;
-  color: #000000 !important;
-}
-
-select:focus,
-select.select:focus,
-select[class*="select"]:focus,
-.select:focus,
-[class*="select"] select:focus,
-div[class*="select"]:focus,
-button[role="combobox"]:focus,
-[role="combobox"]:focus {
-  outline: none !important;
-  border-color: #000000 !important;
-  box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.05) !important;
-  background-color: #ffffff !important;
-  background: #ffffff !important;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 16 16'%3E%3Cpath fill='%23000000' d='M4.427 6.427l3.396 3.396a.25.25 0 00.354 0l3.396-3.396A.25.25 0 0011.396 6H4.604a.25.25 0 00-.177.427z'/%3E%3C/svg%3E") !important;
-  background-repeat: no-repeat !important;
-  background-position: right 12px center !important;
-  background-size: 16px !important;
-}
-
-select:hover,
-select.select:hover,
-select[class*="select"]:hover,
-.select:hover,
-[class*="select"] select:hover,
-div[class*="select"]:hover,
-button[role="combobox"]:hover,
-[role="combobox"]:hover {
-  border-color: #999999 !important;
-  background-color: #ffffff !important;
-  background: #ffffff !important;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 16 16'%3E%3Cpath fill='%23000000' d='M4.427 6.427l3.396 3.396a.25.25 0 00.354 0l3.396-3.396A.25.25 0 0011.396 6H4.604a.25.25 0 00-.177.427z'/%3E%3C/svg%3E") !important;
-  background-repeat: no-repeat !important;
-  background-position: right 12px center !important;
-  background-size: 16px !important;
-}
-
-/* Force option elements inside select to be white */
-select option,
-select.select option,
 .select option {
-  background-color: #ffffff !important;
-  color: #000000 !important;
-}
-
-.hint {
-  font-size: 12px;
+  background: #ffffff;
   color: #000000;
-  margin-top: 6px;
 }
 
 .passwordWrapper {
@@ -230,19 +263,18 @@ select.select option,
   transform: translateY(-50%);
   background: none;
   border: none;
-  color: #666666;
+  color: #999999;
   cursor: pointer;
   padding: 8px;
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: all 0.3s ease;
-  font-size: 24px;
+  font-size: 18px;
+  transition: color 0.3s ease;
 }
 
 .passwordToggle:hover {
   color: #000000;
-  transform: translateY(-50%) scale(1.1);
 }
 
 .forgotPassword {
@@ -251,104 +283,93 @@ select.select option,
 }
 
 .forgotLink {
-  font-size: 14px;
+  font-size: 11px;
   color: #000000;
   text-decoration: none;
+  letter-spacing: 0.5px;
   transition: all 0.3s ease;
+  font-weight: 500;
 }
 
 .forgotLink:hover {
   text-decoration: underline;
-  color: #333333;
 }
 
 .submitBtn {
   width: 100%;
   padding: 14px;
-  background-color: #000000;
+  background: #000000;
   color: #ffffff;
   border: none;
-  border-radius: 8px;
-  font-size: 16px;
+  border-radius: 0;
+  font-size: 12px;
   font-weight: 600;
+  letter-spacing: 1px;
   cursor: pointer;
   transition: all 0.3s ease;
-  margin-top: 24px;
+  margin-top: 32px;
+  font-family: inherit;
 }
 
-.submitBtn:hover {
-  background-color: #333333;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+.submitBtn:hover:not(:disabled) {
+  background: #333333;
 }
 
 .submitBtn:disabled {
-  background-color: #cccccc;
+  background: #cccccc;
   cursor: not-allowed;
-  transform: none;
 }
 
 .footer {
+  margin-top: 32px;
   text-align: center;
-  margin-top: 24px;
-  font-size: 14px;
+}
+
+.footer p {
+  font-size: 13px;
   color: #666666;
+  margin-bottom: 20px;
 }
 
 .footerLink {
   color: #000000;
   text-decoration: none;
   font-weight: 600;
-  margin-left: 4px;
   transition: all 0.3s ease;
 }
 
 .footerLink:hover {
   text-decoration: underline;
-  color: #333333;
 }
 
-.error {
-  background-color: #ffebee;
-  color: #c62828;
-  padding: 12px;
-  border-radius: 8px;
-  margin-bottom: 20px;
-  font-size: 14px;
-  text-align: center;
-  border: 1px solid #ef5350;
-  animation: slideDown 0.3s ease-out;
+.footerLinks {
+  display: flex;
+  justify-content: center;
+  gap: 24px;
+  font-size: 11px;
 }
 
-.success {
-  background-color: #e8f5e9;
-  color: #2e7d32;
-  padding: 12px;
-  border-radius: 8px;
-  margin-bottom: 20px;
-  font-size: 14px;
-  text-align: center;
-  border: 1px solid #66bb6a;
-  animation: slideDown 0.3s ease-out;
+.footerLinks .footerLink {
+  letter-spacing: 0.5px;
 }
 
 .message {
-  padding: 12px;
-  border-radius: 8px;
+  padding: 12px 14px;
+  border-radius: 0;
   margin-bottom: 20px;
-  font-size: 14px;
+  font-size: 13px;
   text-align: center;
   animation: slideDown 0.3s ease-out;
 }
 
 .message.error {
-  background-color: #ffebee;
+  background: #ffebee;
   color: #c62828;
   border: 1px solid #ef5350;
 }
 
 .message.success {
-  background-color: #e8f5e9;
+  background: #e8f5e9;
   color: #2e7d32;
   border: 1px solid #66bb6a;
 }
@@ -364,19 +385,51 @@ select.select option,
   }
 }
 
-.backButton {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  color: #000000;
-  text-decoration: none;
-  font-size: 14px;
-  font-weight: 500;
-  margin-bottom: 24px;
-  transition: all 0.3s ease;
+@media (max-width: 1024px) {
+  .leftPanel {
+    min-width: 300px;
+    padding: 40px 30px;
+  }
+
+  .rightPanel {
+    min-width: 300px;
+    padding: 40px 30px;
+  }
+
+  .tagline {
+    font-size: 36px;
+  }
+
+  .stats {
+    gap: 40px;
+  }
 }
 
-.backButton:hover {
-  color: #333333;
-  gap: 12px;
+@media (max-width: 768px) {
+  .container {
+    flex-direction: column;
+  }
+
+  .leftPanel {
+    min-width: 100%;
+    padding: 40px 20px;
+    justify-content: flex-start;
+  }
+
+  .rightPanel {
+    min-width: 100%;
+    padding: 40px 20px;
+  }
+
+  .tagline {
+    font-size: 28px;
+  }
+
+  .description {
+    margin-bottom: 40px;
+  }
+
+  .stats {
+    margin-bottom: 40px;
+  }
 }

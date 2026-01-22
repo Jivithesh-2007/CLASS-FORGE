@@ -271,203 +271,96 @@
   position: relative;
 }
 
-.notificationDropdown {
-  position: absolute;
-  top: calc(100% + 12px);
-  right: 0;
-  background-color: var(--white);
-  border-radius: var(--radius-md);
-  box-shadow: var(--shadow-xl);
-  min-width: 380px;
-  max-height: 500px;
-  display: flex;
-  flex-direction: column;
-  animation: slideDown 0.2s ease;
-  border: 1px solid var(--border-light);
-  z-index: 1000;
+/* Dark Mode Styles - Deep Charcoal Palette (Slate-950/900) */
+body.dark-mode {
+  background-color: #0f172a;
+  color: #f1f5f9;
 }
 
-
-
-.notifHeader {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 16px 20px;
-  border-bottom: 1px solid var(--border-light);
-}
-
-
-
-.notifTitle {
-  font-size: 16px;
-  font-weight: 600;
-  color: var(--text-primary);
-}
-
-
-
-.closeBtn {
-  background: none;
-  border: none;
-  color: var(--text-secondary);
-  cursor: pointer;
-  padding: 4px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 4px;
-  transition: var(--transition-fast);
-}
-
-
-
-.closeBtn:hover {
-  background-color: var(--background);
-  color: var(--text-primary);
-}
-
-
-
-.notifList {
-  flex: 1;
-  overflow-y: auto;
-  max-height: 350px;
-}
-
-.notifItem {
-  padding: 16px 20px;
-  border-bottom: 1px solid var(--border-light);
-  cursor: pointer;
-  transition: var(--transition-fast);
-  display: flex;
-  align-items: start;
-  gap: 12px;
-  position: relative;
-  background-color: #f5f5f5;
-}
-
-.notifItem:hover {
-  background-color: #eeeeee;
-}
-
-.notifItem.unread {
-  background-color: #f0f0f0;
-}
-
-
-
-.notifContent {
-  flex: 1;
-}
-
-.notifItem .notifTitle {
-  font-size: 14px;
-  font-weight: 600;
-  color: var(--text-primary);
-  margin-bottom: 4px;
-}
-
-
-
-.notifMessage {
-  font-size: 13px;
-  color: var(--text-secondary);
-  margin-bottom: 6px;
-  line-height: 1.4;
-}
-
-
-
-.notifTime {
-  font-size: 12px;
-  color: var(--text-tertiary);
-}
-
-
-
-.unreadDot {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background-color: var(--primary-color);
-  flex-shrink: 0;
-  margin-top: 6px;
-}
-
-.emptyNotif {
-  padding: 40px 20px;
-  text-align: center;
-  color: var(--text-secondary);
-  font-size: 14px;
-}
-
-
-
-.notifFooter {
-  padding: 12px 20px;
-  border-top: 1px solid var(--border-light);
-}
-
-
-
-.viewAllBtn {
-  width: 100%;
-  padding: 10px;
-  background-color: #000000;
-  color: white;
-  border: none;
-  border-radius: var(--radius);
-  font-size: 14px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: var(--transition);
-}
-
-.viewAllBtn:hover {
-  background-color: #1a1a1a;
-}
-
-
-
-.viewAllBtn:hover {
-  background-color: var(--primary-dark);
-  transform: translateY(-1px);
-}
-
-/* Dark Mode Styles */
 body.dark-mode .header {
-  background-color: #0B1220;
-  border-bottom-color: #1a2a4a;
+  background-color: #0f172a;
+  border-bottom-color: #1e293b;
+}
+
+body.dark-mode .breadcrumbApp {
+  color: #f1f5f9;
+}
+
+body.dark-mode .breadcrumbSeparator {
+  color: #64748b;
+}
+
+body.dark-mode .breadcrumbPage {
+  color: #cbd5e1;
+}
+
+body.dark-mode .greetingText {
+  color: #f1f5f9;
+}
+
+body.dark-mode .greetingSubtext {
+  color: #94a3b8;
+}
+
+body.dark-mode .themeToggle {
+  background-color: #1e293b;
+  color: #cbd5e1;
+}
+
+body.dark-mode .themeToggle:hover {
+  background-color: #334155;
+  color: #f1f5f9;
 }
 
 body.dark-mode .iconBtn {
-  background-color: #0E1A3A;
-  color: #e0e0e0;
+  background-color: #1e293b;
+  color: #cbd5e1;
 }
 
 body.dark-mode .iconBtn:hover {
-  background-color: #1a2a4a;
-  color: #ffffff;
+  background-color: #334155;
+  color: #f1f5f9;
+}
+
+body.dark-mode .profile {
+  color: #cbd5e1;
 }
 
 body.dark-mode .profile:hover {
-  background-color: #0E1A3A;
+  background-color: #1e293b;
+}
+
+body.dark-mode .avatar {
+  background: #1e293b;
+  color: #f1f5f9;
+  border-color: #334155;
+}
+
+body.dark-mode .profileName {
+  color: #f1f5f9;
+}
+
+body.dark-mode .profileRole {
+  color: #94a3b8;
+}
+
+body.dark-mode .dropdownIcon {
+  color: #94a3b8;
 }
 
 body.dark-mode .profileMenu {
-  background-color: #0E1A3A;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
-  border-color: #1a2a4a;
+  background-color: #0f172a;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.8);
+  border: 1px solid #1e293b;
 }
 
 body.dark-mode .menuItem {
-  color: #e0e0e0;
+  color: #cbd5e1;
 }
 
 body.dark-mode .menuItem:hover {
-  background-color: #1a2a4a;
-  color: #ffffff;
+  background-color: #1e293b;
+  color: #f1f5f9;
 }
 
 body.dark-mode .menuItem:last-child {
@@ -479,76 +372,28 @@ body.dark-mode .menuItem:last-child:hover {
   color: #ff8888;
 }
 
-body.dark-mode .notificationDropdown {
-  background-color: #0E1A3A;
-  border-color: #1a2a4a;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6);
+body.dark-mode .menuIcon {
+  color: inherit;
 }
 
-body.dark-mode .notifHeader {
-  border-bottom-color: #1a2a4a;
+/* Notification Badge Animation */
+@keyframes badgePulse {
+  0% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7);
+  }
+  50% {
+    transform: scale(1.05);
+    box-shadow: 0 0 0 6px rgba(239, 68, 68, 0);
+  }
+  100% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 rgba(239, 68, 68, 0);
+  }
 }
 
-body.dark-mode .notifTitle {
-  color: #e0e0e0;
-}
-
-body.dark-mode .closeBtn {
-  color: #b0b0b0;
-}
-
-body.dark-mode .closeBtn:hover {
-  background-color: #1a2a4a;
-  color: #e0e0e0;
-}
-
-body.dark-mode .notifItem {
-  background-color: #0E1A3A;
-  border-bottom-color: #1a2a4a;
-}
-
-body.dark-mode .notifItem:hover {
-  background-color: #1a2a4a;
-}
-
-body.dark-mode .notifItem.unread {
-  background-color: #1a2a4a;
-}
-
-body.dark-mode .notifMessage {
-  color: #b0b0b0;
-}
-
-body.dark-mode .notifTime {
-  color: #808080;
-}
-
-body.dark-mode .emptyNotif {
-  color: #b0b0b0;
-}
-
-body.dark-mode .notifFooter {
-  border-top-color: #1a2a4a;
-}
-
-body.dark-mode .viewAllBtn {
-  background-color: #1a2a4a;
-  color: #e0e0e0;
-}
-
-body.dark-mode .viewAllBtn:hover {
-  background-color: #2a3a5a;
-  color: #ffffff;
-}
-
-body.dark-mode .themeToggle {
-  background-color: #0E1A3A;
-  color: #e0e0e0;
-}
-
-body.dark-mode .themeToggle:hover {
-  background-color: #1a2a4a;
-  color: #ffffff;
+.badge.animate {
+  animation: badgePulse 2s infinite;
 }
 
 

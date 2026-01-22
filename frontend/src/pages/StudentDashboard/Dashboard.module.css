@@ -724,14 +724,14 @@
   }
 }
 
-/* Dark Mode Styles */
+/* Dark Mode Styles - Deep Charcoal Palette (Slate-950/900) */
 body.dark-mode .layout {
-  background-color: #05070F;
+  background-color: #0f172a;
 }
 
 body.dark-mode .section {
-  background-color: #0E1A3A;
-  border-color: #1a2a4a;
+  background-color: #1e293b;
+  border-color: #334155;
 }
 
 body.dark-mode .section:hover {
@@ -739,168 +739,178 @@ body.dark-mode .section:hover {
 }
 
 body.dark-mode .sectionHeader {
-  border-bottom-color: #1a2a4a;
+  border-bottom-color: #334155;
 }
 
 body.dark-mode .sectionTitle {
-  color: #e0e0e0;
+  color: #f1f5f9;
 }
 
 body.dark-mode .sectionSubtitle {
-  color: #b0b0b0;
+  color: #cbd5e1;
 }
 
 body.dark-mode .filterTabs {
-  border-bottom-color: #1a2a4a;
+  border-bottom-color: #334155;
 }
 
 body.dark-mode .filterTab {
-  color: #b0b0b0;
+  color: #cbd5e1;
 }
 
 body.dark-mode .filterTab:hover {
-  color: #e0e0e0;
+  color: #f1f5f9;
 }
 
 body.dark-mode .filterTab.active {
-  color: #7FB3E8;
-  border-bottom-color: #7FB3E8;
+  color: #6366f1;
+  border-bottom-color: #6366f1;
 }
 
 body.dark-mode .tableFooter {
-  border-top-color: #1a2a4a;
+  border-top-color: #334155;
 }
 
 body.dark-mode .resultCount {
-  color: #b0b0b0;
+  color: #cbd5e1;
 }
 
 body.dark-mode .paginationBtn {
   background: none;
-  border-color: #1a2a4a;
-  color: #e0e0e0;
+  border-color: #334155;
+  color: #f1f5f9;
 }
 
 body.dark-mode .paginationBtn:hover {
-  background-color: #1a2a4a;
-  border-color: #7FB3E8;
-  color: #7FB3E8;
+  background-color: #334155;
+  border-color: #6366f1;
+  color: #6366f1;
+}
+
+body.dark-mode .button {
+  background-color: #6366f1;
+  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+}
+
+body.dark-mode .button:hover {
+  background-color: #818cf8;
+  box-shadow: 0 6px 16px rgba(99, 102, 241, 0.4);
 }
 
 body.dark-mode .emptyState {
-  color: #b0b0b0;
+  color: #cbd5e1;
 }
 
 body.dark-mode .emptyIcon {
-  color: #1a2a4a;
+  color: #334155;
 }
 
 body.dark-mode .emptyText {
-  color: #e0e0e0;
+  color: #f1f5f9;
 }
 
 body.dark-mode .emptySubtext {
-  color: #b0b0b0;
+  color: #cbd5e1;
 }
 
 body.dark-mode .tableHeader {
-  border-bottom-color: #1a2a4a;
+  border-bottom-color: #334155;
 }
 
 body.dark-mode .headerCell {
-  color: #808080;
+  color: #94a3b8;
 }
 
 body.dark-mode .ideaRow {
-  border-bottom-color: #1a2a4a;
+  border-bottom-color: #334155;
 }
 
 body.dark-mode .ideaRow:hover {
-  background-color: #1a2a4a;
+  background-color: #334155;
 }
 
 body.dark-mode .ideaRowTitleText {
-  color: #e0e0e0;
+  color: #f1f5f9;
 }
 
 body.dark-mode .ideaRowDescription {
-  color: #b0b0b0;
+  color: #cbd5e1;
 }
 
 body.dark-mode .authorCell {
-  color: #e0e0e0;
+  color: #f1f5f9;
 }
 
 body.dark-mode .authorInitial {
-  background-color: #1a2a4a;
-  color: #b0b0b0;
+  background-color: #334155;
+  color: #cbd5e1;
 }
 
 body.dark-mode .authorName {
-  color: #e0e0e0;
+  color: #f1f5f9;
 }
 
 body.dark-mode .departmentCell {
-  color: #e0e0e0;
+  color: #f1f5f9;
 }
 
 body.dark-mode .dateCell {
-  color: #e0e0e0;
+  color: #f1f5f9;
 }
 
 body.dark-mode .ideaCard {
-  background-color: #0E1A3A;
-  border-color: #1a2a4a;
+  background-color: #1e293b;
+  border-color: #334155;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
 }
 
 body.dark-mode .ideaCard:hover {
   box-shadow: 0 12px 24px rgba(0, 0, 0, 0.5);
-  border-color: #7FB3E8;
+  border-color: #6366f1;
 }
 
 body.dark-mode .ideaTitle {
-  color: #e0e0e0;
+  color: #f1f5f9;
 }
 
 body.dark-mode .ideaDescription {
-  color: #b0b0b0;
+  color: #cbd5e1;
 }
 
 body.dark-mode .ideaFooter {
-  border-top-color: #1a2a4a;
+  border-top-color: #334155;
 }
 
 body.dark-mode .ideaMeta {
-  color: #808080;
+  color: #94a3b8;
 }
 
 body.dark-mode .groupsHeader {
-  border-bottom-color: #1a2a4a;
+  border-bottom-color: #334155;
 }
 
 body.dark-mode .codeButton {
-  background-color: #1a2a4a;
-  color: #e0e0e0;
+  background-color: #334155;
+  color: #f1f5f9;
 }
 
 body.dark-mode .codeButton:hover {
-  background-color: #2a3a5a;
+  background-color: #475569;
 }
 
 body.dark-mode .groupCard {
-  background-color: #0E1A3A;
-  border-color: #1a2a4a;
+  background-color: #1e293b;
+  border-color: #334155;
 }
 
 body.dark-mode .groupCard:hover {
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
-  border-color: #7FB3E8;
+  border-color: #6366f1;
 }
 
 body.dark-mode .groupIcon {
-  background-color: #1a2a4a;
-  color: #7FB3E8;
+  background-color: #334155;
+  color: #6366f1;
 }
 
 body.dark-mode .statusBadge {
@@ -909,31 +919,31 @@ body.dark-mode .statusBadge {
 }
 
 body.dark-mode .statusCode {
-  color: #b0b0b0;
+  color: #cbd5e1;
 }
 
 body.dark-mode .groupName {
-  color: #e0e0e0;
+  color: #f1f5f9;
 }
 
 body.dark-mode .groupRole {
-  color: #7FB3E8;
+  color: #6366f1;
 }
 
 body.dark-mode .groupDescription {
-  color: #b0b0b0;
+  color: #cbd5e1;
 }
 
 body.dark-mode .groupMembers {
-  border-bottom-color: #1a2a4a;
+  border-bottom-color: #334155;
 }
 
 body.dark-mode .actionIcon {
-  background-color: #1a2a4a;
-  color: #b0b0b0;
+  background-color: #334155;
+  color: #cbd5e1;
 }
 
 body.dark-mode .actionIcon:hover {
-  background-color: #7FB3E8;
-  color: #0E1A3A;
+  background-color: #6366f1;
+  color: #1e293b;
 }

@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { MdAdd, MdLightbulb } from 'react-icons/md';
-import { MdBarChart, MdCheckCircle, MdPending, MdThumbDown } from 'react-icons/md';
+import { MdAdd, MdLightbulb, MdBarChart, MdCheckCircle, MdPending, MdPeople, MdSend } from 'react-icons/md';
 import Sidebar from '../../components/Sidebar/Sidebar';
 import Header from '../../components/Header/Header';
 import IdeaDetailModal from '../../components/IdeaDetailModal/IdeaDetailModal';
@@ -193,80 +192,132 @@ const StudentDashboard = () => {
         <Header />
         <div className={styles.content}>
           <div style={{
-            background: 'linear-gradient(135deg, #000000 0%, #1a1a1a 100%)',
-            color: '#ffffff',
-            padding: '40px 32px',
-            borderRadius: '16px',
+            background: '#ffffff',
+            border: '1px solid #e5e7eb',
+            padding: '32px',
+            borderRadius: '12px',
             marginBottom: '32px',
             position: 'relative',
             overflow: 'hidden',
-            boxShadow: '0 8px 32px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.1)',
-            border: '1px solid rgba(255, 255, 255, 0.05)'
+            boxShadow: '0 2px 8px rgba(0, 0, 0, 0.04)'
           }}>
-            {/* Decorative background elements */}
-            <div style={{
-              position: 'absolute',
-              top: '-50%',
-              right: '-10%',
-              width: '300px',
-              height: '300px',
-              background: 'radial-gradient(circle, rgba(255, 255, 255, 0.05) 0%, transparent 70%)',
-              borderRadius: '50%',
-              pointerEvents: 'none'
-            }} />
-            <div style={{
-              position: 'absolute',
-              bottom: '-30%',
-              left: '-5%',
-              width: '250px',
-              height: '250px',
-              background: 'radial-gradient(circle, rgba(255, 255, 255, 0.03) 0%, transparent 70%)',
-              borderRadius: '50%',
-              pointerEvents: 'none'
-            }} />
-            
-            {/* Content */}
             <div style={{ position: 'relative', zIndex: 1 }}>
               <p style={{ 
-                margin: '0 0 12px 0', 
-                fontSize: '13px', 
-                color: '#999999', 
+                margin: '0 0 16px 0', 
+                fontSize: '12px', 
+                color: '#6b7280', 
                 fontWeight: '600',
                 textTransform: 'uppercase',
-                letterSpacing: '1px'
+                letterSpacing: '0.5px',
+                background: '#f3f4f6',
+                padding: '8px 12px',
+                borderRadius: '6px',
+                display: 'inline-block'
               }}>
-                Welcome Back
+                {new Date().toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }).toUpperCase()}
               </p>
-              <h1 style={{ 
-                margin: '0', 
-                fontSize: '42px', 
-                fontWeight: '800', 
-                color: '#ffffff',
-                letterSpacing: '-0.5px',
-                lineHeight: '1.2'
-              }}>
-                {user?.fullName || 'User'}
-              </h1>
-              <div style={{
-                marginTop: '16px',
-                display: 'flex',
-                gap: '24px',
-                fontSize: '13px',
-                color: '#aaaaaa',
-                alignItems: 'center'
-              }}>
-                <span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                  <MdBarChart size={16} color="#ffffff" />
-                  {stats?.totalIdeas || 0} Ideas Submitted
-                </span>
-                <span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                  <MdCheckCircle size={16} color="#ffffff" />
-                  {stats?.approvedIdeas || 0} Approved
-                </span>
-                <span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                  <MdPending size={16} color="#ffffff" />
-                  {stats?.pendingIdeas || 0} Pending
-                </span>
+              <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: '32px', marginTop: '16px' }}>
+                <div style={{ flex: 1 }}>
+                  <p style={{ 
+                    margin: '0 0 4px 0', 
+                    fontSize: '14px', 
+                    color: '#9ca3af', 
+                    fontWeight: '500'
+                  }}>
+                    Good {new Date().getHours() < 12 ? 'morning' : new Date().getHours() < 18 ? 'afternoon' : 'evening'},
+                  </p>
+                  <h1 style={{ 
+                    margin: '0 0 12px 0', 
+                    fontSize: '36px', 
+                    fontWeight: '800', 
+                    color: '#000000',
+                    letterSpacing: '-0.5px'
+                  }}>
+                    {user?.fullName || 'User'}
+                  </h1>
+                  <p style={{ 
+                    margin: '0', 
+                    fontSize: '14px', 
+                    color: '#6b7280',
+                    lineHeight: '1.5'
+                  }}>
+                    You have <span style={{ fontWeight: '600', color: '#000000' }}>{stats?.pendingIdeas || 0} submissions</span> waiting for your final review today.
+                  </p>
+                </div>
+                
+                <div style={{ display: 'flex', gap: '12px', flexShrink: 0 }}>
+                  <div style={{
+                    background: '#ffffff',
+                    border: '1px solid #e5e7eb',
+                    padding: '12px 16px',
+                    borderRadius: '10px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '12px',
+                    minWidth: 'auto',
+                    boxShadow: '0 1px 3px rgba(0, 0, 0, 0.05)'
+                  }}>
+                    <div style={{ fontSize: '20px', color: '#3b82f6', flexShrink: 0 }}>
+                      <MdPeople size={20} />
+                    </div>
+                    <div>
+                      <div style={{ fontSize: '11px', color: '#6b7280', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                        STUDENTS
+                      </div>
+                      <div style={{ fontSize: '20px', fontWeight: '700', color: '#000000' }}>
+                        {stats?.totalIdeas || 0}
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div style={{
+                    background: '#ffffff',
+                    border: '1px solid #e5e7eb',
+                    padding: '12px 16px',
+                    borderRadius: '10px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '12px',
+                    minWidth: 'auto',
+                    boxShadow: '0 1px 3px rgba(0, 0, 0, 0.05)'
+                  }}>
+                    <div style={{ fontSize: '20px', color: '#f59e0b', flexShrink: 0 }}>
+                      <MdSend size={20} />
+                    </div>
+                    <div>
+                      <div style={{ fontSize: '11px', color: '#6b7280', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                        SENT
+                      </div>
+                      <div style={{ fontSize: '20px', fontWeight: '700', color: '#000000' }}>
+                        {stats?.approvedIdeas || 0}
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div style={{
+                    background: '#ffffff',
+                    border: '1px solid #e5e7eb',
+                    padding: '12px 16px',
+                    borderRadius: '10px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '12px',
+                    minWidth: 'auto',
+                    boxShadow: '0 1px 3px rgba(0, 0, 0, 0.05)'
+                  }}>
+                    <div style={{ fontSize: '20px', color: '#6b7280', flexShrink: 0 }}>
+                      <MdPending size={20} />
+                    </div>
+                    <div>
+                      <div style={{ fontSize: '11px', color: '#6b7280', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                        PENDING
+                      </div>
+                      <div style={{ fontSize: '20px', fontWeight: '700', color: '#000000' }}>
+                        {String(stats?.pendingIdeas || 0).padStart(2, '0')}
+                      </div>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>

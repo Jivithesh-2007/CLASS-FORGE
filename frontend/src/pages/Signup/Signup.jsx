@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { MdVisibility, MdVisibilityOff } from 'react-icons/md';
 import { useAuth } from '../../context/AuthContext';
 import styles from '../Login/Login.module.css';
+
 const Signup = () => {
   const navigate = useNavigate();
   const { signup } = useAuth();
@@ -18,16 +19,17 @@ const Signup = () => {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [message, setMessage] = useState({ type: '', text: '' });
   const [loading, setLoading] = useState(false);
+
   const handleChange = (e) => {
     setFormData({
       ...formData,
       [e.target.name]: e.target.value
     });
-    // Only clear message if it's a success message
     if (message.type === 'success') {
       setMessage({ type: '', text: '' });
     }
   };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setMessage({ type: '', text: '' });
@@ -42,7 +44,6 @@ const Signup = () => {
     setLoading(true);
     const email = formData.username + formData.domain;
     try {
-      console.log('📝 Attempting signup with:', email);
       const result = await signup({
         fullName: formData.fullName,
         username: formData.username,
@@ -50,10 +51,8 @@ const Signup = () => {
         department: formData.department,
         password: formData.password
       });
-      console.log('📋 Signup result:', result);
       
       if (result.success) {
-        console.log('✅ Signup successful');
         setMessage({ type: 'success', text: 'Account created successfully! Redirecting...' });
         setTimeout(() => {
           const role = result.user.role;
@@ -66,133 +65,170 @@ const Signup = () => {
           }
         }, 1500);
       } else {
-        console.log('❌ Signup failed:', result.message);
         setMessage({ type: 'error', text: result.message || 'Signup failed. Please try again.' });
         setLoading(false);
       }
     } catch (err) {
-      console.error('💥 Signup error:', err);
       setMessage({ type: 'error', text: 'An error occurred. Please try again.' });
       setLoading(false);
     }
   };
+
   return (
     <div className={styles.container}>
-      <div className={styles.card}>
-        <div className={styles.header}>
-          <div className={styles.logo}>ClassForge</div>
-          <div className={styles.subtitle}>Join and share your innovative ideas</div>
+      <div className={styles.leftPanel}>
+        <div className={styles.leftContent}>
+          <div className={styles.logo}>C</div>
+          <div className={styles.brandName}>CLASSFORGE</div>
+          <div className={styles.tagline}>
+            Where Ideas<br />Meet <span className={styles.impact}>Impact.</span>
+          </div>
+          <div className={styles.description}>
+            The premier institution portal for collaborative innovation and strategic idea synthesis.
+          </div>
+          <div className={styles.stats}>
+            <div className={styles.stat}>
+              <div className={styles.statLabel}>ACTIVE IDEAS</div>
+              <div className={styles.statValue}>1,240+</div>
+            </div>
+            <div className={styles.stat}>
+              <div className={styles.statLabel}>IMPLEMENTATION</div>
+              <div className={styles.statValue}>89%</div>
+            </div>
+          </div>
+          <div className={styles.copyright}>© 2024 CLASSFORGE SYSTEMS. ALL RIGHTS RESERVED<br />PRIVATE & CONFIDENTIAL</div>
         </div>
-        <div className={styles.title}>Create Account</div>
-        <div className={styles.description}>Sign up to start submitting your ideas</div>
-        {message.text && (
-          <div className={`${styles.message} ${styles[message.type]}`}>
-            {message.text}
-          </div>
-        )}
-        <form className={styles.form} onSubmit={handleSubmit}>
-          <div className={styles.formGroup}>
-            <label className={styles.label}>Full Name</label>
-            <input
-              type="text"
-              name="fullName"
-              placeholder="Your full name"
-              className={styles.input}
-              value={formData.fullName}
-              onChange={handleChange}
-              required
-            />
-          </div>
-          <div className={styles.formGroup}>
-            <label className={styles.label}>Username</label>
-            <div className={styles.inputWrapper}>
+      </div>
+
+      <div className={styles.rightPanel}>
+        <div className={styles.formContainer}>
+          <h1 className={styles.title}>Portal Registration</h1>
+          <p className={styles.subtitle}>Join the institution. Create your account to participate in collaborative innovation.</p>
+          
+          <blockquote className={styles.quote}>
+            <p>"Institutional excellence is realized when visionary ideas are forged into the enduring foundations of progress."</p>
+            <p className={styles.quoteAttribution}>— CLASSFORGE EDITORIAL</p>
+          </blockquote>
+
+          {message.text && (
+            <div className={`${styles.message} ${styles[message.type]}`}>
+              {message.text}
+            </div>
+          )}
+
+          <form className={styles.form} onSubmit={handleSubmit}>
+            <div className={styles.formGroup}>
+              <label className={styles.label}>FULL NAME</label>
               <input
                 type="text"
-                name="username"
-                placeholder="username"
+                name="fullName"
+                placeholder="Your full name"
                 className={styles.input}
-                value={formData.username}
+                value={formData.fullName}
                 onChange={handleChange}
                 required
               />
-              <select
-                name="domain"
-                className={styles.select}
-                value={formData.domain}
-                onChange={handleChange}
-                required
-              >
-                <option value="@karunya.edu.in">@ karunya.edu.in</option>
-                <option value="@karunya.edu">@ karunya.edu</option>
-              </select>
             </div>
-          </div>
-          <div className={styles.formGroup}>
-            <label className={styles.label}>Department</label>
-            <input
-              type="text"
-              name="department"
-              placeholder="e.g., Computer Science"
-              className={styles.input}
-              value={formData.department}
-              onChange={handleChange}
-              required
-            />
-          </div>
-          <div className={styles.formGroup}>
-            <label className={styles.label}>Password</label>
-            <div className={styles.passwordWrapper}>
+
+            <div className={styles.formGroup}>
+              <label className={styles.label}>OFFICIAL EMAIL</label>
+              <div className={styles.inputWrapper}>
+                <input
+                  type="text"
+                  name="username"
+                  placeholder="your@institution.edu"
+                  className={styles.input}
+                  value={formData.username}
+                  onChange={handleChange}
+                  required
+                />
+                <select
+                  name="domain"
+                  className={styles.select}
+                  value={formData.domain}
+                  onChange={handleChange}
+                  required
+                >
+                  <option value="@karunya.edu.in">@karunya.edu.in</option>
+                  <option value="@karunya.edu">@karunya.edu</option>
+                </select>
+              </div>
+            </div>
+
+            <div className={styles.formGroup}>
+              <label className={styles.label}>DEPARTMENT</label>
               <input
-                type={showPassword ? 'text' : 'password'}
-                name="password"
-                placeholder="Min 6 characters"
+                type="text"
+                name="department"
+                placeholder="e.g., Computer Science"
                 className={styles.input}
-                value={formData.password}
+                value={formData.department}
                 onChange={handleChange}
                 required
               />
-              <button
-                type="button"
-                className={styles.passwordToggle}
-                onClick={() => setShowPassword(!showPassword)}
-              >
-                {showPassword ? <MdVisibilityOff /> : <MdVisibility />}
-              </button>
+            </div>
+
+            <div className={styles.formGroup}>
+              <label className={styles.label}>PASSWORD</label>
+              <div className={styles.passwordWrapper}>
+                <input
+                  type={showPassword ? 'text' : 'password'}
+                  name="password"
+                  placeholder="••••••••"
+                  className={styles.input}
+                  value={formData.password}
+                  onChange={handleChange}
+                  required
+                />
+                <button
+                  type="button"
+                  className={styles.passwordToggle}
+                  onClick={() => setShowPassword(!showPassword)}
+                >
+                  {showPassword ? <MdVisibilityOff /> : <MdVisibility />}
+                </button>
+              </div>
+            </div>
+
+            <div className={styles.formGroup}>
+              <label className={styles.label}>CONFIRM PASSWORD</label>
+              <div className={styles.passwordWrapper}>
+                <input
+                  type={showConfirmPassword ? 'text' : 'password'}
+                  name="confirmPassword"
+                  placeholder="••••••••"
+                  className={styles.input}
+                  value={formData.confirmPassword}
+                  onChange={handleChange}
+                  required
+                />
+                <button
+                  type="button"
+                  className={styles.passwordToggle}
+                  onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                >
+                  {showConfirmPassword ? <MdVisibilityOff /> : <MdVisibility />}
+                </button>
+              </div>
+            </div>
+
+            <button type="submit" className={styles.submitBtn} disabled={loading}>
+              {loading ? 'CREATING ACCOUNT...' : 'CREATE ACCOUNT'}
+            </button>
+          </form>
+
+          <div className={styles.footer}>
+            <p>Already registered? <Link to="/login" className={styles.footerLink}>Sign in</Link></p>
+            <div className={styles.footerLinks}>
+              <a href="#" className={styles.footerLink}>SECURITY POLICY</a>
+              <a href="#" className={styles.footerLink}>SYSTEM STATUS</a>
+              <a href="#" className={styles.footerLink}>SUPPORT</a>
             </div>
           </div>
-          <div className={styles.formGroup}>
-            <label className={styles.label}>Confirm Password</label>
-            <div className={styles.passwordWrapper}>
-              <input
-                type={showConfirmPassword ? 'text' : 'password'}
-                name="confirmPassword"
-                placeholder="Confirm password"
-                className={styles.input}
-                value={formData.confirmPassword}
-                onChange={handleChange}
-                required
-              />
-              <button
-                type="button"
-                className={styles.passwordToggle}
-                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-              >
-                {showConfirmPassword ? <MdVisibilityOff /> : <MdVisibility />}
-              </button>
-            </div>
-          </div>
-          <button type="submit" className={styles.submitBtn} disabled={loading}>
-            {loading ? 'Creating account...' : 'Sign Up'}
-          </button>
-        </form>
-        <div className={styles.footer}>
-          Already have an account?
-          <Link to="/login" className={styles.footerLink}>
-            Sign In →
-          </Link>
         </div>
       </div>
     </div>
   );
 };
+
 export default Signup;

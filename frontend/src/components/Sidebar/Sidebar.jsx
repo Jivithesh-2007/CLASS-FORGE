@@ -1,24 +1,42 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { 
   MdGridView,
   MdAddCircleOutline,
   MdLightbulb,
   MdPeople,
-  MdNotifications, 
   MdSettings,
   MdLogout,
   MdRateReview,
-  MdPersonOutline
+  MdPersonOutline,
+  MdDarkMode,
+  MdLightMode
 } from 'react-icons/md';
 import { useAuth } from '../../context/AuthContext';
-import { useTheme } from '../../context/ThemeContext';
 import styles from './Sidebar.module.css';
 
 const Sidebar = ({ role }) => {
   const navigate = useNavigate();
   const { logout } = useAuth();
-  const { isDarkMode } = useTheme();
+  const [isDarkMode, setIsDarkMode] = useState(false);
+
+  useEffect(() => {
+    // Check for saved dark mode preference
+    const savedDarkMode = localStorage.getItem('darkMode') === 'true';
+    setIsDarkMode(savedDarkMode);
+  }, []);
+
+  const toggleDarkMode = () => {
+    const newDarkMode = !isDarkMode;
+    setIsDarkMode(newDarkMode);
+    localStorage.setItem('darkMode', newDarkMode);
+    
+    if (newDarkMode) {
+      document.body.classList.add('dark-mode');
+    } else {
+      document.body.classList.remove('dark-mode');
+    }
+  };
 
   const handleLogout = () => {
     logout();
@@ -31,7 +49,6 @@ const Sidebar = ({ role }) => {
     { path: '/student-dashboard/my-ideas', icon: MdLightbulb, label: 'My Ideas' },
     { path: '/student-dashboard/explore-ideas', icon: MdRateReview, label: 'Explore Ideas' },
     { path: '/student-dashboard/groups', icon: MdPeople, label: 'My Groups' },
-    { path: '/student-dashboard/notifications', icon: MdNotifications, label: 'Notifications' },
     { path: '/student-dashboard/settings', icon: MdSettings, label: 'Settings' }
   ];
 
@@ -40,7 +57,6 @@ const Sidebar = ({ role }) => {
     { path: '/teacher-dashboard/review', icon: MdRateReview, label: 'Review Ideas' },
     { path: '/teacher-dashboard/ideas', icon: MdLightbulb, label: 'Ideas' },
     { path: '/teacher-dashboard/students', icon: MdPersonOutline, label: 'Students' },
-    { path: '/teacher-dashboard/notifications', icon: MdNotifications, label: 'Notifications' },
     { path: '/teacher-dashboard/settings', icon: MdSettings, label: 'Settings' }
   ];
 
@@ -48,7 +64,6 @@ const Sidebar = ({ role }) => {
     { path: '/admin-dashboard', icon: MdGridView, label: 'Dashboard' },
     { path: '/admin-dashboard/users', icon: MdPeople, label: 'Manage Users' },
     { path: '/admin-dashboard/ideas', icon: MdLightbulb, label: 'All Ideas' },
-    { path: '/admin-dashboard/notifications', icon: MdNotifications, label: 'Notifications' },
     { path: '/admin-dashboard/settings', icon: MdSettings, label: 'Settings' }
   ];
 
@@ -81,6 +96,10 @@ const Sidebar = ({ role }) => {
       </nav>
       
       <div className={styles.footer}>
+        <button className={styles.themeToggleBtn} onClick={toggleDarkMode} title={isDarkMode ? 'Light Mode' : 'Dark Mode'}>
+          {isDarkMode ? <MdLightMode className={styles.themeIcon} /> : <MdDarkMode className={styles.themeIcon} />}
+          <span className={styles.themeLabel}>{isDarkMode ? 'Light' : 'Dark'}</span>
+        </button>
         <button className={styles.logoutBtn} onClick={handleLogout}>
           <MdLogout className={styles.logoutIcon} />
           Logout
