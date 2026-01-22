@@ -124,6 +124,9 @@ const ForgotPassword = () => {
                   <option value="@karunya.edu">@ karunya.edu</option>
                 </select>
               </div>
+              <div className={styles.hint}>
+                            Student: @karunya.edu.in | Faculty: @karunya.edu
+                          </div>
              
             </div>
             <button type="submit" className={styles.submitBtn} disabled={loading}>

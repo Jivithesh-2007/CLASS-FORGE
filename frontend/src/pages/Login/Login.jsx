@@ -80,90 +80,73 @@ const Login = () => {
           </div>
           <div className={styles.copyright}>© 2024 CLASSFORGE SYSTEMS. ALL RIGHTS RESERVED<br />PRIVATE & CONFIDENTIAL</div>
         </div>
-      </div>
-
-      <div className={styles.rightPanel}>
-        <div className={styles.formContainer}>
-          <h1 className={styles.title}>Portal Login</h1>
-          <p className={styles.subtitle}>Welcome back. Please authenticate your institutional identity.</p>
-          
-          <blockquote className={styles.quote}>
-            <p>"Institutional excellence is realized when visionary ideas are forged into the enduring foundations of progress."</p>
-            <p className={styles.quoteAttribution}>— CLASSFORGE EDITORIAL</p>
-          </blockquote>
-
-          {message.text && (
-            <div className={`${styles.message} ${styles[message.type]}`}>
-              {message.text}
-            </div>
-          )}
-
-          <form className={styles.form} onSubmit={handleSubmit}>
-            <div className={styles.formGroup}>
-              <label className={styles.label}>OFFICIAL EMAIL</label>
-              <div className={styles.inputWrapper}>
-                <input
-                  type="text"
-                  name="username"
-                  placeholder="your@institution.edu"
-                  className={styles.input}
-                  value={formData.username}
-                  onChange={handleChange}
-                  required
-                />
-                <select
-                  name="domain"
-                  className={styles.select}
-                  value={formData.domain}
-                  onChange={handleChange}
-                  required
-                >
-                  <option value="@karunya.edu.in">@karunya.edu.in</option>
-                  <option value="@karunya.edu">@karunya.edu</option>
-                </select>
-              </div>
-            </div>
-
-            <div className={styles.formGroup}>
-              <label className={styles.label}>PASSWORD</label>
-              <div className={styles.passwordWrapper}>
-                <input
-                  type={showPassword ? 'text' : 'password'}
-                  name="password"
-                  placeholder="••••••••"
-                  className={styles.input}
-                  value={formData.password}
-                  onChange={handleChange}
-                  required
-                />
-                <button
-                  type="button"
-                  className={styles.passwordToggle}
-                  onClick={() => setShowPassword(!showPassword)}
-                >
-                  {showPassword ? <MdVisibilityOff /> : <MdVisibility />}
-                </button>
-              </div>
-              <div className={styles.forgotPassword}>
-                <Link to="/forgot-password" className={styles.forgotLink}>
-                  FORGOT CREDENTIALS?
-                </Link>
-              </div>
-            </div>
-
-            <button type="submit" className={styles.submitBtn} disabled={loading}>
-              {loading ? 'AUTHENTICATING...' : 'AUTHENTICATE'}
-            </button>
-          </form>
-
-          <div className={styles.footer}>
-            <p>New to the portal? <Link to="/signup" className={styles.footerLink}>Request access</Link></p>
-            <div className={styles.footerLinks}>
-              <a href="#" className={styles.footerLink}>SECURITY POLICY</a>
-              <a href="#" className={styles.footerLink}>SYSTEM STATUS</a>
-              <a href="#" className={styles.footerLink}>SUPPORT</a>
+        <div className={styles.title}>Welcome back</div>
+        <div className={styles.description}>Login to your account</div>
+        {message.text && (
+          <div className={`${styles.message} ${styles[message.type]}`}>
+            {message.text}
+          </div>
+        )}
+        <form className={styles.form} onSubmit={handleSubmit}>
+          <div className={styles.formGroup}>
+            <label className={styles.label}>Username</label>
+            <div className={styles.inputWrapper}>
+              <input
+                type="text"
+                name="username"
+                placeholder="username"
+                className={styles.input}
+                value={formData.username}
+                onChange={handleChange}
+                required
+              />
+              <select
+                name="domain"
+                className={styles.select}
+                value={formData.domain}
+                onChange={handleChange}
+                required
+              >
+                <option value="@karunya.edu.in">@ karunya.edu.in</option>
+                <option value="@karunya.edu">@ karunya.edu</option>
+              </select>
             </div>
           </div>
+          <div className={styles.formGroup}>
+            <label className={styles.label}>Password</label>
+            <div className={styles.passwordWrapper}>
+              <input
+                type={showPassword ? 'text' : 'password'}
+                name="password"
+                placeholder="Enter your password"
+                className={styles.input}
+                value={formData.password}
+                onChange={handleChange}
+                required
+              />
+              <button
+                type="button"
+                className={styles.passwordToggle}
+                onClick={() => setShowPassword(!showPassword)}
+              >
+                {showPassword ? <MdVisibilityOff /> : <MdVisibility />}
+              </button>
+            </div>
+            <div className={styles.forgotPassword}>
+              <Link to="/forgot-password" className={styles.forgotLink}>
+                Forgot password?
+              </Link>
+            </div>
+          </div>
+          <button type="submit" className={styles.submitBtn} disabled={loading}>
+            {loading ? 'Signing in...' : 'Sign In'}
+          </button>
+        </form>
+        <div className={styles.footer}>
+          New to ClassForge?
+          <Link to="/signup" className={styles.footerLink}>
+            Create Account →
+          </Link>
         </div>
       </div>
     </div>
