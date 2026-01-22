@@ -10,51 +10,157 @@
 
 .container {
   min-height: 100vh;
-  background: #ffffff;
   display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 20px;
+  background: #ffffff;
 }
 
-.card {
-  background-color: #ffffff;
-  border-radius: 16px;
-  padding: 48px;
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.03);
-  width: 100%;
-  max-width: 450px;
-  border: 1px solid rgba(0, 0, 0, 0.05);
+/* LEFT PANEL - BLACK BACKGROUND */
+.leftPanel {
+  width: 50%;
+  background-color: #000000;
+  color: #ffffff;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 60px 40px;
+  position: relative;
 }
 
-.header {
-  text-align: center;
-  margin-bottom: 32px;
+.leftContent {
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
 }
 
 .logo {
-  font-size: 32px;
+  width: 40px;
+  height: 40px;
+  border: 2px solid #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
   font-weight: 700;
-  color: #000000;
-  margin-bottom: 8px;
+  color: #ffffff;
+  border-radius: 4px;
 }
 
-.subtitle {
+.brandName {
   font-size: 14px;
-  color: #666666;
+  font-weight: 600;
+  letter-spacing: 2px;
+  color: #ffffff;
 }
 
-.title {
-  font-size: 24px;
-  font-weight: 600;
-  color: #000000;
-  margin-top: 24px;
-  margin-bottom: 8px;
+.tagline {
+  font-size: 48px;
+  font-weight: 700;
+  line-height: 1.2;
+  color: #ffffff;
+  margin-bottom: 20px;
+}
+
+.impact {
+  color: #cccccc;
+  font-weight: 400;
 }
 
 .description {
   font-size: 14px;
+  color: #999999;
+  line-height: 1.6;
+  max-width: 300px;
+}
+
+.stats {
+  display: flex;
+  gap: 60px;
+  padding-top: 20px;
+  border-top: 1px solid #333333;
+}
+
+.stat {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.statLabel {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 1px;
   color: #666666;
+  text-transform: uppercase;
+}
+
+.statValue {
+  font-size: 24px;
+  font-weight: 700;
+  color: #ffffff;
+}
+
+.copyright {
+  font-size: 11px;
+  color: #666666;
+  line-height: 1.6;
+  letter-spacing: 0.5px;
+}
+
+/* RIGHT PANEL - WHITE BACKGROUND */
+.rightPanel {
+  width: 50%;
+  background-color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px;
+}
+
+.formContainer {
+  width: 100%;
+  max-width: 420px;
+}
+
+.formTitle {
+  font-size: 32px;
+  font-weight: 700;
+  color: #000000;
+  margin-bottom: 8px;
+  letter-spacing: -0.5px;
+}
+
+.formSubtitle {
+  font-size: 14px;
+  color: #999999;
+  margin-bottom: 32px;
+  line-height: 1.5;
+}
+
+.quote {
+  background-color: #f9f9f9;
+  border-left: 3px solid #000000;
+  padding: 20px;
+  margin-bottom: 32px;
+  font-style: italic;
+}
+
+.quote p {
+  font-size: 13px;
+  color: #666666;
+  line-height: 1.6;
+  margin: 0 0 12px 0;
+}
+
+.quote p:last-child {
+  margin-bottom: 0;
+}
+
+.quoteAttribution {
+  font-size: 11px;
+  color: #999999;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
 }
 
 .form {
@@ -62,15 +168,17 @@
 }
 
 .formGroup {
-  margin-bottom: 20px;
+  margin-bottom: 24px;
 }
 
 .label {
   display: block;
-  font-size: 14px;
-  font-weight: 500;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 1px;
   color: #000000;
   margin-bottom: 8px;
+  text-transform: uppercase;
 }
 
 .inputWrapper {
@@ -83,15 +191,14 @@ input[type="text"].input,
 input[type="password"].input,
 input[type="email"].input,
 textarea.input {
-  width: 100%;
+  flex: 1;
   padding: 12px 16px;
-  border: 1px solid #e0e0e0 !important;
-  border-radius: 8px;
+  border: 1px solid #e0e0e0;
+  border-radius: 0;
   font-size: 14px;
   transition: all 0.3s ease;
-  background-color: #ffffff !important;
-  background: #ffffff !important;
-  color: #000000 !important;
+  background-color: #ffffff;
+  color: #000000;
   -webkit-appearance: none;
   -moz-appearance: none;
   appearance: none;
@@ -102,7 +209,7 @@ input[type="text"].input::placeholder,
 input[type="password"].input::placeholder,
 input[type="email"].input::placeholder,
 textarea.input::placeholder {
-  color: #999999;
+  color: #cccccc;
 }
 
 input.input:focus,
@@ -111,10 +218,9 @@ input[type="password"].input:focus,
 input[type="email"].input:focus,
 textarea.input:focus {
   outline: none;
-  border-color: #000000 !important;
-  box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.05) !important;
-  background-color: #ffffff !important;
-  background: #ffffff !important;
+  border-color: #000000;
+  box-shadow: none;
+  background-color: #ffffff;
 }
 
 input.input:hover,
@@ -122,12 +228,10 @@ input[type="text"].input:hover,
 input[type="password"].input:hover,
 input[type="email"].input:hover,
 textarea.input:hover {
-  border-color: #999999 !important;
-  background-color: #ffffff !important;
-  background: #ffffff !important;
+  border-color: #999999;
+  background-color: #ffffff;
 }
 
-/* Force ALL select/dropdown elements to be white ALWAYS - MAXIMUM OVERRIDE */
 select,
 select.select,
 select[class*="select"],
@@ -136,37 +240,23 @@ select[class*="select"],
 div[class*="select"],
 button[role="combobox"],
 [role="combobox"] {
-  padding: 12px 16px !important;
-  padding-right: 40px !important;
-  border: 1px solid #e0e0e0 !important;
-  border-radius: 8px !important;
-  font-size: 14px !important;
-  background-color: #ffffff !important;
-  background: #ffffff !important;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 16 16'%3E%3Cpath fill='%23000000' d='M4.427 6.427l3.396 3.396a.25.25 0 00.354 0l3.396-3.396A.25.25 0 0011.396 6H4.604a.25.25 0 00-.177.427z'/%3E%3C/svg%3E") !important;
-  background-repeat: no-repeat !important;
-  background-position: right 12px center !important;
-  background-size: 16px !important;
-  color: #000000 !important;
-  cursor: pointer !important;
-  transition: all 0.3s ease !important;
-  min-width: 180px !important;
-  -webkit-appearance: none !important;
-  -moz-appearance: none !important;
-  appearance: none !important;
-}
-
-/* Input wrapper - also force white */
-.inputWrapper select,
-.inputWrapper [class*="select"],
-.inputWrapper button {
-  background-color: #ffffff !important;
-  background: #ffffff !important;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 16 16'%3E%3Cpath fill='%23000000' d='M4.427 6.427l3.396 3.396a.25.25 0 00.354 0l3.396-3.396A.25.25 0 0011.396 6H4.604a.25.25 0 00-.177.427z'/%3E%3C/svg%3E") !important;
-  background-repeat: no-repeat !important;
-  background-position: right 12px center !important;
-  background-size: 16px !important;
-  color: #000000 !important;
+  padding: 12px 16px;
+  padding-right: 40px;
+  border: 1px solid #e0e0e0;
+  border-radius: 0;
+  font-size: 14px;
+  background-color: #ffffff;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 16 16'%3E%3Cpath fill='%23000000' d='M4.427 6.427l3.396 3.396a.25.25 0 00.354 0l3.396-3.396A.25.25 0 0011.396 6H4.604a.25.25 0 00-.177.427z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  background-size: 16px;
+  color: #000000;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  min-width: 140px;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
 }
 
 select:focus,
@@ -177,15 +267,14 @@ select[class*="select"]:focus,
 div[class*="select"]:focus,
 button[role="combobox"]:focus,
 [role="combobox"]:focus {
-  outline: none !important;
-  border-color: #000000 !important;
-  box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.05) !important;
-  background-color: #ffffff !important;
-  background: #ffffff !important;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 16 16'%3E%3Cpath fill='%23000000' d='M4.427 6.427l3.396 3.396a.25.25 0 00.354 0l3.396-3.396A.25.25 0 0011.396 6H4.604a.25.25 0 00-.177.427z'/%3E%3C/svg%3E") !important;
-  background-repeat: no-repeat !important;
-  background-position: right 12px center !important;
-  background-size: 16px !important;
+  outline: none;
+  border-color: #000000;
+  box-shadow: none;
+  background-color: #ffffff;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 16 16'%3E%3Cpath fill='%23000000' d='M4.427 6.427l3.396 3.396a.25.25 0 00.354 0l3.396-3.396A.25.25 0 0011.396 6H4.604a.25.25 0 00-.177.427z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  background-size: 16px;
 }
 
 select:hover,
@@ -196,27 +285,19 @@ select[class*="select"]:hover,
 div[class*="select"]:hover,
 button[role="combobox"]:hover,
 [role="combobox"]:hover {
-  border-color: #999999 !important;
-  background-color: #ffffff !important;
-  background: #ffffff !important;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 16 16'%3E%3Cpath fill='%23000000' d='M4.427 6.427l3.396 3.396a.25.25 0 00.354 0l3.396-3.396A.25.25 0 0011.396 6H4.604a.25.25 0 00-.177.427z'/%3E%3C/svg%3E") !important;
-  background-repeat: no-repeat !important;
-  background-position: right 12px center !important;
-  background-size: 16px !important;
+  border-color: #999999;
+  background-color: #ffffff;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 16 16'%3E%3Cpath fill='%23000000' d='M4.427 6.427l3.396 3.396a.25.25 0 00.354 0l3.396-3.396A.25.25 0 0011.396 6H4.604a.25.25 0 00-.177.427z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  background-size: 16px;
 }
 
-/* Force option elements inside select to be white */
 select option,
 select.select option,
 .select option {
-  background-color: #ffffff !important;
-  color: #000000 !important;
-}
-
-.hint {
-  font-size: 12px;
+  background-color: #ffffff;
   color: #000000;
-  margin-top: 6px;
 }
 
 .passwordWrapper {
@@ -230,19 +311,18 @@ select.select option,
   transform: translateY(-50%);
   background: none;
   border: none;
-  color: #666666;
+  color: #999999;
   cursor: pointer;
   padding: 8px;
   display: flex;
   align-items: center;
   justify-content: center;
   transition: all 0.3s ease;
-  font-size: 24px;
+  font-size: 20px;
 }
 
 .passwordToggle:hover {
   color: #000000;
-  transform: translateY(-50%) scale(1.1);
 }
 
 .forgotPassword {
@@ -251,15 +331,16 @@ select.select option,
 }
 
 .forgotLink {
-  font-size: 14px;
+  font-size: 11px;
   color: #000000;
   text-decoration: none;
+  font-weight: 600;
+  letter-spacing: 0.5px;
   transition: all 0.3s ease;
 }
 
 .forgotLink:hover {
   text-decoration: underline;
-  color: #333333;
 }
 
 .submitBtn {
@@ -268,75 +349,65 @@ select.select option,
   background-color: #000000;
   color: #ffffff;
   border: none;
-  border-radius: 8px;
-  font-size: 16px;
-  font-weight: 600;
+  border-radius: 0;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 1px;
   cursor: pointer;
   transition: all 0.3s ease;
-  margin-top: 24px;
+  margin-top: 32px;
+  text-transform: uppercase;
 }
 
 .submitBtn:hover {
   background-color: #333333;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 }
 
 .submitBtn:disabled {
   background-color: #cccccc;
   cursor: not-allowed;
-  transform: none;
 }
 
 .footer {
+  margin-top: 32px;
   text-align: center;
-  margin-top: 24px;
-  font-size: 14px;
+}
+
+.footerText {
+  font-size: 13px;
   color: #666666;
+  margin-bottom: 16px;
 }
 
 .footerLink {
   color: #000000;
   text-decoration: none;
   font-weight: 600;
-  margin-left: 4px;
   transition: all 0.3s ease;
 }
 
 .footerLink:hover {
   text-decoration: underline;
-  color: #333333;
 }
 
-.error {
-  background-color: #ffebee;
-  color: #c62828;
-  padding: 12px;
-  border-radius: 8px;
-  margin-bottom: 20px;
-  font-size: 14px;
-  text-align: center;
-  border: 1px solid #ef5350;
-  animation: slideDown 0.3s ease-out;
+.footerLinks {
+  display: flex;
+  justify-content: center;
+  gap: 24px;
+  margin-top: 16px;
 }
 
-.success {
-  background-color: #e8f5e9;
-  color: #2e7d32;
-  padding: 12px;
-  border-radius: 8px;
-  margin-bottom: 20px;
-  font-size: 14px;
-  text-align: center;
-  border: 1px solid #66bb6a;
-  animation: slideDown 0.3s ease-out;
+.footerLinks .footerLink {
+  font-size: 11px;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
 }
 
 .message {
   padding: 12px;
-  border-radius: 8px;
+  border-radius: 0;
   margin-bottom: 20px;
-  font-size: 14px;
+  font-size: 13px;
   text-align: center;
   animation: slideDown 0.3s ease-out;
 }
@@ -364,19 +435,57 @@ select.select option,
   }
 }
 
-.backButton {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  color: #000000;
-  text-decoration: none;
-  font-size: 14px;
-  font-weight: 500;
-  margin-bottom: 24px;
-  transition: all 0.3s ease;
+/* RESPONSIVE */
+@media (max-width: 1024px) {
+  .leftPanel {
+    width: 45%;
+    padding: 40px 30px;
+  }
+
+  .rightPanel {
+    width: 55%;
+    padding: 30px;
+  }
+
+  .tagline {
+    font-size: 36px;
+  }
+
+  .formContainer {
+    max-width: 380px;
+  }
 }
 
-.backButton:hover {
-  color: #333333;
-  gap: 12px;
+@media (max-width: 768px) {
+  .container {
+    flex-direction: column;
+  }
+
+  .leftPanel {
+    width: 100%;
+    padding: 40px 30px;
+    min-height: 50vh;
+  }
+
+  .rightPanel {
+    width: 100%;
+    padding: 40px 30px;
+    min-height: 50vh;
+  }
+
+  .tagline {
+    font-size: 32px;
+  }
+
+  .stats {
+    gap: 40px;
+  }
+
+  .formContainer {
+    max-width: 100%;
+  }
+
+  .formTitle {
+    font-size: 28px;
+  }
 }
