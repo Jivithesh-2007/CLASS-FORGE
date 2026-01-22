@@ -19,13 +19,20 @@ const Notifications = () => {
       console.log('🔄 useEffect triggered, fetching notifications...');
       fetchNotifications();
       setupSocket();
+      
+      // Set up polling to refresh notifications every 10 seconds
+      const pollInterval = setInterval(() => {
+        console.log('🔄 Polling for new notifications...');
+        fetchNotifications();
+      }, 10000);
+      
+      return () => {
+        clearInterval(pollInterval);
+        if (socketRef.current) {
+          socketRef.current.off('notification');
+        }
+      };
     }
-
-    return () => {
-      if (socketRef.current) {
-        socketRef.current.off('notification');
-      }
-    };
   }, [user]);
 
   const setupSocket = () => {

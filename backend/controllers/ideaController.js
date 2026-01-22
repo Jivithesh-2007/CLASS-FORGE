@@ -291,17 +291,29 @@ const reviewIdea = async (req, res) => {
       recipient: idea.submittedBy._id,
       sender: req.user._id,
       type: 'idea_status',
-      title: `Idea ${status}`,
+      title: `Idea ${status.charAt(0).toUpperCase() + status.slice(1)}`,
       message: `Your idea "${idea.title}" has been ${status}`,
       relatedIdea: idea._id
     });
     await notification.save();
+    
+    // Populate notification for Socket.io emission
+    await notification.populate('sender', 'fullName email');
+    await notification.populate('relatedIdea', 'title');
 
     await sendIdeaStatusEmail(idea.submittedBy.email, idea.title, status, feedback);
 
     const io = req.app.get('io');
     if (io) {
-      io.to(idea.submittedBy._id.toString()).emit('notification', notification);
+      console.log('📢 Emitting notification to:', idea.submittedBy._id.toString());
+      console.log('📬 Notification data:', notification);
+      io.to(idea.submittedBy._id.toString()).emit('notification', {
+        type: 'idea_status',
+        message: `Your idea "${idea.title}" has been ${status}`,
+        notification: notification
+      });
+    } else {
+      console.log('⚠️ Socket.io not available');
     }
 
     res.status(200).json({

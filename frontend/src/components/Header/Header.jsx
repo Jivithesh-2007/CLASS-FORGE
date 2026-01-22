@@ -21,14 +21,20 @@ const Header = ({ title, subtitle }) => {
     if (user && user._id) {
       fetchNotifications();
       setupSocket();
+      
+      // Set up polling to refresh notifications every 10 seconds
+      const pollInterval = setInterval(() => {
+        fetchNotifications();
+      }, 10000);
+      
+      return () => {
+        clearInterval(pollInterval);
+        const socket = getSocket();
+        if (socket) {
+          socket.off('notification');
+        }
+      };
     }
-
-    return () => {
-      const socket = getSocket();
-      if (socket) {
-        socket.off('notification');
-      }
-    };
   }, [user]);
 
   const setupSocket = () => {
