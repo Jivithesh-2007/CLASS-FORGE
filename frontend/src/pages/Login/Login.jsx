@@ -1,19 +1,20 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { MdVisibility, MdVisibilityOff } from 'react-icons/md';
 import { useAuth } from '../../context/AuthContext';
+import { useToast } from '../../context/ToastContext';
 import styles from './Login.module.css';
 
 const Login = () => {
   const navigate = useNavigate();
   const { login } = useAuth();
+  const { success, error: showError } = useToast();
   const [formData, setFormData] = useState({
     username: '',
     domain: '@karunya.edu.in',
     password: ''
   });
   const [showPassword, setShowPassword] = useState(false);
-  const [message, setMessage] = useState({ type: '', text: '' });
   const [loading, setLoading] = useState(false);
 
   const handleChange = (e) => {
@@ -21,21 +22,17 @@ const Login = () => {
       ...formData,
       [e.target.name]: e.target.value
     });
-    if (message.type === 'success') {
-      setMessage({ type: '', text: '' });
-    }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setMessage({ type: '', text: '' });
     setLoading(true);
     const email = formData.username + formData.domain;
     try {
       const result = await login({ email, password: formData.password });
       
       if (result.success) {
-        setMessage({ type: 'success', text: 'Login successful! Redirecting...' });
+        success('Login successful! Redirecting...');
         setTimeout(() => {
           const role = result.user.role;
           if (role === 'student') {
@@ -45,13 +42,13 @@ const Login = () => {
           } else if (role === 'admin') {
             navigate('/admin-dashboard');
           }
-        }, 1500);
+        }, 1000);
       } else {
-        setMessage({ type: 'error', text: result.message || 'Login failed. Please try again.' });
+        showError(result.message || 'Login failed. Please try again.');
         setLoading(false);
       }
     } catch (err) {
-      setMessage({ type: 'error', text: 'An error occurred. Please try again.' });
+      showError('An error occurred. Please try again.');
       setLoading(false);
     }
   };
@@ -80,12 +77,6 @@ const Login = () => {
         <div className={styles.formContainer}>
           <h1 className={styles.formTitle}>Login</h1>
           <p className={styles.formSubtitle}>Welcome back. Please authenticate your institutional identity.</p>
-
-          {message.text && (
-            <div className={`${styles.message} ${styles[message.type]}`}>
-              {message.text}
-            </div>
-          )}
 
           <form className={styles.form} onSubmit={handleSubmit}>
             <div className={styles.formGroup}>

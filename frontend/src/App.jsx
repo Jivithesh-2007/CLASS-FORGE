@@ -2,6 +2,7 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
 import { ThemeProvider } from './context/ThemeContext';
+import { ToastProvider } from './context/ToastContext';
 import ProtectedRoute from './components/ProtectedRoute/ProtectedRoute';
 import PageTransition from './components/PageTransition/PageTransition';
 
@@ -12,6 +13,7 @@ import ForgotPassword from './pages/ForgotPassword/ForgotPassword';
 import StudentDashboard from './pages/StudentDashboard/Dashboard';
 import SubmitIdea from './pages/StudentDashboard/SubmitIdea';
 import MyIdeas from './pages/StudentDashboard/MyIdeas';
+import MergedIdeasStudent from './pages/StudentDashboard/MergedIdeas';
 import ExploreIdeas from './pages/StudentDashboard/ExploreIdeas';
 import StudentGroups from './pages/StudentDashboard/Groups';
 import StudentSettings from './pages/Settings/Settings';
@@ -20,6 +22,8 @@ import TeacherDashboard from './pages/TeacherDashboard/Dashboard';
 import ReviewIdeas from './pages/TeacherDashboard/ReviewIdeas';
 import Ideas from './pages/TeacherDashboard/Ideas';
 import ApprovedIdeas from './pages/TeacherDashboard/ApprovedIdeas';
+import MergedIdeasTeacher from './pages/TeacherDashboard/MergedIdeas';
+import MergeSelect from './pages/TeacherDashboard/MergeSelect';
 import Students from './pages/TeacherDashboard/Students';
 import TeacherSettings from './pages/Settings/Settings';
 
@@ -33,8 +37,9 @@ function App() {
   return (
     <AuthProvider>
       <ThemeProvider>
-        <Router>
-          <PageTransition>
+        <ToastProvider>
+          <Router>
+            <PageTransition>
             <Routes>
             <Route path="/" element={<Navigate to="/login" replace />} />
             <Route path="/login" element={<Login />} />
@@ -62,6 +67,14 @@ function App() {
               element={
                 <ProtectedRoute allowedRoles={['student']}>
                   <MyIdeas />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/student-dashboard/merged-ideas"
+              element={
+                <ProtectedRoute allowedRoles={['student']}>
+                  <MergedIdeasStudent />
                 </ProtectedRoute>
               }
             />
@@ -127,6 +140,22 @@ function App() {
               element={
                 <ProtectedRoute allowedRoles={['teacher']}>
                   <ApprovedIdeas />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/teacher-dashboard/merged"
+              element={
+                <ProtectedRoute allowedRoles={['teacher']}>
+                  <MergedIdeasTeacher />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/teacher-dashboard/merge-select"
+              element={
+                <ProtectedRoute allowedRoles={['teacher']}>
+                  <MergeSelect />
                 </ProtectedRoute>
               }
             />
@@ -200,6 +229,7 @@ function App() {
           </Routes>
           </PageTransition>
         </Router>
+        </ToastProvider>
       </ThemeProvider>
       </AuthProvider>
   );

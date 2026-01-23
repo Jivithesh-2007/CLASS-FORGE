@@ -393,6 +393,9 @@ const mergeIdeas = async (req, res) => {
       idea.contributors.map(c => c.toString())
     ))];
 
+    // Get all original submitters as ObjectIds
+    const allSubmitters = [...new Set(ideas.map(idea => idea.submittedBy._id))];
+
     // Combine all comments from both ideas
     const allComments = ideas.flatMap(idea => idea.comments || []);
 
@@ -402,6 +405,7 @@ const mergeIdeas = async (req, res) => {
       domain: domain || ideas[0].domain,
       tags: tags || [...new Set(ideas.flatMap(i => i.tags))],
       submittedBy: req.user._id,
+      submittedByMultiple: allSubmitters,
       contributors: allContributors,
       comments: allComments,
       status: 'approved'
@@ -409,6 +413,7 @@ const mergeIdeas = async (req, res) => {
 
     await mergedIdea.save();
     await mergedIdea.populate('comments.author', 'fullName username');
+    await mergedIdea.populate('submittedByMultiple', 'fullName email');
 
     for (const idea of ideas) {
       idea.status = 'merged';

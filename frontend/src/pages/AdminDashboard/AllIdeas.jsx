@@ -2,12 +2,17 @@ import React, { useState, useEffect } from 'react';
 import { MdDelete } from 'react-icons/md';
 import Sidebar from '../../components/Sidebar/Sidebar';
 import Header from '../../components/Header/Header';
+import ConfirmModal from '../../components/ConfirmModal/ConfirmModal';
 import { ideaAPI } from '../../services/api';
+import { useToast } from '../../context/ToastContext';
 import styles from '../StudentDashboard/Dashboard.module.css';
+
 const AllIdeas = () => {
+  const { success, error: showError } = useToast();
   const [ideas, setIdeas] = useState([]);
   const [filterStatus, setFilterStatus] = useState('all');
   const [loading, setLoading] = useState(true);
+  const [deleteConfirm, setDeleteConfirm] = useState(null);
   useEffect(() => {
     fetchIdeas();
   }, [filterStatus]);
@@ -23,14 +28,19 @@ const AllIdeas = () => {
     }
   };
   const handleDelete = async (id) => {
-    if (window.confirm('Are you sure you want to delete this idea?')) {
-      try {
-        await ideaAPI.deleteIdea(id);
-        fetchIdeas();
-      } catch (error) {
-        console.error('Error deleting idea:', error);
-        alert(error.response?.data?.message || 'Failed to delete idea');
-      }
+    setDeleteConfirm(id);
+  };
+
+  const executeDelete = async () => {
+    if (!deleteConfirm) return;
+    try {
+      await ideaAPI.deleteIdea(deleteConfirm);
+      success('Idea deleted successfully');
+      fetchIdeas();
+      setDeleteConfirm(null);
+    } catch (error) {
+      console.error('Error deleting idea:', error);
+      showError(error.response?.data?.message || 'Failed to delete idea');
     }
   };
   const getStatusClass = (status) => {
@@ -108,7 +118,21 @@ const AllIdeas = () => {
           </div>
         </div>
       </div>
+
+      {/* Delete Confirmation Modal */}
+      {deleteConfirm && (
+        <ConfirmModal
+          title="Delete Idea"
+          message="Are you sure you want to delete this idea? This action cannot be undone."
+          confirmText="Delete"
+          cancelText="Cancel"
+          isDangerous={true}
+          onConfirm={executeDelete}
+          onCancel={() => setDeleteConfirm(null)}
+        />
+      )}
     </div>
   );
 };
+
 export default AllIdeas;

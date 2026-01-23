@@ -4,6 +4,7 @@ import { MdAdd, MdLightbulb, MdBarChart, MdCheckCircle, MdPending, MdPeople, MdS
 import Sidebar from '../../components/Sidebar/Sidebar';
 import Header from '../../components/Header/Header';
 import IdeaDetailModal from '../../components/IdeaDetailModal/IdeaDetailModal';
+import LoadingSpinner from '../../components/LoadingSpinner/LoadingSpinner';
 import { useAuth } from '../../context/AuthContext';
 import { ideaAPI } from '../../services/api';
 import styles from './Dashboard.module.css';
@@ -180,7 +181,17 @@ const StudentDashboard = () => {
   };
 
   if (loading) {
-    return <div>Loading...</div>;
+    return (
+      <div className={styles.layout}>
+        <Sidebar role="student" />
+        <div className={styles.main}>
+          <Header />
+          <div className={styles.content}>
+            <LoadingSpinner message="Loading dashboard..." />
+          </div>
+        </div>
+      </div>
+    );
   }
 
   const totalIdeas = stats?.totalIdeas || 0;

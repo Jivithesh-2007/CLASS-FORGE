@@ -3,15 +3,16 @@ import { MdClose, MdSend, MdDelete, MdDeleteOutline } from 'react-icons/md';
 import { ideaAPI } from '../../services/api';
 import { useAuth } from '../../context/AuthContext';
 import { getSocket } from '../../services/socket';
+import { useToast } from '../../context/ToastContext';
 import styles from './IdeaDetailModal.module.css';
 
 const IdeaDetailModal = ({ idea, onClose, showComments = false }) => {
   const { user } = useAuth();
+  const { success, error: showError } = useToast();
   const [comments, setComments] = useState([]);
   const [newComment, setNewComment] = useState('');
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
-  const [message, setMessage] = useState({ type: '', text: '' });
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [deleting, setDeleting] = useState(false);
   const socketRef = React.useRef(null);
@@ -31,18 +32,13 @@ const IdeaDetailModal = ({ idea, onClose, showComments = false }) => {
     };
   }, [idea._id, showComments]);
 
-  const showMessage = (type, text) => {
-    setMessage({ type, text });
-    setTimeout(() => setMessage({ type: '', text: '' }), 3000);
-  };
-
   const fetchComments = async () => {
     try {
       const response = await ideaAPI.getComments(idea._id);
       setComments(response.data.comments || []);
     } catch (error) {
       console.error('Error fetching comments:', error);
-      showMessage('error', 'Failed to load comments');
+      showError('Failed to load comments');
     } finally {
       setLoading(false);
     }
@@ -67,7 +63,7 @@ const IdeaDetailModal = ({ idea, onClose, showComments = false }) => {
   const handleAddComment = async (e) => {
     e.preventDefault();
     if (!newComment.trim()) {
-      showMessage('error', 'Please enter a comment');
+      showError('Please enter a comment');
       return;
     }
 
@@ -77,11 +73,11 @@ const IdeaDetailModal = ({ idea, onClose, showComments = false }) => {
       if (response.data.success) {
         setComments([...comments, response.data.comment]);
         setNewComment('');
-        showMessage('success', 'Comment added successfully!');
+        success('Comment added successfully!');
       }
     } catch (error) {
       console.error('Error adding comment:', error);
-      showMessage('error', error.response?.data?.message || 'Failed to add comment');
+      showError(error.response?.data?.message || 'Failed to add comment');
     } finally {
       setSubmitting(false);
     }
@@ -91,10 +87,10 @@ const IdeaDetailModal = ({ idea, onClose, showComments = false }) => {
     try {
       await ideaAPI.deleteComment(idea._id, commentId);
       setComments(comments.filter(c => c._id !== commentId));
-      showMessage('success', 'Comment deleted');
+      success('Comment deleted');
     } catch (error) {
       console.error('Error deleting comment:', error);
-      showMessage('error', 'Failed to delete comment');
+      showError('Failed to delete comment');
     }
   };
 
@@ -157,12 +153,6 @@ const IdeaDetailModal = ({ idea, onClose, showComments = false }) => {
           </div>
         </div>
 
-        {message.text && (
-          <div className={`${styles.messageAlert} ${styles[`alert${message.type.charAt(0).toUpperCase() + message.type.slice(1)}`]}`}>
-            {message.text}
-          </div>
-        )}
-
         <div className={styles.modalContent}>
           <div className={styles.ideaSection}>
             <div className={styles.ideaMeta}>
@@ -219,7 +209,10 @@ const IdeaDetailModal = ({ idea, onClose, showComments = false }) => {
 
               <div className={styles.commentsList}>
                 {loading ? (
-                  <div className={styles.loadingText}>Loading comments...</div>
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '24px', flexDirection: 'column', gap: '12px' }}>
+                    <div style={{ width: '28px', height: '28px', border: '3px solid #e5e7eb', borderTopColor: '#000', borderRadius: '50%', animation: 'spin 1s linear infinite' }}></div>
+                    <p style={{ color: '#999', fontSize: '13px', margin: 0 }}>Loading comments...</p>
+                  </div>
                 ) : comments.length === 0 ? (
                   <div className={styles.emptyText}>No comments yet. Be the first to comment!</div>
                 ) : (

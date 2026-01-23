@@ -2,9 +2,11 @@ import React, { useState } from 'react';
 import { MdClose, MdCheckCircle, MdSchedule, MdCancel, MdFileDownload, MdSend, MdCheckBox, MdCheckBoxOutlineBlank, MdArrowBack } from 'react-icons/md';
 import { jsPDF } from 'jspdf';
 import IdeaDetailModal from '../IdeaDetailModal/IdeaDetailModal';
+import { useToast } from '../../context/ToastContext';
 import styles from './StudentDetail.module.css';
 
 const StudentDetail = ({ student, onClose }) => {
+  const { success, error: showError } = useToast();
   const [showAllIdeas, setShowAllIdeas] = useState(false);
   const [showEmailModal, setShowEmailModal] = useState(false);
   const [emailSubject, setEmailSubject] = useState('');
@@ -67,15 +69,16 @@ const StudentDetail = ({ student, onClose }) => {
       });
       
       if (response.ok) {
+        success('Email sent successfully!');
         setEmailSubject('');
         setEmailMessage('');
         setShowEmailModal(false);
       } else {
-        alert('Failed to send email');
+        showError('Failed to send email');
       }
     } catch (error) {
       console.error('Error sending email:', error);
-      alert('Error sending email');
+      showError('Error sending email');
     } finally {
       setSending(false);
     }
@@ -95,7 +98,7 @@ const StudentDetail = ({ student, onClose }) => {
   const handleMergeIdeas = async (e) => {
     e.preventDefault();
     if (selectedIdeasForMerge.length !== 2) {
-      alert('Please select exactly 2 ideas to merge');
+      showError('Please select exactly 2 ideas to merge');
       return;
     }
 
@@ -116,7 +119,7 @@ const StudentDetail = ({ student, onClose }) => {
       });
 
       if (response.ok) {
-        alert('Ideas merged successfully!');
+        success('Ideas merged successfully!');
         setSelectedIdeasForMerge([]);
         setShowMergeModal(false);
         setMergeTitle('');
@@ -124,11 +127,11 @@ const StudentDetail = ({ student, onClose }) => {
         setMergeDomain('');
         window.location.reload();
       } else {
-        alert('Failed to merge ideas');
+        showError('Failed to merge ideas');
       }
     } catch (error) {
       console.error('Error merging ideas:', error);
-      alert('Error merging ideas');
+      showError('Error merging ideas');
     } finally {
       setMerging(false);
     }

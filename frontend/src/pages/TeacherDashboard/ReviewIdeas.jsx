@@ -2,17 +2,19 @@ import { useState, useEffect } from 'react';
 import { MdCheckCircle, MdCancel, MdClose, MdPerson, MdCheckBox, MdCheckBoxOutlineBlank, MdMergeType, MdDescription, MdNotes, MdAutoAwesome } from 'react-icons/md';
 import Sidebar from '../../components/Sidebar/Sidebar';
 import Header from '../../components/Header/Header';
+import LoadingSpinner from '../../components/LoadingSpinner/LoadingSpinner';
 import { ideaAPI } from '../../services/api';
+import { useToast } from '../../context/ToastContext';
 import styles from './TeacherDashboard.module.css';
 import reviewStyles from './ReviewIdeas.module.css';
 
 const ReviewIdeas = () => {
+  const { success, error: showError } = useToast();
   const [ideas, setIdeas] = useState([]);
   const [selectedIdea, setSelectedIdea] = useState(null);
   const [feedback, setFeedback] = useState('');
   const [loading, setLoading] = useState(true);
   const [reviewLoading, setReviewLoading] = useState(false);
-  const [message, setMessage] = useState({ type: '', text: '' });
   const [aiInsights, setAiInsights] = useState(null);
   const [loadingInsights, setLoadingInsights] = useState(false);
   const [selectedForMerge, setSelectedForMerge] = useState([]);
@@ -34,11 +36,6 @@ const ReviewIdeas = () => {
     } finally {
       setLoading(false);
     }
-  };
-
-  const showMessage = (type, text) => {
-    setMessage({ type, text });
-    setTimeout(() => setMessage({ type: '', text: '' }), 4000);
   };
 
   const handleSelectIdea = async (idea) => {
@@ -67,7 +64,7 @@ const ReviewIdeas = () => {
     } catch (error) {
       console.error('Error fetching AI insights:', error);
       setLoadingInsights(false);
-      showMessage('error', 'Failed to generate AI insights. Please try again.');
+      showError('Failed to generate AI insights. Please try again.');
     }
   };
 
@@ -76,14 +73,14 @@ const ReviewIdeas = () => {
     setReviewLoading(true);
     try {
       await ideaAPI.reviewIdea(selectedIdea._id, { status, feedback });
-      showMessage('success', `Idea ${status} successfully!`);
+      success(`Idea ${status} successfully!`);
       setAiInsights(null);
       setSelectedIdea(null);
       setFeedback('');
       fetchPendingIdeas();
     } catch (error) {
       console.error('Error reviewing idea:', error);
-      showMessage('error', error.response?.data?.message || 'Failed to review idea');
+      showError(error.response?.data?.message || 'Failed to review idea');
     } finally {
       setReviewLoading(false);
     }
@@ -115,7 +112,7 @@ const ReviewIdeas = () => {
 
   const handleMergeClick = () => {
     if (selectedForMerge.length < 2) {
-      showMessage('error', 'Please select at least 2 ideas to merge');
+      showError('Please select at least 2 ideas to merge');
       return;
     }
     
@@ -128,7 +125,7 @@ const ReviewIdeas = () => {
 
   const handleMergeIdeas = async () => {
     if (!mergeTitle.trim()) {
-      showMessage('error', 'Please enter a title for the merged idea');
+      showError('Please enter a title for the merged idea');
       return;
     }
 
@@ -141,7 +138,7 @@ const ReviewIdeas = () => {
         domain: mergeDomain
       });
       
-      showMessage('success', 'Ideas merged successfully!');
+      success('Ideas merged successfully!');
       setShowMergeModal(false);
       setSelectedForMerge([]);
       setMergeTitle('');
@@ -150,14 +147,24 @@ const ReviewIdeas = () => {
       fetchPendingIdeas();
     } catch (error) {
       console.error('Error merging ideas:', error);
-      showMessage('error', error.response?.data?.message || 'Failed to merge ideas');
+      showError(error.response?.data?.message || 'Failed to merge ideas');
     } finally {
       setReviewLoading(false);
     }
   };
 
   if (loading) {
-    return <div>Loading...</div>;
+    return (
+      <div className={styles.layout}>
+        <Sidebar role="teacher" />
+        <div className={styles.main}>
+          <Header title="Review Ideas" />
+          <div className={styles.content}>
+            <LoadingSpinner message="Loading pending ideas..." />
+          </div>
+        </div>
+      </div>
+    );
   }
 
   const filteredIdeas = getFilteredAndSortedIdeas();
@@ -168,37 +175,6 @@ const ReviewIdeas = () => {
       <div className={styles.main}>
         <Header title="Review Ideas" />
         <div className={styles.content}>
-          {message.text && (
-            <div style={{
-              padding: '12px 16px',
-              marginBottom: '20px',
-              borderRadius: '8px',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'space-between',
-              animation: 'slideDown 0.3s ease-out',
-              backgroundColor: message.type === 'success' ? 'var(--icon-teal-bg)' : '#ffebee',
-              border: `1px solid ${message.type === 'success' ? 'var(--icon-teal-text)' : '#ffcdd2'}`,
-              color: message.type === 'success' ? 'var(--icon-teal-text)' : 'var(--status-danger)'
-            }}>
-              <span style={{ fontSize: '14px', fontWeight: '500' }}>{message.text}</span>
-              <button
-                onClick={() => setMessage({ type: '', text: '' })}
-                style={{
-                  background: 'none',
-                  border: 'none',
-                  cursor: 'pointer',
-                  color: 'inherit',
-                  padding: '4px',
-                  display: 'flex',
-                  alignItems: 'center'
-                }}
-              >
-                <MdClose size={18} />
-              </button>
-            </div>
-          )}
-
           <style>{`
             @keyframes slideDown {
               from {

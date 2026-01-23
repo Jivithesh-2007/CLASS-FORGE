@@ -36,6 +36,10 @@ const ideaSchema = new mongoose.Schema({
     ref: 'User',
     required: true
   },
+  submittedByMultiple: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User'
+  }],
   groupId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Group'

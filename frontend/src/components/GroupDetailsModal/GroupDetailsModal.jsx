@@ -1,14 +1,16 @@
 import { useState } from 'react';
 import { MdClose, MdContentCopy, MdLogout, MdDelete } from 'react-icons/md';
+import { useToast } from '../../context/ToastContext';
 import styles from './GroupDetailsModal.module.css';
 
 const GroupDetailsModal = ({ group, isAdmin, onClose, onInvite, onDelete, onLeave }) => {
+  const { success } = useToast();
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [deleting, setDeleting] = useState(false);
 
   const copyToClipboard = (text) => {
     navigator.clipboard.writeText(text);
-    alert('Copied to clipboard!');
+    success('Copied to clipboard!');
   };
 
   const handleDeleteClick = async () => {

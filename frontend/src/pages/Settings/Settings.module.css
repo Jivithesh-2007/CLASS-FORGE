@@ -543,7 +543,7 @@ body.dark-mode .navItem:hover {
 body.dark-mode .navItem.active {
   background-color: #1a2a4a;
   color: #ffffff;
-  border-left-color: #7FB3E8;
+  border-left-color: #000000;
 }
 
 body.dark-mode .sidebarFooter {
@@ -624,8 +624,8 @@ body.dark-mode .select {
 
 body.dark-mode .input:focus,
 body.dark-mode .select:focus {
-  border-color: #7FB3E8;
-  box-shadow: 0 0 0 3px rgba(127, 179, 232, 0.2);
+  border-color: #000000;
+  box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.2);
 }
 
 body.dark-mode .input:disabled {

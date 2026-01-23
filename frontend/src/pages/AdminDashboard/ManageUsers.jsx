@@ -2,12 +2,17 @@ import React, { useState, useEffect } from 'react';
 import { MdBlock, MdCheckCircle, MdDelete } from 'react-icons/md';
 import Sidebar from '../../components/Sidebar/Sidebar';
 import Header from '../../components/Header/Header';
+import ConfirmModal from '../../components/ConfirmModal/ConfirmModal';
 import { adminAPI } from '../../services/api';
+import { useToast } from '../../context/ToastContext';
 import styles from '../StudentDashboard/Dashboard.module.css';
+
 const ManageUsers = () => {
+  const { success, error: showError } = useToast();
   const [users, setUsers] = useState([]);
   const [filterRole, setFilterRole] = useState('all');
   const [loading, setLoading] = useState(true);
+  const [confirmAction, setConfirmAction] = useState(null);
   useEffect(() => {
     fetchUsers();
   }, [filterRole]);
@@ -23,25 +28,29 @@ const ManageUsers = () => {
     }
   };
   const handleToggleStatus = async (id) => {
-    if (window.confirm('Are you sure you want to change this user\'s status?')) {
-      try {
-        await adminAPI.toggleUserStatus(id);
-        fetchUsers();
-      } catch (error) {
-        console.error('Error toggling status:', error);
-        alert(error.response?.data?.message || 'Failed to update user status');
-      }
-    }
+    setConfirmAction({ type: 'toggle', id });
   };
+
   const handleDelete = async (id) => {
-    if (window.confirm('Are you sure you want to delete this user? This action cannot be undone.')) {
-      try {
-        await adminAPI.deleteUser(id);
-        fetchUsers();
-      } catch (error) {
-        console.error('Error deleting user:', error);
-        alert(error.response?.data?.message || 'Failed to delete user');
+    setConfirmAction({ type: 'delete', id });
+  };
+
+  const executeAction = async () => {
+    if (!confirmAction) return;
+
+    try {
+      if (confirmAction.type === 'toggle') {
+        await adminAPI.toggleUserStatus(confirmAction.id);
+        success('User status updated successfully');
+      } else if (confirmAction.type === 'delete') {
+        await adminAPI.deleteUser(confirmAction.id);
+        success('User deleted successfully');
       }
+      fetchUsers();
+      setConfirmAction(null);
+    } catch (error) {
+      console.error('Error:', error);
+      showError(error.response?.data?.message || 'Operation failed');
     }
   };
   return (
@@ -163,7 +172,23 @@ const ManageUsers = () => {
           </div>
         </div>
       </div>
+
+      {/* Confirm Modal */}
+      {confirmAction && (
+        <ConfirmModal
+          title={confirmAction.type === 'toggle' ? 'Change User Status' : 'Delete User'}
+          message={confirmAction.type === 'toggle' 
+            ? 'Are you sure you want to change this user\'s status?' 
+            : 'Are you sure you want to delete this user? This action cannot be undone.'}
+          confirmText={confirmAction.type === 'toggle' ? 'Change' : 'Delete'}
+          cancelText="Cancel"
+          isDangerous={confirmAction.type === 'delete'}
+          onConfirm={executeAction}
+          onCancel={() => setConfirmAction(null)}
+        />
+      )}
     </div>
   );
 };
+
 export default ManageUsers;

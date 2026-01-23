@@ -2,9 +2,11 @@ import { useState, useEffect, useRef } from 'react';
 import { MdSend, MdClose, MdMoreVert } from 'react-icons/md';
 import { messageAPI } from '../../services/api';
 import { getSocket } from '../../services/socket';
+import { useToast } from '../../context/ToastContext';
 import styles from './GroupChat.module.css';
 
 const GroupChat = ({ group, onClose, currentUser, onShowDetails }) => {
+  const { success, error: showError } = useToast();
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState('');
   const [loading, setLoading] = useState(true);
@@ -75,11 +77,13 @@ const GroupChat = ({ group, onClose, currentUser, onShowDetails }) => {
       // Don't add message here - let socket listener handle it
       if (response.data && response.data.data) {
         console.log('✓ Message sent successfully');
+        success('Message sent!');
       }
 
       setNewMessage('');
     } catch (error) {
       console.error('Error sending message:', error);
+      showError('Failed to send message');
     }
   };
 
@@ -161,7 +165,10 @@ const GroupChat = ({ group, onClose, currentUser, onShowDetails }) => {
       {/* Messages Container */}
       <div className={styles.messagesContainer}>
         {loading ? (
-          <div className={styles.loadingText}>Loading messages...</div>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%', flexDirection: 'column', gap: '12px' }}>
+            <div style={{ width: '32px', height: '32px', border: '3px solid #e5e7eb', borderTopColor: '#000', borderRadius: '50%', animation: 'spin 1s linear infinite' }}></div>
+            <p style={{ color: '#999', fontSize: '14px', margin: 0 }}>Loading messages...</p>
+          </div>
         ) : messages.length === 0 ? (
           <div className={styles.emptyState}>
             <div className={styles.emptyText}>No messages yet</div>

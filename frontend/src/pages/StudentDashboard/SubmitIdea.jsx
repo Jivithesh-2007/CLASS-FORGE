@@ -4,18 +4,18 @@ import { MdClose, MdSend } from 'react-icons/md';
 import Sidebar from '../../components/Sidebar/Sidebar';
 import Header from '../../components/Header/Header';
 import { ideaAPI } from '../../services/api';
+import { useToast } from '../../context/ToastContext';
 import styles from './SubmitIdea.module.css';
 
 const SubmitIdea = () => {
   const navigate = useNavigate();
+  const { success, error: showError } = useToast();
   const [formData, setFormData] = useState({
     title: '',
     description: '',
     domain: '',
     tags: ''
   });
-  const [error, setError] = useState('');
-  const [success, setSuccess] = useState('');
   const [loading, setLoading] = useState(false);
 
   const handleChange = (e) => {
@@ -23,14 +23,10 @@ const SubmitIdea = () => {
       ...formData,
       [e.target.name]: e.target.value
     });
-    setError('');
-    setSuccess('');
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError('');
-    setSuccess('');
     setLoading(true);
 
     const tags = formData.tags.split(',').map(tag => tag.trim()).filter(tag => tag);
@@ -43,14 +39,14 @@ const SubmitIdea = () => {
         tags
       });
       console.log('Idea created successfully:', response.data);
-      setSuccess('Idea submitted successfully!');
+      success('Idea submitted successfully!');
       setTimeout(() => {
         navigate('/student-dashboard/my-ideas');
       }, 1500);
     } catch (err) {
       console.error('Idea submission error:', err);
       const errorMessage = err.response?.data?.message || err.message || 'Failed to submit idea';
-      setError(errorMessage);
+      showError(errorMessage);
       setLoading(false);
     }
   };
@@ -75,16 +71,12 @@ const SubmitIdea = () => {
               </button>
             </div>
 
-            {error && (
-              <div className={styles.alert} style={{ backgroundColor: '#ffebee', borderColor: '#ffcdd2', color: 'var(--status-danger)' }}>
-                {error}
-              </div>
-            )}
-            {success && (
-              <div className={styles.alert} style={{ backgroundColor: 'var(--icon-teal-bg)', borderColor: 'var(--icon-teal-text)', color: 'var(--icon-teal-text)' }}>
-                {success}
-              </div>
-            )}
+            <div className={styles.guidelines}>
+              <h4 className={styles.guidelinesTitle}>GUIDELINES</h4>
+              <p className={styles.guidelinesText}>
+                Submissions are reviewed weekly by our innovation mentors. Ensure your pitch clearly states the value proposition. You can edit your submission until it moves to "reviewing" status.
+              </p>
+            </div>
 
             <form onSubmit={handleSubmit} className={styles.form}>
               {/* Project Title */}
@@ -151,14 +143,6 @@ const SubmitIdea = () => {
                   rows="4"
                   required
                 />
-              </div>
-
-              {/* Guidelines */}
-              <div className={styles.guidelines}>
-                <h4 className={styles.guidelinesTitle}>GUIDELINES</h4>
-                <p className={styles.guidelinesText}>
-                  Submissions are reviewed weekly by our innovation mentors. Ensure your pitch clearly states the value proposition. You can edit your submission until it moves to "reviewing" status.
-                </p>
               </div>
 
               {/* Tags */}

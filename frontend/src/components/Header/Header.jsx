@@ -147,7 +147,14 @@ const Header = ({ title, subtitle }) => {
         </div>
       </header>
 
-      <NotificationPanel isOpen={showNotifications} onClose={() => setShowNotifications(false)} />
+      <NotificationPanel 
+        isOpen={showNotifications} 
+        onClose={() => {
+          setShowNotifications(false);
+          // Refresh unread count when panel closes
+          fetchUnreadCount();
+        }} 
+      />
     </>
   );
 };

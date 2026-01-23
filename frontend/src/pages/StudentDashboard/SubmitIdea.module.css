@@ -26,27 +26,21 @@
   border: 1px solid var(--border-light);
 }
 
-
-
 .formHeader {
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
-  margin-bottom: 32px;
-  padding-bottom: 24px;
-  border-bottom: 2px solid var(--border-light);
+  margin-bottom: 28px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid var(--border-light);
 }
-
-
 
 .formTitle {
   font-size: 24px;
   font-weight: 700;
   color: var(--text-primary);
-  margin: 0 0 8px 0;
+  margin: 0 0 6px 0;
 }
-
-
 
 .formSubtitle {
   font-size: 13px;
@@ -125,12 +119,10 @@
   letter-spacing: 0.5px;
 }
 
-
-
 .input,
 .select,
 .textarea {
-  padding: 14px 16px;
+  padding: 12px 14px;
   border: 1px solid var(--border-color);
   border-radius: var(--radius);
   font-size: 14px;
@@ -140,8 +132,6 @@
   color: var(--text-primary);
 }
 
-
-
 .input:focus,
 .select:focus,
 .textarea:focus {
@@ -150,11 +140,9 @@
   box-shadow: 0 0 0 3px rgba(90, 163, 240, 0.1);
 }
 
-
-
 .textarea {
   resize: vertical;
-  min-height: 120px;
+  min-height: 100px;
   line-height: 1.5;
 }
 
@@ -172,10 +160,9 @@
   padding: 16px 20px;
   background-color: #f5f7fa;
   border-radius: var(--radius);
-  border-left: 4px solid #3b82f6;
+  border-left: 4px solid #000000;
+  margin: 8px 0 16px 0;
 }
-
-
 
 .guidelinesTitle {
   font-size: 12px;
@@ -186,8 +173,6 @@
   margin: 0 0 8px 0;
 }
 
-
-
 .guidelinesText {
   font-size: 13px;
   color: var(--text-secondary);
@@ -195,12 +180,10 @@
   margin: 0;
 }
 
-
-
 .formActions {
   display: flex;
   gap: 12px;
-  margin-top: 8px;
+  margin-top: 16px;
 }
 
 .submitBtn {
@@ -337,13 +320,13 @@ body.dark-mode .textarea {
 body.dark-mode .input:focus,
 body.dark-mode .select:focus,
 body.dark-mode .textarea:focus {
-  border-color: #7FB3E8;
-  box-shadow: 0 0 0 3px rgba(127, 179, 232, 0.2);
+  border-color: #000000;
+  box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.2);
 }
 
 body.dark-mode .guidelines {
   background-color: #1a2a4a;
-  border-left-color: #7FB3E8;
+  border-left-color: #000000;
 }
 
 body.dark-mode .guidelinesTitle {
@@ -375,6 +358,6 @@ body.dark-mode .cancelBtn {
 
 body.dark-mode .cancelBtn:hover {
   background-color: #1a2a4a;
-  border-color: #7FB3E8;
-  color: #7FB3E8;
+  border-color: #000000;
+  color: #000000;
 }

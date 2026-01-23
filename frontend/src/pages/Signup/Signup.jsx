@@ -1,12 +1,14 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { MdVisibility, MdVisibilityOff } from 'react-icons/md';
 import { useAuth } from '../../context/AuthContext';
+import { useToast } from '../../context/ToastContext';
 import styles from '../Login/Login.module.css';
 
 const Signup = () => {
   const navigate = useNavigate();
   const { signup } = useAuth();
+  const { success, error: showError } = useToast();
   const [formData, setFormData] = useState({
     fullName: '',
     username: '',
@@ -17,7 +19,6 @@ const Signup = () => {
   });
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [message, setMessage] = useState({ type: '', text: '' });
   const [loading, setLoading] = useState(false);
 
   const handleChange = (e) => {
@@ -25,20 +26,16 @@ const Signup = () => {
       ...formData,
       [e.target.name]: e.target.value
     });
-    if (message.type === 'success') {
-      setMessage({ type: '', text: '' });
-    }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setMessage({ type: '', text: '' });
     if (formData.password !== formData.confirmPassword) {
-      setMessage({ type: 'error', text: 'Passwords do not match' });
+      showError('Passwords do not match');
       return;
     }
     if (formData.password.length < 6) {
-      setMessage({ type: 'error', text: 'Password must be at least 6 characters' });
+      showError('Password must be at least 6 characters');
       return;
     }
     setLoading(true);
@@ -53,7 +50,7 @@ const Signup = () => {
       });
       
       if (result.success) {
-        setMessage({ type: 'success', text: 'Account created successfully! Redirecting...' });
+        success('Account created successfully! Redirecting...');
         setTimeout(() => {
           const role = result.user.role;
           if (role === 'student') {
@@ -63,13 +60,13 @@ const Signup = () => {
           } else if (role === 'admin') {
             navigate('/admin-dashboard');
           }
-        }, 1500);
+        }, 1000);
       } else {
-        setMessage({ type: 'error', text: result.message || 'Signup failed. Please try again.' });
+        showError(result.message || 'Signup failed. Please try again.');
         setLoading(false);
       }
     } catch (err) {
-      setMessage({ type: 'error', text: 'An error occurred. Please try again.' });
+      showError('An error occurred. Please try again.');
       setLoading(false);
     }
   };
@@ -98,12 +95,6 @@ const Signup = () => {
         <div className={styles.formContainer}>
           <h1 className={styles.title}>Create Account</h1>
           <p className={styles.subtitle}>Join the institution. Create your account to participate in collaborative innovation.</p>
-
-          {message.text && (
-            <div className={`${styles.message} ${styles[message.type]}`}>
-              {message.text}
-            </div>
-          )}
 
           <form className={styles.form} onSubmit={handleSubmit}>
             <div className={styles.formGroup}>

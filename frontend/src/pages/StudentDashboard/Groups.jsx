@@ -5,11 +5,14 @@ import Sidebar from '../../components/Sidebar/Sidebar';
 import Header from '../../components/Header/Header';
 import GroupChat from '../../components/GroupChat/GroupChat';
 import GroupDetailsModal from '../../components/GroupDetailsModal/GroupDetailsModal';
+import ConfirmModal from '../../components/ConfirmModal/ConfirmModal';
 import { groupAPI } from '../../services/api';
+import { useToast } from '../../context/ToastContext';
 import styles from './Groups.module.css';
 
 const Groups = () => {
   const { user } = useAuth();
+  const { success, error: showError } = useToast();
   const [groups, setGroups] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showCreateModal, setShowCreateModal] = useState(false);
@@ -18,13 +21,13 @@ const Groups = () => {
   const [selectedGroup, setSelectedGroup] = useState(null);
   const [showGroupDetails, setShowGroupDetails] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
+  const [deleteConfirm, setDeleteConfirm] = useState(null);
   const [formData, setFormData] = useState({
     name: '',
     description: ''
   });
   const [inviteEmail, setInviteEmail] = useState('');
   const [joinCode, setJoinCode] = useState('');
-  const [message, setMessage] = useState({ type: '', text: '' });
 
   useEffect(() => {
     console.log('🔄 Groups component mounted');
@@ -48,14 +51,9 @@ const Groups = () => {
       setLoading(false);
     } catch (error) {
       console.error('❌ Error fetching groups:', error);
-      showMessage('error', 'Failed to fetch groups');
+      showError('Failed to fetch groups');
       setLoading(false);
     }
-  };
-
-  const showMessage = (type, text) => {
-    setMessage({ type, text });
-    setTimeout(() => setMessage({ type: '', text: '' }), 4000);
   };
 
   const handleCreateGroup = async (e) => {
@@ -64,11 +62,11 @@ const Groups = () => {
       await groupAPI.createGroup(formData);
       setFormData({ name: '', description: '' });
       setShowCreateModal(false);
-      showMessage('success', 'Group created successfully!');
+      success('Group created successfully!');
       // Force refresh groups
       setTimeout(() => fetchGroups(), 500);
     } catch (error) {
-      showMessage('error', error.response?.data?.message || 'Failed to create group');
+      showError(error.response?.data?.message || 'Failed to create group');
     }
   };
 
@@ -78,9 +76,9 @@ const Groups = () => {
       await groupAPI.inviteToGroup(selectedGroup._id, { email: inviteEmail });
       setInviteEmail('');
       setShowInviteModal(false);
-      showMessage('success', 'Invitation sent successfully!');
+      success('Invitation sent successfully!');
     } catch (error) {
-      showMessage('error', error.response?.data?.message || 'Failed to send invitation');
+      showError(error.response?.data?.message || 'Failed to send invitation');
     }
   };
 
@@ -90,24 +88,23 @@ const Groups = () => {
       await groupAPI.joinByCode({ groupCode: joinCode });
       setJoinCode('');
       setShowJoinModal(false);
-      showMessage('success', 'Joined group successfully!');
+      success('Joined group successfully!');
       fetchGroups();
     } catch (error) {
       console.error('Join error:', error);
-      showMessage('error', error.response?.data?.message || 'Failed to join group');
+      showError(error.response?.data?.message || 'Failed to join group');
     }
   };
 
   const handleDeleteGroup = async (groupId) => {
-    if (window.confirm('Are you sure you want to delete this group?')) {
-      try {
-        await groupAPI.deleteGroup(groupId);
-        showMessage('success', 'Group deleted successfully');
-        setSelectedGroup(null);
-        fetchGroups();
-      } catch (error) {
-        showMessage('error', error.response?.data?.message || 'Failed to delete group');
-      }
+    try {
+      await groupAPI.deleteGroup(groupId);
+      success('Group deleted successfully');
+      setSelectedGroup(null);
+      setDeleteConfirm(null);
+      fetchGroups();
+    } catch (error) {
+      showError(error.response?.data?.message || 'Failed to delete group');
     }
   };
 
@@ -116,13 +113,13 @@ const Groups = () => {
       console.log('👋 Leaving group:', selectedGroup._id);
       await groupAPI.leaveGroup(selectedGroup._id);
       console.log('✅ Left group successfully');
-      showMessage('success', 'Left group successfully');
+      success('Left group successfully');
       setSelectedGroup(null);
       setShowGroupDetails(false);
       fetchGroups();
     } catch (error) {
       console.error('❌ Error leaving group:', error);
-      showMessage('error', error.response?.data?.message || 'Failed to leave group');
+      showError(error.response?.data?.message || 'Failed to leave group');
     }
   };
 
@@ -151,15 +148,6 @@ const Groups = () => {
       <Sidebar role="student" />
       <div className={styles.main}>
         <Header title="My GROUPS" />
-        
-        {message.text && (
-          <div className={`${styles.alert} ${styles[message.type]}`}>
-            <span>{message.text}</span>
-            <button onClick={() => setMessage({ type: '', text: '' })}>
-              <MdClose size={18} />
-            </button>
-          </div>
-        )}
 
         <div className={styles.whatsappContainer}>
           {/* Sidebar - Groups List */}
@@ -383,10 +371,23 @@ const Groups = () => {
             setShowInviteModal(true);
           }}
           onDelete={() => {
-            handleDeleteGroup(selectedGroup._id);
+            setDeleteConfirm(selectedGroup._id);
             setShowGroupDetails(false);
           }}
           onLeave={handleLeaveGroup}
+        />
+      )}
+
+      {/* Delete Confirmation Modal */}
+      {deleteConfirm && (
+        <ConfirmModal
+          title="Delete Group"
+          message="Are you sure you want to delete this group? This action cannot be undone."
+          confirmText="Delete"
+          cancelText="Cancel"
+          isDangerous={true}
+          onConfirm={() => handleDeleteGroup(deleteConfirm)}
+          onCancel={() => setDeleteConfirm(null)}
         />
       )}
     </div>

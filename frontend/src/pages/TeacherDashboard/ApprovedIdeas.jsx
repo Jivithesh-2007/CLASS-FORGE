@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Sidebar from '../../components/Sidebar/Sidebar';
 import Header from '../../components/Header/Header';
 import IdeaDetailModal from '../../components/IdeaDetailModal/IdeaDetailModal';
+import LoadingSpinner from '../../components/LoadingSpinner/LoadingSpinner';
 import { ideaAPI } from '../../services/api';
 import styles from './TeacherDashboard.module.css';
 
@@ -36,7 +37,17 @@ const ApprovedIdeas = () => {
   };
 
   if (loading) {
-    return <div>Loading...</div>;
+    return (
+      <div className={styles.layout}>
+        <Sidebar role="teacher" />
+        <div className={styles.main}>
+          <Header title="Approved Ideas" />
+          <div className={styles.content}>
+            <LoadingSpinner message="Loading approved ideas..." />
+          </div>
+        </div>
+      </div>
+    );
   }
 
   return (

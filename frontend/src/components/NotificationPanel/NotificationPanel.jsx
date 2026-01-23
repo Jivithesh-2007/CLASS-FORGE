@@ -10,7 +10,7 @@ const NotificationPanel = ({ isOpen, onClose }) => {
   useEffect(() => {
     if (isOpen) {
       fetchNotifications();
-      const interval = setInterval(fetchNotifications, 5000);
+      const interval = setInterval(fetchNotifications, 10000); // Increased to 10 seconds
       return () => clearInterval(interval);
     }
   }, [isOpen]);
@@ -41,17 +41,23 @@ const NotificationPanel = ({ isOpen, onClose }) => {
       // Optimistic update - update UI immediately
       setNotifications(prev => 
         prev.map(notif => 
-          notif._id === notificationId ? { ...notif, isRead: true } : notif
+          notif._id === notificationId ? { ...notif, isRead: true, read: true } : notif
         )
       );
-      setUnreadCount(prev => Math.max(0, prev - 1));
+      const newUnreadCount = Math.max(0, unreadCount - 1);
+      setUnreadCount(newUnreadCount);
 
       // Then make API call
       const token = localStorage.getItem('token');
-      await fetch(`http://localhost:5001/api/notifications/${notificationId}/read`, {
+      const response = await fetch(`http://localhost:5001/api/notifications/${notificationId}/read`, {
         method: 'PATCH',
         headers: { 'Authorization': `Bearer ${token}` }
       });
+
+      if (!response.ok) {
+        // Revert on error
+        fetchNotifications();
+      }
     } catch (error) {
       console.error('Error marking notification as read:', error);
       // Revert on error
@@ -62,19 +68,28 @@ const NotificationPanel = ({ isOpen, onClose }) => {
   const deleteNotification = async (notificationId, e) => {
     e.stopPropagation();
     try {
+      // Check if notification is unread before deleting
+      const notif = notifications.find(n => n._id === notificationId);
+      const wasUnread = notif && (!notif.isRead && !notif.read);
+      
       // Optimistic update - remove from UI immediately
       setNotifications(prev => prev.filter(notif => notif._id !== notificationId));
-      setUnreadCount(prev => {
-        const notif = notifications.find(n => n._id === notificationId);
-        return notif && !notif.isRead ? Math.max(0, prev - 1) : prev;
-      });
+      
+      if (wasUnread) {
+        setUnreadCount(prev => Math.max(0, prev - 1));
+      }
 
       // Then make API call
       const token = localStorage.getItem('token');
-      await fetch(`http://localhost:5001/api/notifications/${notificationId}`, {
+      const response = await fetch(`http://localhost:5001/api/notifications/${notificationId}`, {
         method: 'DELETE',
         headers: { 'Authorization': `Bearer ${token}` }
       });
+
+      if (!response.ok) {
+        // Revert on error
+        fetchNotifications();
+      }
     } catch (error) {
       console.error('Error deleting notification:', error);
       // Revert on error
@@ -163,7 +178,7 @@ const NotificationPanel = ({ isOpen, onClose }) => {
                 return (
                   <div
                     key={notification._id}
-                    className={`${styles.notificationItem} ${!notification.isRead ? styles.unread : ''}`}
+                    className={`${styles.notificationItem} ${!notification.isRead && !notification.read ? styles.unread : ''}`}
                   >
                     <div className={styles.categoryBadge} style={{ backgroundColor: categoryColor }}>
                       {category.charAt(0)}
@@ -195,7 +210,7 @@ const NotificationPanel = ({ isOpen, onClose }) => {
                         <MdDelete size={18} />
                       </button>
                     </div>
-                    {!notification.isRead && <div className={styles.unreadDot} />}
+                    {!notification.isRead && !notification.read && <div className={styles.unreadDot} />}
                   </div>
                 );
               })}
@@ -214,12 +229,15 @@ const NotificationPanel = ({ isOpen, onClose }) => {
                 onClick={async () => {
                   try {
                     const token = localStorage.getItem('token');
-                    await fetch('http://localhost:5001/api/notifications/mark-all-read', {
-                      method: 'PATCH',
+                    const response = await fetch('http://localhost:5001/api/notifications/read-all', {
+                      method: 'PUT',
                       headers: { 'Authorization': `Bearer ${token}` }
                     });
-                    setNotifications(prev => prev.map(n => ({ ...n, isRead: true })));
-                    setUnreadCount(0);
+                    
+                    if (response.ok) {
+                      setNotifications(prev => prev.map(n => ({ ...n, isRead: true, read: true })));
+                      setUnreadCount(0);
+                    }
                   } catch (error) {
                     console.error('Error marking all as read:', error);
                   }

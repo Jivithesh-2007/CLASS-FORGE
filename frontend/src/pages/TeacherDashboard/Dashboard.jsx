@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { MdTrendingUp, MdPeople, MdAssignment, MdSchedule, MdSend, MdPending } from 'react-icons/md';
 import Sidebar from '../../components/Sidebar/Sidebar';
 import Header from '../../components/Header/Header';
+import LoadingSpinner from '../../components/LoadingSpinner/LoadingSpinner';
 import { useAuth } from '../../context/AuthContext';
 import { ideaAPI } from '../../services/api';
 import styles from './TeacherDashboard.module.css';
@@ -67,6 +68,7 @@ const TeacherDashboard = () => {
   };
 
   const calculateSubmissionTrend = (ideas) => {
+    // Get last 7 days starting from 6 days ago to today
     const last7Days = [];
     for (let i = 6; i >= 0; i--) {
       const date = new Date();
@@ -75,8 +77,10 @@ const TeacherDashboard = () => {
       last7Days.push(date);
     }
 
+    // Count ideas submitted on each day
     const trend = last7Days.map(date => {
       const count = ideas.filter(idea => {
+        if (!idea.createdAt) return false;
         const ideaDate = new Date(idea.createdAt);
         ideaDate.setHours(0, 0, 0, 0);
         return ideaDate.getTime() === date.getTime();
@@ -84,7 +88,11 @@ const TeacherDashboard = () => {
       return count;
     });
 
-    console.log('📊 Submission Trend Data:', trend);
+    console.log('📊 Submission Trend Data (Real):', trend);
+    console.log('📅 Date Range:', last7Days.map(d => d.toLocaleDateString()));
+    console.log('📝 Total Ideas:', ideas.length);
+    console.log('💾 Ideas with dates:', ideas.filter(i => i.createdAt).length);
+    
     return trend;
   };
 
@@ -98,13 +106,19 @@ const TeacherDashboard = () => {
     
     console.log('📈 Graph Data:', { data, maxValue, height });
     
-    const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+    // Generate dates for last 7 days
+    const dates = [];
+    for (let i = 6; i >= 0; i--) {
+      const date = new Date();
+      date.setDate(date.getDate() - i);
+      dates.push(date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }));
+    }
     
     const points = data.map((value, index) => {
       const x = padding + (index / (data.length - 1)) * width;
       const y = padding + height - (value / maxValue) * height;
-      console.log(`Day ${days[index]}: value=${value}, y=${y}, scaledHeight=${(value / maxValue) * height}`);
-      return { x, y, value, day: days[index] };
+      console.log(`Day ${dates[index]}: value=${value}, y=${y}, scaledHeight=${(value / maxValue) * height}`);
+      return { x, y, value, day: dates[index] };
     });
 
     // Generate smooth curve using cubic Bezier curves for smoother transitions
@@ -291,7 +305,17 @@ const TeacherDashboard = () => {
   };
 
   if (loading) {
-    return <div>Loading...</div>;
+    return (
+      <div className={styles.layout}>
+        <Sidebar role="teacher" />
+        <div className={styles.main}>
+          <Header />
+          <div className={styles.content}>
+            <LoadingSpinner message="Loading dashboard..." />
+          </div>
+        </div>
+      </div>
+    );
   }
 
   const totalSubmissions = stats?.totalSubmissions || 0;
@@ -438,7 +462,13 @@ const TeacherDashboard = () => {
                       }
 
                       const maxValue = Math.max(...data, 1);
-                      const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+                      // Generate dates for last 7 days
+                      const dates = [];
+                      for (let i = 6; i >= 0; i--) {
+                        const date = new Date();
+                        date.setDate(date.getDate() - i);
+                        dates.push(date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }));
+                      }
                       const barWidth = 70;
                       const barGap = 30;
                       const padding = 70;
@@ -538,11 +568,11 @@ const TeacherDashboard = () => {
                           })}
 
                           {/* X-axis labels */}
-                          {days.map((day, idx) => {
+                          {dates.map((date, idx) => {
                             const barX = 70 + (idx * (barWidth + barGap)) + barGap + barWidth / 2;
                             return (
                               <text key={`x-${idx}`} x={barX} y="325" textAnchor="middle" fontSize="13" fill="#000000" fontWeight="500">
-                                {day}
+                                {date}
                               </text>
                             );
                           })}
@@ -554,7 +584,7 @@ const TeacherDashboard = () => {
 
                           {/* X-axis label */}
                           <text x="470" y="345" textAnchor="middle" fontSize="12" fill="#000000" fontWeight="500">
-                            Days
+                            Dates (Last 7 Days)
                           </text>
                         </>
                       );
