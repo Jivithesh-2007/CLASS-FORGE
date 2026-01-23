@@ -96,7 +96,7 @@ const Signup = () => {
 
       <div className={styles.rightPanel}>
         <div className={styles.formContainer}>
-          <h1 className={styles.title}>Portal Registration</h1>
+          <h1 className={styles.title}>Create Account</h1>
           <p className={styles.subtitle}>Join the institution. Create your account to participate in collaborative innovation.</p>
 
           {message.text && (
@@ -120,7 +120,7 @@ const Signup = () => {
             </div>
 
             <div className={styles.formGroup}>
-              <label className={styles.label}>OFFICIAL EMAIL</label>
+              <label className={styles.label}>EMAIL</label>
               <div className={styles.inputWrapper}>
                 <input
                   type="text"
@@ -207,12 +207,7 @@ const Signup = () => {
           </form>
 
           <div className={styles.footer}>
-            <p>Already registered? <Link to="/login" className={styles.footerLink}>Sign in</Link></p>
-            <div className={styles.footerLinks}>
-              <a href="#" className={styles.footerLink}>SECURITY POLICY</a>
-              <a href="#" className={styles.footerLink}>SYSTEM STATUS</a>
-              <a href="#" className={styles.footerLink}>SUPPORT</a>
-            </div>
+            <p>Already Have a Account? <Link to="/login" className={styles.footerLink}>Sign in</Link></p>
           </div>
         </div>
       </div>

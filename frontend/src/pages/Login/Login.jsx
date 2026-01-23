@@ -78,7 +78,7 @@ const Login = () => {
 
       <div className={styles.rightPanel}>
         <div className={styles.formContainer}>
-          <h1 className={styles.formTitle}>Portal Login</h1>
+          <h1 className={styles.formTitle}>Login</h1>
           <p className={styles.formSubtitle}>Welcome back. Please authenticate your institutional identity.</p>
 
           {message.text && (
@@ -89,7 +89,7 @@ const Login = () => {
 
           <form className={styles.form} onSubmit={handleSubmit}>
             <div className={styles.formGroup}>
-              <label className={styles.label}>OFFICIAL EMAIL</label>
+              <label className={styles.label}>EMAIL</label>
               <div className={styles.inputWrapper}>
                 <input
                   type="text"
@@ -141,17 +141,14 @@ const Login = () => {
             </div>
 
             <button type="submit" className={styles.submitBtn} disabled={loading}>
-              {loading ? 'AUTHENTICATING...' : 'AUTHENTICATE'}
+              {loading ? 'LOGIN SUCESSFULL...' : 'LOGIN'}
             </button>
           </form>
 
           <div className={styles.footer}>
-            <p className={styles.footerText}>New to the portal? <Link to="/signup" className={styles.footerLink}>Request access</Link></p>
-            <div className={styles.footerLinks}>
-              <a href="#" className={styles.footerLink}>SECURITY POLICY</a>
-              <a href="#" className={styles.footerLink}>SYSTEM STATUS</a>
-              <a href="#" className={styles.footerLink}>SUPPORT</a>
-            </div>
+            <p className={styles.footerText}>Don't Have a Account? <Link to="/signup" className={styles.footerLink}>Sign Up</Link></p>
+           
+          
           </div>
         </div>
       </div>
