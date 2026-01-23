@@ -77,10 +77,10 @@ const GroupChat = ({ group, onClose, currentUser, onShowDetails }) => {
       // Don't add message here - let socket listener handle it
       if (response.data && response.data.data) {
         console.log('✓ Message sent successfully');
-        success('Message sent!');
       }
 
       setNewMessage('');
+      success('Message sent!');
     } catch (error) {
       console.error('Error sending message:', error);
       showError('Failed to send message');
