@@ -203,14 +203,33 @@ const NotificationPanel = ({ isOpen, onClose }) => {
           )}
         </div>
 
-        {notifications.length > 0 && (
-          <div className={styles.footer}>
-            <button className={styles.clearBtn} onClick={clearAllNotifications}>
-              <MdClear size={16} />
-              CLEAR ALL NOTIFICATIONS
-            </button>
+        <div className={styles.footer}>
+            <div style={{ display: 'flex', gap: '8px' }}>
+              <button className={styles.clearBtn} onClick={clearAllNotifications}>
+                <MdClear size={16} />
+                CLEAR ALL
+              </button>
+              <button 
+                className={styles.markAllReadBtn}
+                onClick={async () => {
+                  try {
+                    const token = localStorage.getItem('token');
+                    await fetch('http://localhost:5001/api/notifications/mark-all-read', {
+                      method: 'PATCH',
+                      headers: { 'Authorization': `Bearer ${token}` }
+                    });
+                    setNotifications(prev => prev.map(n => ({ ...n, isRead: true })));
+                    setUnreadCount(0);
+                  } catch (error) {
+                    console.error('Error marking all as read:', error);
+                  }
+                }}
+              >
+                <MdCheckCircle size={16} />
+                MARK ALL READ
+              </button>
+            </div>
           </div>
-        )}
       </div>
     </>
   );

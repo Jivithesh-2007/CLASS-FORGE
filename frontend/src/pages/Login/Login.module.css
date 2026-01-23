@@ -73,10 +73,7 @@
 }
 
 .stats {
-  display: flex;
-  gap: 60px;
-  padding-top: 20px;
-  border-top: 1px solid #333333;
+  display: none;
 }
 
 .stat {
@@ -101,7 +98,7 @@
 
 .copyright {
   font-size: 11px;
-  color: #666666;
+  color: #ffffff;
   line-height: 1.6;
   letter-spacing: 0.5px;
 }
@@ -136,17 +133,24 @@
   line-height: 1.5;
 }
 
-.quote {
-  background-color: #f9f9f9;
-  border-left: 3px solid #000000;
-  padding: 20px;
+.subtitle {
+  font-size: 14px;
+  color: #999999;
   margin-bottom: 32px;
+  line-height: 1.5;
+}
+
+.quote {
+  background-color: transparent;
+  border-left: 3px solid #ffffff;
+  padding: 20px;
+  margin: 20px 0;
   font-style: italic;
 }
 
 .quote p {
   font-size: 13px;
-  color: #666666;
+  color: #cccccc;
   line-height: 1.6;
   margin: 0 0 12px 0;
 }
@@ -302,13 +306,18 @@ select.select option,
 
 .passwordWrapper {
   position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.passwordWrapper input {
+  flex: 1;
+  padding-right: 44px;
 }
 
 .passwordToggle {
   position: absolute;
   right: 12px;
-  top: 50%;
-  transform: translateY(-50%);
   background: none;
   border: none;
   color: #999999;

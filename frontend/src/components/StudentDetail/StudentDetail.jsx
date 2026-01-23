@@ -138,165 +138,164 @@ const StudentDetail = ({ student, onClose }) => {
     const doc = new jsPDF();
     const pageWidth = doc.internal.pageSize.getWidth();
     const pageHeight = doc.internal.pageSize.getHeight();
-    let yPosition = 20;
+    let yPosition = 15;
     const margin = 15;
-    const lineHeight = 7;
     const contentWidth = pageWidth - 2 * margin;
 
-    // Helper function to add text with wrapping
-    const addWrappedText = (text, fontSize, fontStyle = 'normal', maxWidth = contentWidth) => {
-      doc.setFontSize(fontSize);
-      doc.setFont(undefined, fontStyle);
-      const lines = doc.splitTextToSize(text, maxWidth);
-      lines.forEach((line) => {
-        if (yPosition > pageHeight - 15) {
-          doc.addPage();
-          yPosition = 20;
-        }
-        doc.text(line, margin, yPosition);
-        yPosition += lineHeight;
-      });
-      return yPosition;
+    // Color scheme
+    const primaryColor = [0, 0, 0];
+    const accentColor = [79, 70, 229];
+    const lightGray = [243, 244, 246];
+    const darkGray = [75, 85, 99];
+    const textColor = [31, 41, 55];
+
+    // Helper to check if we need a new page
+    const checkPageBreak = (spaceNeeded = 10) => {
+      if (yPosition + spaceNeeded > pageHeight - 10) {
+        doc.addPage();
+        yPosition = 15;
+      }
     };
 
-    // Header
-    doc.setFillColor(0, 0, 0);
-    doc.rect(0, 0, pageWidth, 30, 'F');
-    doc.setTextColor(255, 255, 255);
-    doc.setFontSize(20);
-    doc.setFont(undefined, 'bold');
-    doc.text('CLASSFORGE', margin, 15);
-    doc.setFontSize(10);
-    doc.text('Student Profile Report', margin, 23);
-
-    yPosition = 40;
-    doc.setTextColor(0, 0, 0);
-
-    // Title
-    doc.setFontSize(16);
-    doc.setFont(undefined, 'bold');
-    doc.text('Student Profile Report', margin, yPosition);
-    yPosition += 12;
-
-    // Divider
-    doc.setDrawColor(200, 200, 200);
-    doc.line(margin, yPosition, pageWidth - margin, yPosition);
-    yPosition += 8;
-
-    // Student Information Section
-    doc.setFontSize(12);
-    doc.setFont(undefined, 'bold');
-    doc.text('Student Information', margin, yPosition);
-    yPosition += 8;
-
-    doc.setFontSize(10);
-    doc.setFont(undefined, 'normal');
-    const studentInfo = [
-      `Full Name: ${student.fullName}`,
-      `Student ID: ${student.studentId || student._id.slice(0, 8)}`,
-      `Department: ${student.department}`,
-      `Program: ${student.program || 'B.Tech'}`,
-      `Year: ${student.year || 'N/A'}`,
-      `Email: ${student.email}`,
-      `Status: ${student.status || 'Active'}`
-    ];
-
-    studentInfo.forEach((info) => {
-      if (yPosition > pageHeight - 20) {
-        doc.addPage();
-        yPosition = 20;
-      }
-      doc.text(info, margin, yPosition);
-      yPosition += 7;
-    });
-
-    yPosition += 5;
-
-    // Statistics Section
-    doc.setFontSize(12);
-    doc.setFont(undefined, 'bold');
-    doc.text('Idea Statistics', margin, yPosition);
-    yPosition += 8;
-
-    doc.setFontSize(10);
-    doc.setFont(undefined, 'normal');
-    const stats = [
-      `Total Ideas Submitted: ${student.totalIdeas}`,
-      `Approved Ideas: ${student.approvedIdeas}`,
-      `Pending Review: ${student.pendingIdeas}`,
-      `Rejected Ideas: ${student.rejectedIdeas}`,
-      `Approval Rate: ${student.totalIdeas > 0 ? Math.round((student.approvedIdeas / student.totalIdeas) * 100) : 0}%`
-    ];
-
-    stats.forEach((stat) => {
-      if (yPosition > pageHeight - 20) {
-        doc.addPage();
-        yPosition = 20;
-      }
-      doc.text(stat, margin, yPosition);
-      yPosition += 7;
-    });
-
-    yPosition += 5;
-
-    // Recent Ideas Section
-    if (student.recentIdeas && student.recentIdeas.length > 0) {
+    // Helper to add section title
+    const addSectionTitle = (title) => {
+      checkPageBreak(12);
       doc.setFontSize(12);
       doc.setFont(undefined, 'bold');
-      doc.text('Recent Ideas', margin, yPosition);
-      yPosition += 8;
+      doc.setTextColor(...primaryColor);
+      doc.text(title, margin, yPosition);
+      yPosition += 2;
+      doc.setDrawColor(...accentColor);
+      doc.setLineWidth(0.5);
+      doc.line(margin, yPosition, pageWidth - margin, yPosition);
+      yPosition += 6;
+    };
 
+    // Helper to add key-value pair
+    const addKeyValue = (key, value, indent = 0) => {
+      checkPageBreak(5);
       doc.setFontSize(9);
-      student.recentIdeas.forEach((idea, index) => {
-        if (yPosition > pageHeight - 30) {
-          doc.addPage();
-          yPosition = 20;
-        }
+      doc.setFont(undefined, 'bold');
+      doc.setTextColor(...darkGray);
+      doc.text(key + ':', margin + indent, yPosition);
+      doc.setFont(undefined, 'normal');
+      doc.setTextColor(...textColor);
+      doc.text(String(value), margin + 45 + indent, yPosition);
+      yPosition += 5;
+    };
 
-        // Idea number and title
+    // Helper to add wrapped text
+    const addWrappedText = (text, fontSize = 9, indent = 0) => {
+      checkPageBreak(8);
+      doc.setFontSize(fontSize);
+      doc.setFont(undefined, 'normal');
+      doc.setTextColor(...textColor);
+      const lines = doc.splitTextToSize(text, contentWidth - indent);
+      lines.forEach((line) => {
+        checkPageBreak(5);
+        doc.text(line, margin + indent, yPosition);
+        yPosition += 5;
+      });
+    };
+
+    // ===== HEADER =====
+    doc.setFontSize(14);
+    doc.setFont(undefined, 'bold');
+    doc.setTextColor(...primaryColor);
+    doc.text('ClassForge - Student Performance Report', margin, yPosition);
+    yPosition += 6;
+    doc.setFontSize(8);
+    doc.setFont(undefined, 'normal');
+    doc.setTextColor(...darkGray);
+    doc.text(`Generated on ${new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' })}`, margin, yPosition);
+    yPosition += 8;
+
+    // ===== STUDENT INFORMATION =====
+    addSectionTitle('Student Information');
+    addKeyValue('Full Name', student.fullName);
+    addKeyValue('Student ID', student.studentId || student._id.slice(0, 8));
+    addKeyValue('Email', student.email);
+    addKeyValue('Department', student.department);
+    addKeyValue('Program', student.program || 'B.Tech');
+    addKeyValue('Year', student.year || 'N/A');
+    addKeyValue('Status', student.status || 'Active');
+    addKeyValue('Account Created', new Date(student.createdAt).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }));
+    yPosition += 3;
+
+    // ===== KEY METRICS =====
+    addSectionTitle('Key Metrics');
+    const approvalRate = student.totalIdeas > 0 ? Math.round((student.approvedIdeas / student.totalIdeas) * 100) : 0;
+    const rejectionRate = student.totalIdeas > 0 ? Math.round((student.rejectedIdeas / student.totalIdeas) * 100) : 0;
+    const pendingRate = student.totalIdeas > 0 ? Math.round((student.pendingIdeas / student.totalIdeas) * 100) : 0;
+
+    const metrics = [
+      { label: 'Total Ideas Submitted', value: student.totalIdeas },
+      { label: 'Approved Ideas', value: student.approvedIdeas },
+      { label: 'Pending Review', value: student.pendingIdeas },
+      { label: 'Rejected Ideas', value: student.rejectedIdeas },
+      { label: 'Approval Rate', value: `${approvalRate}%` },
+      { label: 'Rejection Rate', value: `${rejectionRate}%` },
+      { label: 'Pending Percentage', value: `${pendingRate}%` }
+    ];
+
+    metrics.forEach((metric) => {
+      addKeyValue(metric.label, metric.value);
+    });
+    yPosition += 3;
+
+    // ===== PERFORMANCE SUMMARY =====
+    addSectionTitle('Performance Summary');
+    const summaryText = `${student.fullName} has submitted ${student.totalIdeas} idea(s) to the ClassForge platform. Out of these submissions, ${student.approvedIdeas} have been approved (${approvalRate}%), ${student.pendingIdeas} are pending review (${pendingRate}%), and ${student.rejectedIdeas} have been rejected (${rejectionRate}%). The student's overall engagement and contribution to the innovation platform is reflected in these metrics.`;
+    addWrappedText(summaryText);
+    yPosition += 3;
+
+    // ===== SUBMITTED IDEAS =====
+    const allIdeas = student.allIdeas || student.recentIdeas || [];
+    if (allIdeas && allIdeas.length > 0) {
+      addSectionTitle('Submitted Ideas');
+
+      allIdeas.forEach((idea, index) => {
+        checkPageBreak(15);
+
+        // Idea header with background
+        doc.setFillColor(...lightGray);
+        doc.rect(margin, yPosition - 3, contentWidth, 6, 'F');
+        doc.setFontSize(10);
         doc.setFont(undefined, 'bold');
-        doc.text(`${index + 1}. ${idea.title}`, margin, yPosition);
-        yPosition += 6;
+        doc.setTextColor(...primaryColor);
+        doc.text(`${index + 1}. ${idea.title}`, margin + 2, yPosition + 1);
+        yPosition += 7;
 
         // Idea details
-        doc.setFont(undefined, 'normal');
-        doc.setTextColor(100, 100, 100);
-        const ideaDetails = [
-          `Domain: ${idea.domain}`,
-          `Status: ${idea.status.toUpperCase()}`,
-          `Date: ${new Date(idea.createdAt).toLocaleDateString('en-US', {
-            year: 'numeric',
-            month: 'long',
-            day: 'numeric'
-          })}`
-        ];
+        addKeyValue('Domain', idea.domain, 3);
+        addKeyValue('Status', idea.status.charAt(0).toUpperCase() + idea.status.slice(1), 3);
+        addKeyValue('Submitted Date', new Date(idea.createdAt).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }), 3);
 
-        ideaDetails.forEach((detail) => {
-          if (yPosition > pageHeight - 20) {
-            doc.addPage();
-            yPosition = 20;
-          }
-          doc.text(detail, margin + 5, yPosition);
-          yPosition += 5;
-        });
+        // Description
+        if (idea.description) {
+          doc.setFontSize(9);
+          doc.setFont(undefined, 'bold');
+          doc.setTextColor(...darkGray);
+          checkPageBreak(5);
+          doc.text('Description:', margin + 3, yPosition);
+          yPosition += 4;
+          addWrappedText(idea.description, 8, 3);
+        }
 
-        doc.setTextColor(0, 0, 0);
-        yPosition += 3;
+        yPosition += 2;
       });
     }
 
-    // Footer
-    yPosition = pageHeight - 15;
+    // ===== FOOTER =====
+    yPosition += 5;
     doc.setFontSize(8);
-    doc.setTextColor(150, 150, 150);
-    doc.text(`Generated on ${new Date().toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit'
-    })}`, margin, yPosition);
-    doc.text(`© 2024 ClassForge Systems. All Rights Reserved.`, pageWidth - margin - 60, yPosition);
+    doc.setFont(undefined, 'normal');
+    doc.setTextColor(...darkGray);
+    doc.text('---', margin, yPosition);
+    yPosition += 4;
+    doc.text('© 2026 ClassForge Systems. All Rights Reserved.', margin, yPosition);
+    yPosition += 3;
+    doc.text('This is a confidential document. Unauthorized distribution is prohibited.', margin, yPosition);
 
     // Save the PDF
     doc.save(`${student.fullName}_Report.pdf`);

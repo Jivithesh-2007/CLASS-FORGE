@@ -66,19 +66,13 @@ const Login = () => {
             Where Ideas<br />Meet <span className={styles.impact}>Impact.</span>
           </div>
           <div className={styles.description}>
-            The premier institution portal for collaborative innovation and strategic idea synthesis.
+            Access your institutional account to collaborate on innovative ideas and contribute to institutional growth.
           </div>
-          <div className={styles.stats}>
-            <div className={styles.stat}>
-              <div className={styles.statLabel}>ACTIVE IDEAS</div>
-              <div className={styles.statValue}>1,240+</div>
-            </div>
-            <div className={styles.stat}>
-              <div className={styles.statLabel}>IMPLEMENTATION</div>
-              <div className={styles.statValue}>89%</div>
-            </div>
-          </div>
-          <div className={styles.copyright}>© 2024 CLASSFORGE SYSTEMS. ALL RIGHTS RESERVED<br />PRIVATE & CONFIDENTIAL</div>
+          <blockquote className={styles.quote}>
+            <p>"Institutional excellence is realized when visionary ideas are forged into the enduring foundations of progress."</p>
+            <p className={styles.quoteAttribution}>— CLASSFORGE EDITORIAL</p>
+          </blockquote>
+          <div className={styles.copyright}>© 2026 CLASSFORGE SYSTEMS. ALL RIGHTS RESERVED<br />PRIVATE & CONFIDENTIAL</div>
         </div>
       </div>
 
@@ -86,11 +80,6 @@ const Login = () => {
         <div className={styles.formContainer}>
           <h1 className={styles.formTitle}>Portal Login</h1>
           <p className={styles.formSubtitle}>Welcome back. Please authenticate your institutional identity.</p>
-          
-          <blockquote className={styles.quote}>
-            <p>"Institutional excellence is realized when visionary ideas are forged into the enduring foundations of progress."</p>
-            <p className={styles.quoteAttribution}>— CLASSFORGE EDITORIAL</p>
-          </blockquote>
 
           {message.text && (
             <div className={`${styles.message} ${styles[message.type]}`}>
@@ -105,7 +94,7 @@ const Login = () => {
                 <input
                   type="text"
                   name="username"
-                  placeholder="your@institution.edu"
+                 
                   className={styles.input}
                   value={formData.username}
                   onChange={handleChange}

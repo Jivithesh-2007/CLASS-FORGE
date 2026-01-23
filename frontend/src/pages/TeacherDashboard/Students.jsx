@@ -104,6 +104,7 @@ export default function StudentsPage() {
           email: user.email,
           createdAt: user.createdAt,
           recentIdeas: studentIdeas.slice(0, 5),
+          allIdeas: studentIdeas,
           program: user.program || 'B.Tech',
           studentId: user.username
         };

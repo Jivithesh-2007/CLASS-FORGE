@@ -84,19 +84,13 @@ const Signup = () => {
             Where Ideas<br />Meet <span className={styles.impact}>Impact.</span>
           </div>
           <div className={styles.description}>
-            The premier institution portal for collaborative innovation and strategic idea synthesis.
+            Join our community of innovators and contribute your ideas to shape the future of institutional excellence.
           </div>
-          <div className={styles.stats}>
-            <div className={styles.stat}>
-              <div className={styles.statLabel}>ACTIVE IDEAS</div>
-              <div className={styles.statValue}>1,240+</div>
-            </div>
-            <div className={styles.stat}>
-              <div className={styles.statLabel}>IMPLEMENTATION</div>
-              <div className={styles.statValue}>89%</div>
-            </div>
-          </div>
-          <div className={styles.copyright}>© 2024 CLASSFORGE SYSTEMS. ALL RIGHTS RESERVED<br />PRIVATE & CONFIDENTIAL</div>
+          <blockquote className={styles.quote}>
+            <p>"Institutional excellence is realized when visionary ideas are forged into the enduring foundations of progress."</p>
+            <p className={styles.quoteAttribution}>— CLASSFORGE EDITORIAL</p>
+          </blockquote>
+          <div className={styles.copyright}>© 2026 CLASSFORGE SYSTEMS. ALL RIGHTS RESERVED<br />PRIVATE & CONFIDENTIAL</div>
         </div>
       </div>
 
@@ -104,11 +98,6 @@ const Signup = () => {
         <div className={styles.formContainer}>
           <h1 className={styles.title}>Portal Registration</h1>
           <p className={styles.subtitle}>Join the institution. Create your account to participate in collaborative innovation.</p>
-          
-          <blockquote className={styles.quote}>
-            <p>"Institutional excellence is realized when visionary ideas are forged into the enduring foundations of progress."</p>
-            <p className={styles.quoteAttribution}>— CLASSFORGE EDITORIAL</p>
-          </blockquote>
 
           {message.text && (
             <div className={`${styles.message} ${styles[message.type]}`}>
@@ -136,7 +125,7 @@ const Signup = () => {
                 <input
                   type="text"
                   name="username"
-                  placeholder="your@institution.edu"
+
                   className={styles.input}
                   value={formData.username}
                   onChange={handleChange}
