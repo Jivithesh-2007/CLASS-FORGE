@@ -14,11 +14,32 @@ const ideaSchema = new mongoose.Schema({
     required: [true, 'Domain is required'],
     trim: true
   },
+  karunyaThrustArea: {
+    type: String,
+    enum: ['Water', 'Food', 'Healthcare', 'Energy'],
+    trim: true
+  },
+  sdg: {
+    type: String,
+    trim: true
+  },
+  laboratory: {
+    type: String,
+    trim: true
+  },
   tags: [{
     type: String,
     trim: true
   }],
   attachments: [{
+    filename: String,
+    url: String,
+    uploadDate: {
+      type: Date,
+      default: Date.now
+    }
+  }],
+  images: [{
     filename: String,
     url: String,
     uploadDate: {

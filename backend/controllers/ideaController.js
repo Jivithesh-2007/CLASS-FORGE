@@ -9,7 +9,7 @@ const { generateAiInsights } = require('../services/aiInsightsService');
 
 const createIdea = async (req, res) => {
   try {
-    const { title, description, domain, tags, groupId } = req.body;
+    const { title, description, domain, tags, groupId, karunyaThrustArea, sdg, laboratory } = req.body;
 
     if (!title || !description || !domain) {
       return res.status(400).json({
@@ -18,11 +18,36 @@ const createIdea = async (req, res) => {
       });
     }
 
+    // Parse tags if it's a JSON string
+    let parsedTags = tags || [];
+    if (typeof tags === 'string') {
+      try {
+        parsedTags = JSON.parse(tags);
+      } catch (e) {
+        parsedTags = [];
+      }
+    }
+
+    // Handle image uploads
+    const images = [];
+    if (req.files && req.files.length > 0) {
+      req.files.forEach(file => {
+        images.push({
+          filename: file.filename,
+          url: `/uploads/${file.filename}`
+        });
+      });
+    }
+
     const idea = new Idea({
       title,
       description,
       domain,
-      tags: tags || [],
+      karunyaThrustArea: karunyaThrustArea || null,
+      sdg: sdg || null,
+      laboratory: laboratory || null,
+      tags: parsedTags,
+      images: images,
       submittedBy: req.user._id,
       groupId: groupId || null,
       contributors: [req.user._id]

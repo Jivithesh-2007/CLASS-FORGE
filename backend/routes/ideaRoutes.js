@@ -1,5 +1,7 @@
 const express = require('express');
 const router = express.Router();
+const multer = require('multer');
+const path = require('path');
 const {
   createIdea,
   getIdeas,
@@ -17,10 +19,37 @@ const {
   deleteComment
 } = require('../controllers/ideaController');
 const { authMiddleware, roleCheck } = require('../middleware/auth');
+
+// Configure multer for image uploads
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, 'uploads/');
+  },
+  filename: (req, file, cb) => {
+    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+    cb(null, uniqueSuffix + path.extname(file.originalname));
+  }
+});
+
+const fileFilter = (req, file, cb) => {
+  const allowedMimes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+  if (allowedMimes.includes(file.mimetype)) {
+    cb(null, true);
+  } else {
+    cb(new Error('Only image files are allowed'), false);
+  }
+};
+
+const upload = multer({
+  storage: storage,
+  fileFilter: fileFilter,
+  limits: { fileSize: 10 * 1024 * 1024 } // 10MB limit
+});
+
 router.use(authMiddleware);
 
 // Specific routes first (before :id routes)
-router.post('/', roleCheck('student'), createIdea);
+router.post('/', roleCheck('student'), upload.array('images', 10), createIdea);
 router.get('/', getIdeas);
 router.get('/stats/student', roleCheck('student'), getStudentStats);
 router.get('/stats/teacher', roleCheck('teacher', 'admin'), getTeacherStats);

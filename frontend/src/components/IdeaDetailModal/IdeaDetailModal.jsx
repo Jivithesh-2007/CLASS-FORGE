@@ -15,6 +15,7 @@ const IdeaDetailModal = ({ idea, onClose, showComments = false }) => {
   const [submitting, setSubmitting] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [deleting, setDeleting] = useState(false);
+  const [selectedImage, setSelectedImage] = useState(null);
   const socketRef = React.useRef(null);
 
   useEffect(() => {
@@ -201,6 +202,27 @@ const IdeaDetailModal = ({ idea, onClose, showComments = false }) => {
                 </div>
               </div>
             )}
+
+            {idea.images && idea.images.length > 0 && (
+              <div className={styles.imagesSection}>
+                <h3 className={styles.sectionTitle}>Images ({idea.images.length})</h3>
+                <div className={styles.imageGrid}>
+                  {idea.images.map((image, idx) => (
+                    <div 
+                      key={idx} 
+                      className={styles.imageGridItem}
+                      onClick={() => setSelectedImage(image)}
+                    >
+                      <img 
+                        src={image.url} 
+                        alt={`Idea ${idx}`} 
+                        className={styles.gridImage}
+                      />
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
 
           {showComments && (
@@ -302,6 +324,25 @@ const IdeaDetailModal = ({ idea, onClose, showComments = false }) => {
                   {deleting ? 'Deleting...' : 'Delete Idea'}
                 </button>
               </div>
+            </div>
+          </div>
+        )}
+
+        {/* Image Lightbox */}
+        {selectedImage && (
+          <div className={styles.imageLightbox} onClick={() => setSelectedImage(null)}>
+            <div className={styles.lightboxContent} onClick={(e) => e.stopPropagation()}>
+              <button 
+                className={styles.lightboxClose}
+                onClick={() => setSelectedImage(null)}
+              >
+                <MdClose size={28} />
+              </button>
+              <img 
+                src={selectedImage.url} 
+                alt="Full view" 
+                className={styles.lightboxImage}
+              />
             </div>
           </div>
         )}

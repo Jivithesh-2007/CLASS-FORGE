@@ -22,6 +22,7 @@ const ReviewIdeas = () => {
   const [mergeTitle, setMergeTitle] = useState('');
   const [mergeDescription, setMergeDescription] = useState('');
   const [mergeDomain, setMergeDomain] = useState('');
+  const [selectedImage, setSelectedImage] = useState(null);
 
   useEffect(() => {
     fetchPendingIdeas();
@@ -286,6 +287,27 @@ const ReviewIdeas = () => {
                       <p>{selectedIdea.description}</p>
                     </div>
 
+                    {selectedIdea.images && selectedIdea.images.length > 0 && (
+                      <div className={reviewStyles.imagesSection}>
+                        <h4>📷 SUPPORTING IMAGES ({selectedIdea.images.length})</h4>
+                        <div className={reviewStyles.imageGrid}>
+                          {selectedIdea.images.map((image, idx) => (
+                            <div 
+                              key={idx} 
+                              className={reviewStyles.imageGridItem}
+                              onClick={() => setSelectedImage(image)}
+                            >
+                              <img 
+                                src={image.url} 
+                                alt={`Idea ${idx}`} 
+                                className={reviewStyles.gridImage}
+                              />
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
                     <div className={reviewStyles.evaluationNotesSection}>
                       <h4><MdNotes size={18} /> EVALUATION NOTES</h4>
                       <textarea
@@ -433,6 +455,25 @@ const ReviewIdeas = () => {
                 <MdMergeType size={18} /> Confirm Merge
               </button>
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* Image Lightbox */}
+      {selectedImage && (
+        <div className={reviewStyles.imageLightbox} onClick={() => setSelectedImage(null)}>
+          <div className={reviewStyles.lightboxContent} onClick={(e) => e.stopPropagation()}>
+            <button 
+              className={reviewStyles.lightboxClose}
+              onClick={() => setSelectedImage(null)}
+            >
+              <MdClose size={28} />
+            </button>
+            <img 
+              src={selectedImage.url} 
+              alt="Full view" 
+              className={reviewStyles.lightboxImage}
+            />
           </div>
         </div>
       )}

@@ -10,20 +10,38 @@ const Ideas = () => {
   const [ideas, setIdeas] = useState([]);
   const [filteredIdeas, setFilteredIdeas] = useState([]);
   const [filterStatus, setFilterStatus] = useState('all');
+  const [filterDomain, setFilterDomain] = useState('all');
+  const [filterLaboratory, setFilterLaboratory] = useState('all');
   const [loading, setLoading] = useState(true);
   const [selectedIdea, setSelectedIdea] = useState(null);
+  const [domains, setDomains] = useState([]);
+  const [laboratories, setLaboratories] = useState([]);
 
   useEffect(() => {
     fetchIdeas();
   }, []);
 
   useEffect(() => {
-    if (filterStatus === 'all') {
-      setFilteredIdeas(ideas);
-    } else {
-      setFilteredIdeas(ideas.filter(idea => idea.status === filterStatus));
+    applyFilters();
+  }, [filterStatus, filterDomain, filterLaboratory, ideas]);
+
+  const applyFilters = () => {
+    let filtered = ideas;
+
+    if (filterStatus !== 'all') {
+      filtered = filtered.filter(idea => idea.status === filterStatus);
     }
-  }, [filterStatus, ideas]);
+
+    if (filterDomain !== 'all') {
+      filtered = filtered.filter(idea => idea.domain === filterDomain);
+    }
+
+    if (filterLaboratory !== 'all') {
+      filtered = filtered.filter(idea => idea.laboratory === filterLaboratory);
+    }
+
+    setFilteredIdeas(filtered);
+  };
 
   const fetchIdeas = async () => {
     try {
@@ -41,6 +59,12 @@ const Ideas = () => {
       ];
       setIdeas(allIdeas);
       setFilteredIdeas(allIdeas);
+
+      // Extract unique domains and laboratories
+      const uniqueDomains = [...new Set(allIdeas.map(idea => idea.domain).filter(Boolean))];
+      const uniqueLabs = [...new Set(allIdeas.map(idea => idea.laboratory).filter(Boolean))];
+      setDomains(uniqueDomains.sort());
+      setLaboratories(uniqueLabs.sort());
     } catch (error) {
       console.error('Error fetching ideas:', error);
     } finally {
@@ -118,6 +142,36 @@ const Ideas = () => {
               >
                 Merged
               </button>
+            </div>
+
+            {/* Domain and Laboratory Filters */}
+            <div className={styles.filterRow}>
+              <div className={styles.filterGroup}>
+                <label className={styles.filterLabel}>Domain</label>
+                <select
+                  value={filterDomain}
+                  onChange={(e) => setFilterDomain(e.target.value)}
+                  className={styles.filterSelect}
+                >
+                  <option value="all">All Domains</option>
+                  {domains.map(domain => (
+                    <option key={domain} value={domain}>{domain}</option>
+                  ))}
+                </select>
+              </div>
+              <div className={styles.filterGroup}>
+                <label className={styles.filterLabel}>Laboratory</label>
+                <select
+                  value={filterLaboratory}
+                  onChange={(e) => setFilterLaboratory(e.target.value)}
+                  className={styles.filterSelect}
+                >
+                  <option value="all">All Laboratories</option>
+                  {laboratories.map(lab => (
+                    <option key={lab} value={lab}>{lab}</option>
+                  ))}
+                </select>
+              </div>
             </div>
 
             {filteredIdeas.length === 0 ? (
