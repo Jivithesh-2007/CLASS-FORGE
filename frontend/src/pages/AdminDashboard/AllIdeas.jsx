@@ -1,8 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { MdDelete } from 'react-icons/md';
 import Sidebar from '../../components/Sidebar/Sidebar';
 import Header from '../../components/Header/Header';
 import ConfirmModal from '../../components/ConfirmModal/ConfirmModal';
+import IdeaDetailModal from '../../components/IdeaDetailModal/IdeaDetailModal';
 import { ideaAPI } from '../../services/api';
 import { useToast } from '../../context/ToastContext';
 import styles from '../StudentDashboard/Dashboard.module.css';
@@ -13,9 +14,12 @@ const AllIdeas = () => {
   const [filterStatus, setFilterStatus] = useState('all');
   const [loading, setLoading] = useState(true);
   const [deleteConfirm, setDeleteConfirm] = useState(null);
+  const [selectedIdea, setSelectedIdea] = useState(null);
+
   useEffect(() => {
     fetchIdeas();
   }, [filterStatus]);
+
   const fetchIdeas = async () => {
     try {
       const params = filterStatus !== 'all' ? { status: filterStatus } : {};
@@ -27,7 +31,9 @@ const AllIdeas = () => {
       setLoading(false);
     }
   };
-  const handleDelete = async (id) => {
+
+  const handleDelete = async (id, e) => {
+    e.stopPropagation();
     setDeleteConfirm(id);
   };
 
@@ -43,13 +49,19 @@ const AllIdeas = () => {
       showError(error.response?.data?.message || 'Failed to delete idea');
     }
   };
-  const getStatusClass = (status) => {
+
+  const getStatusStyle = (status) => {
     switch (status) {
-      case 'pending': return styles.statusPending;
-      case 'approved': return styles.statusApproved;
-      case 'rejected': return styles.statusRejected;
-      case 'merged': return styles.statusMerged;
-      default: return styles.statusPending;
+      case 'pending':
+        return { backgroundColor: '#fef3c7', color: '#d97706' };
+      case 'approved':
+        return { backgroundColor: '#d1fae5', color: '#059669' };
+      case 'rejected':
+        return { backgroundColor: '#fee2e2', color: '#dc2626' };
+      case 'merged':
+        return { backgroundColor: '#dbeafe', color: '#2563eb' };
+      default:
+        return { backgroundColor: '#fef3c7', color: '#d97706' };
     }
   };
   return (
@@ -65,9 +77,14 @@ const AllIdeas = () => {
                 value={filterStatus}
                 onChange={(e) => setFilterStatus(e.target.value)}
                 style={{
-                  padding: '10px',
+                  padding: '10px 16px',
                   borderRadius: '8px',
-                  border: '1px solid var(--border-color)'
+                  border: '1px solid #e5e7eb',
+                  fontSize: '13px',
+                  fontWeight: '500',
+                  cursor: 'pointer',
+                  backgroundColor: 'white',
+                  transition: 'all 0.2s ease'
                 }}
               >
                 <option value="all">All Status</option>
@@ -84,25 +101,44 @@ const AllIdeas = () => {
             ) : (
               <div className={styles.ideaGrid}>
                 {ideas.map((idea) => (
-                  <div key={idea._id} className={styles.ideaCard}>
+                  <div 
+                    key={idea._id} 
+                    className={styles.ideaCard}
+                    onClick={() => setSelectedIdea(idea)}
+                    style={{ cursor: 'pointer', position: 'relative' }}
+                  >
                     <div className={styles.ideaHeader}>
                       <h3 className={styles.ideaTitle}>{idea.title}</h3>
                       <button
-                        onClick={() => handleDelete(idea._id)}
+                        onClick={(e) => handleDelete(idea._id, e)}
                         style={{
                           background: 'none',
                           border: 'none',
-                          color: 'var(--danger-color)',
+                          color: '#dc2626',
                           cursor: 'pointer',
-                          padding: '4px'
+                          padding: '4px',
+                          fontSize: '18px',
+                          transition: 'all 0.2s ease'
                         }}
+                        onMouseEnter={(e) => e.target.style.transform = 'scale(1.2)'}
+                        onMouseLeave={(e) => e.target.style.transform = 'scale(1)'}
                       >
-                        <MdDelete size={18} />
+                        <MdDelete />
                       </button>
                     </div>
-                    <span className={`${styles.status} ${getStatusClass(idea.status)}`}>
+                    <div style={{
+                      padding: '6px 12px',
+                      borderRadius: '6px',
+                      fontSize: '11px',
+                      fontWeight: '700',
+                      textTransform: 'uppercase',
+                      letterSpacing: '0.3px',
+                      display: 'inline-block',
+                      width: 'fit-content',
+                      ...getStatusStyle(idea.status)
+                    }}>
                       {idea.status.charAt(0).toUpperCase() + idea.status.slice(1)}
-                    </span>
+                    </div>
                     <p className={styles.ideaDescription}>{idea.description}</p>
                     <div className={styles.ideaFooter}>
                       <div className={styles.ideaMeta}>
@@ -129,6 +165,15 @@ const AllIdeas = () => {
           isDangerous={true}
           onConfirm={executeDelete}
           onCancel={() => setDeleteConfirm(null)}
+        />
+      )}
+
+      {/* Idea Detail Modal */}
+      {selectedIdea && (
+        <IdeaDetailModal 
+          idea={selectedIdea} 
+          onClose={() => setSelectedIdea(null)}
+          showComments={false}
         />
       )}
     </div>

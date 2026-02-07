@@ -1,0 +1,422 @@
+%PDF-1.3
+%ºß¬à
+3 0 obj
+<</Type /Page
+/Parent 1 0 R
+/Resources 2 0 R
+/MediaBox [0 0 612. 792.]
+/Contents 4 0 R
+>>
+endobj
+4 0 obj
+<<
+/Length 3006
+>>
+stream
+0.200025 w
+0 G
+BT
+/F2 18 Tf
+20.6999999999999993 TL
+0 g
+36. 752. Td
+(ClassForge App Summary) Tj
+ET
+BT
+/F2 12 Tf
+13.7999999999999989 TL
+0 g
+36. 728. Td
+(What It Is) Tj
+ET
+BT
+/F1 10 Tf
+11.5 TL
+0 g
+36. 714. Td
+(ClassForge is an innovation management and idea submission platform for academic settings. It lets students submit) Tj
+ET
+BT
+/F1 10 Tf
+11.5 TL
+0 g
+36. 702. Td
+(ideas and enables teachers and admins to review, organize, and track them.) Tj
+ET
+BT
+/F2 12 Tf
+13.7999999999999989 TL
+0 g
+36. 686. Td
+(Who It's For) Tj
+ET
+BT
+/F1 10 Tf
+11.5 TL
+0 g
+36. 672. Td
+(Primary persona: students submitting innovation ideas for review, collaboration, and feedback.) Tj
+ET
+BT
+/F2 12 Tf
+13.7999999999999989 TL
+0 g
+36. 656. Td
+(What It Does) Tj
+ET
+BT
+/F1 10 Tf
+11.5 TL
+0 g
+36. 642. Td
+(- Role-based portals for students, teachers, and admins with protected routes.) Tj
+ET
+BT
+/F1 10 Tf
+11.5 TL
+0 g
+36. 630. Td
+(- Idea submission with tags, domain, optional images, and contributor tracking.) Tj
+ET
+BT
+/F1 10 Tf
+11.5 TL
+0 g
+36. 618. Td
+(- Review workflow with status updates, comments, and approvals.) Tj
+ET
+BT
+/F1 10 Tf
+11.5 TL
+0 g
+36. 606. Td
+(- Idea merging with merge history tracking.) Tj
+ET
+BT
+/F1 10 Tf
+11.5 TL
+0 g
+36. 594. Td
+(- Groups with invitations and real-time chat, including file attachments.) Tj
+ET
+BT
+/F1 10 Tf
+11.5 TL
+0 g
+36. 582. Td
+(- Notifications delivered in-app and in real time via Socket.io.) Tj
+ET
+BT
+/F1 10 Tf
+11.5 TL
+0 g
+36. 570. Td
+(- AI insights and similarity checks for submitted ideas \(Anthropic optional\).) Tj
+ET
+BT
+/F2 12 Tf
+13.7999999999999989 TL
+0 g
+36. 554. Td
+(How It Works \(Repo Evidence\)) Tj
+ET
+BT
+/F1 10 Tf
+11.5 TL
+0 g
+36. 540. Td
+(- Frontend: React + Vite SPA with React Router, Auth/Theme/Toast contexts, axios API client, and socket.io-client for) Tj
+ET
+BT
+/F1 10 Tf
+11.5 TL
+0 g
+48. 528. Td
+(  real-time events.) Tj
+ET
+BT
+/F1 10 Tf
+11.5 TL
+0 g
+36. 516. Td
+(- Backend: Node/Express REST API under /api/*, JWT auth middleware, multer uploads, and Socket.io server for) Tj
+ET
+BT
+/F1 10 Tf
+11.5 TL
+0 g
+48. 504. Td
+(  notifications and chat.) Tj
+ET
+BT
+/F1 10 Tf
+11.5 TL
+0 g
+36. 492. Td
+(- Data: MongoDB via Mongoose models \(User, Idea, Group, Message, Notification, MergeHistory, OTP\).) Tj
+ET
+BT
+/F1 10 Tf
+11.5 TL
+0 g
+36. 480. Td
+(- Services: email delivery via Nodemailer; AI insights via Anthropic SDK with a mock fallback; similarity scoring for idea) Tj
+ET
+BT
+/F1 10 Tf
+11.5 TL
+0 g
+48. 468. Td
+(  matching.) Tj
+ET
+BT
+/F2 12 Tf
+13.7999999999999989 TL
+0 g
+36. 452. Td
+(How To Run \(Minimal\)) Tj
+ET
+BT
+/F1 10 Tf
+11.5 TL
+0 g
+36. 438. Td
+(- Install dependencies: run npm install in the repo root, backend, and frontend.) Tj
+ET
+BT
+/F1 10 Tf
+11.5 TL
+0 g
+36. 426. Td
+(- Configure backend env vars \(backend/.env exists\): MONGODB_URI, JWT_SECRET, FRONTEND_URL, EMAIL_*;) Tj
+ET
+BT
+/F1 10 Tf
+11.5 TL
+0 g
+48. 414. Td
+(  optional ANTHROPIC_API_KEY.) Tj
+ET
+BT
+/F1 10 Tf
+11.5 TL
+0 g
+36. 402. Td
+(- Start both apps from root: npm run dev \(backend on 5001, frontend on 5173\).) Tj
+ET
+endstream
+endobj
+1 0 obj
+<</Type /Pages
+/Kids [3 0 R ]
+/Count 1
+>>
+endobj
+5 0 obj
+<<
+/Type /Font
+/BaseFont /Helvetica
+/Subtype /Type1
+/Encoding /WinAnsiEncoding
+/FirstChar 32
+/LastChar 255
+>>
+endobj
+6 0 obj
+<<
+/Type /Font
+/BaseFont /Helvetica-Bold
+/Subtype /Type1
+/Encoding /WinAnsiEncoding
+/FirstChar 32
+/LastChar 255
+>>
+endobj
+7 0 obj
+<<
+/Type /Font
+/BaseFont /Helvetica-Oblique
+/Subtype /Type1
+/Encoding /WinAnsiEncoding
+/FirstChar 32
+/LastChar 255
+>>
+endobj
+8 0 obj
+<<
+/Type /Font
+/BaseFont /Helvetica-BoldOblique
+/Subtype /Type1
+/Encoding /WinAnsiEncoding
+/FirstChar 32
+/LastChar 255
+>>
+endobj
+9 0 obj
+<<
+/Type /Font
+/BaseFont /Courier
+/Subtype /Type1
+/Encoding /WinAnsiEncoding
+/FirstChar 32
+/LastChar 255
+>>
+endobj
+10 0 obj
+<<
+/Type /Font
+/BaseFont /Courier-Bold
+/Subtype /Type1
+/Encoding /WinAnsiEncoding
+/FirstChar 32
+/LastChar 255
+>>
+endobj
+11 0 obj
+<<
+/Type /Font
+/BaseFont /Courier-Oblique
+/Subtype /Type1
+/Encoding /WinAnsiEncoding
+/FirstChar 32
+/LastChar 255
+>>
+endobj
+12 0 obj
+<<
+/Type /Font
+/BaseFont /Courier-BoldOblique
+/Subtype /Type1
+/Encoding /WinAnsiEncoding
+/FirstChar 32
+/LastChar 255
+>>
+endobj
+13 0 obj
+<<
+/Type /Font
+/BaseFont /Times-Roman
+/Subtype /Type1
+/Encoding /WinAnsiEncoding
+/FirstChar 32
+/LastChar 255
+>>
+endobj
+14 0 obj
+<<
+/Type /Font
+/BaseFont /Times-Bold
+/Subtype /Type1
+/Encoding /WinAnsiEncoding
+/FirstChar 32
+/LastChar 255
+>>
+endobj
+15 0 obj
+<<
+/Type /Font
+/BaseFont /Times-Italic
+/Subtype /Type1
+/Encoding /WinAnsiEncoding
+/FirstChar 32
+/LastChar 255
+>>
+endobj
+16 0 obj
+<<
+/Type /Font
+/BaseFont /Times-BoldItalic
+/Subtype /Type1
+/Encoding /WinAnsiEncoding
+/FirstChar 32
+/LastChar 255
+>>
+endobj
+17 0 obj
+<<
+/Type /Font
+/BaseFont /ZapfDingbats
+/Subtype /Type1
+/FirstChar 32
+/LastChar 255
+>>
+endobj
+18 0 obj
+<<
+/Type /Font
+/BaseFont /Symbol
+/Subtype /Type1
+/FirstChar 32
+/LastChar 255
+>>
+endobj
+2 0 obj
+<<
+/ProcSet [/PDF /Text /ImageB /ImageC /ImageI]
+/Font <<
+/F1 5 0 R
+/F2 6 0 R
+/F3 7 0 R
+/F4 8 0 R
+/F5 9 0 R
+/F6 10 0 R
+/F7 11 0 R
+/F8 12 0 R
+/F9 13 0 R
+/F10 14 0 R
+/F11 15 0 R
+/F12 16 0 R
+/F13 17 0 R
+/F14 18 0 R
+>>
+/XObject <<
+>>
+>>
+endobj
+19 0 obj
+<<
+/Producer (jsPDF 4.0.0)
+/CreationDate (D:20260206220619+05'30')
+>>
+endobj
+20 0 obj
+<<
+/Type /Catalog
+/Pages 1 0 R
+/OpenAction [3 0 R /FitH null]
+/PageLayout /OneColumn
+>>
+endobj
+xref
+0 21
+0000000000 65535 f 
+0000003178 00000 n 
+0000004995 00000 n 
+0000000015 00000 n 
+0000000120 00000 n 
+0000003235 00000 n 
+0000003360 00000 n 
+0000003490 00000 n 
+0000003623 00000 n 
+0000003760 00000 n 
+0000003883 00000 n 
+0000004012 00000 n 
+0000004144 00000 n 
+0000004280 00000 n 
+0000004408 00000 n 
+0000004535 00000 n 
+0000004664 00000 n 
+0000004797 00000 n 
+0000004899 00000 n 
+0000005243 00000 n 
+0000005329 00000 n 
+trailer
+<<
+/Size 21
+/Root 20 0 R
+/Info 19 0 R
+/ID [ <961BFF7EF87E431DBB6776103A98C87C> <961BFF7EF87E431DBB6776103A98C87C> ]
+>>
+startxref
+5433
+%%EOF

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { MdVisibility, MdVisibilityOff } from 'react-icons/md';
+import { MdVisibility, MdVisibilityOff, MdPerson, MdSchool, MdSupervisorAccount } from 'react-icons/md';
 import { useAuth } from '../../context/AuthContext';
 import { useToast } from '../../context/ToastContext';
 import styles from './Login.module.css';
@@ -9,9 +9,9 @@ const Login = () => {
   const navigate = useNavigate();
   const { login } = useAuth();
   const { success, error: showError } = useToast();
+  const [activeTab, setActiveTab] = useState('student');
   const [formData, setFormData] = useState({
     username: '',
-    domain: '@karunya.edu.in',
     password: ''
   });
   const [showPassword, setShowPassword] = useState(false);
@@ -27,19 +27,42 @@ const Login = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-    const email = formData.username + formData.domain;
+    
+    let email = formData.username;
+    if (!email.includes('@')) {
+      email = formData.username + '@karunya.edu.in';
+    }
+
     try {
       const result = await login({ email, password: formData.password });
       
       if (result.success) {
+        const userRole = result.user.role;
+        
+        // Validate role matches tab
+        if (activeTab === 'student' && userRole !== 'student') {
+          showError('This account is not a student account. Please use the correct login section.');
+          setLoading(false);
+          return;
+        }
+        if (activeTab === 'teacher' && userRole !== 'teacher') {
+          showError('This account is not a teacher account. Please use the correct login section.');
+          setLoading(false);
+          return;
+        }
+        if (activeTab === 'admin' && userRole !== 'admin') {
+          showError('This account is not an admin account. Please use the correct login section.');
+          setLoading(false);
+          return;
+        }
+
         success('Login successful! Redirecting...');
         setTimeout(() => {
-          const role = result.user.role;
-          if (role === 'student') {
+          if (userRole === 'student') {
             navigate('/student-dashboard');
-          } else if (role === 'teacher') {
+          } else if (userRole === 'teacher') {
             navigate('/teacher-dashboard');
-          } else if (role === 'admin') {
+          } else if (userRole === 'admin') {
             navigate('/admin-dashboard');
           }
         }, 1000);
@@ -78,6 +101,81 @@ const Login = () => {
           <h1 className={styles.formTitle}>Login</h1>
           <p className={styles.formSubtitle}>Welcome back. Please authenticate your institutional identity.</p>
 
+          {/* Tab Navigation */}
+          <div style={{
+            display: 'flex',
+            gap: '12px',
+            marginBottom: '24px',
+            borderBottom: '1px solid #e5e7eb'
+          }}>
+            <button
+              onClick={() => setActiveTab('student')}
+              style={{
+                flex: 1,
+                padding: '12px',
+                background: 'none',
+                border: 'none',
+                borderBottom: activeTab === 'student' ? '3px solid #000' : 'none',
+                cursor: 'pointer',
+                fontSize: '14px',
+                fontWeight: activeTab === 'student' ? '700' : '500',
+                color: activeTab === 'student' ? '#000' : '#999',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '8px',
+                transition: 'all 0.2s ease'
+              }}
+            >
+              <MdPerson size={18} />
+              Student
+            </button>
+            <button
+              onClick={() => setActiveTab('teacher')}
+              style={{
+                flex: 1,
+                padding: '12px',
+                background: 'none',
+                border: 'none',
+                borderBottom: activeTab === 'teacher' ? '3px solid #000' : 'none',
+                cursor: 'pointer',
+                fontSize: '14px',
+                fontWeight: activeTab === 'teacher' ? '700' : '500',
+                color: activeTab === 'teacher' ? '#000' : '#999',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '8px',
+                transition: 'all 0.2s ease'
+              }}
+            >
+              <MdSchool size={18} />
+              Teacher
+            </button>
+            <button
+              onClick={() => setActiveTab('admin')}
+              style={{
+                flex: 1,
+                padding: '12px',
+                background: 'none',
+                border: 'none',
+                borderBottom: activeTab === 'admin' ? '3px solid #000' : 'none',
+                cursor: 'pointer',
+                fontSize: '14px',
+                fontWeight: activeTab === 'admin' ? '700' : '500',
+                color: activeTab === 'admin' ? '#000' : '#999',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '8px',
+                transition: 'all 0.2s ease'
+              }}
+            >
+              <MdSupervisorAccount size={18} />
+              Admin
+            </button>
+          </div>
+
           <form className={styles.form} onSubmit={handleSubmit}>
             <div className={styles.formGroup}>
               <label className={styles.label}>EMAIL</label>
@@ -85,22 +183,20 @@ const Login = () => {
                 <input
                   type="text"
                   name="username"
-                 
+                  placeholder={activeTab === 'admin' ? 'admin@karunya.edu.in' : 'your.email'}
                   className={styles.input}
                   value={formData.username}
                   onChange={handleChange}
                   required
                 />
-                <select
-                  name="domain"
-                  className={styles.select}
-                  value={formData.domain}
-                  onChange={handleChange}
-                  required
-                >
-                  <option value="@karunya.edu.in">@karunya.edu.in</option>
-                  <option value="@karunya.edu">@karunya.edu</option>
-                </select>
+                <span style={{
+                  padding: '8px 12px',
+                  color: '#999',
+                  fontSize: '14px',
+                  fontWeight: '500'
+                }}>
+                  @karunya.edu.in
+                </span>
               </div>
             </div>
 
@@ -132,14 +228,12 @@ const Login = () => {
             </div>
 
             <button type="submit" className={styles.submitBtn} disabled={loading}>
-              {loading ? 'LOGIN SUCESSFULL...' : 'LOGIN'}
+              {loading ? 'LOGGING IN...' : 'LOGIN'}
             </button>
           </form>
 
           <div className={styles.footer}>
-            <p className={styles.footerText}>Don't Have a Account? <Link to="/signup" className={styles.footerLink}>Sign Up</Link></p>
-           
-          
+            <p className={styles.footerText}>Don't Have an Account? <Link to="/signup" className={styles.footerLink}>Sign Up</Link></p>
           </div>
         </div>
       </div>

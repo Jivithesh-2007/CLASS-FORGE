@@ -85,7 +85,12 @@ export const adminAPI = {
   getAllUsers: (params) => api.get('/admin/users', { params }),
   toggleUserStatus: (id) => api.put(`/admin/users/${id}/toggle-status`),
   deleteUser: (id) => api.delete(`/admin/users/${id}`),
-  getSystemStats: () => api.get('/admin/stats')
+  getSystemStats: () => api.get('/admin/stats'),
+  reviewIdea: (id, data) => api.post(`/admin/ideas/${id}/review`, data),
+  mergeIdeas: (data) => api.post('/admin/ideas/merge', data),
+  getStudentActivity: (studentId) => api.get(`/admin/students/${studentId}/activity`),
+  assignAdminRole: (studentId) => api.post(`/admin/users/${studentId}/assign-admin`),
+  removeAdminRole: (adminId) => api.post(`/admin/users/${adminId}/remove-admin`)
 };
 
 export const teacherAPI = {

@@ -44,8 +44,9 @@ const Sidebar = ({ role }) => {
 
   const adminLinks = [
     { path: '/admin-dashboard', icon: MdGridView, label: 'Dashboard' },
-    { path: '/admin-dashboard/users', icon: MdPeople, label: 'Manage Users' },
-    { path: '/admin-dashboard/ideas', icon: MdLightbulb, label: 'All Ideas' },
+    { path: '/admin-dashboard/review-ideas', icon: MdRateReview, label: 'Review Ideas' },
+    { path: '/admin-dashboard/all-ideas', icon: MdLightbulb, label: 'All Ideas' },
+    { path: '/admin-dashboard/manage-users', icon: MdPeople, label: 'Manage Users' },
     { path: '/admin-dashboard/settings', icon: MdSettings, label: 'Settings' }
   ];
 

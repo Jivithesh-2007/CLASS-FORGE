@@ -160,9 +160,9 @@ const IdeaDetailModal = ({ idea, onClose, showComments = false }) => {
               <div className={styles.metaItem}>
                 <span className={styles.metaLabel}>Submitted by</span>
                 <span className={styles.metaValue}>
-                  {idea.contributors && idea.contributors.length > 0
+                  {idea.submittedBy?.fullName || (idea.contributors && idea.contributors.length > 0
                     ? idea.contributors.map(c => c.fullName || c).join(', ')
-                    : idea.submittedBy?.fullName}
+                    : 'Unknown')}
                 </span>
               </div>
               <div className={styles.metaItem}>
@@ -207,19 +207,24 @@ const IdeaDetailModal = ({ idea, onClose, showComments = false }) => {
               <div className={styles.imagesSection}>
                 <h3 className={styles.sectionTitle}>Images ({idea.images.length})</h3>
                 <div className={styles.imageGrid}>
-                  {idea.images.map((image, idx) => (
-                    <div 
-                      key={idx} 
-                      className={styles.imageGridItem}
-                      onClick={() => setSelectedImage(image)}
-                    >
-                      <img 
-                        src={image.url} 
-                        alt={`Idea ${idx}`} 
-                        className={styles.gridImage}
-                      />
-                    </div>
-                  ))}
+                  {idea.images.map((image, idx) => {
+                    const imageUrl = image.url.startsWith('http') 
+                      ? image.url 
+                      : `http://localhost:5001${image.url}`;
+                    return (
+                      <div 
+                        key={idx} 
+                        className={styles.imageGridItem}
+                        onClick={() => setSelectedImage({ ...image, url: imageUrl })}
+                      >
+                        <img 
+                          src={imageUrl} 
+                          alt={`Idea ${idx}`} 
+                          className={styles.gridImage}
+                        />
+                      </div>
+                    );
+                  })}
                 </div>
               </div>
             )}

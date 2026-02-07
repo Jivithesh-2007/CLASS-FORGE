@@ -30,6 +30,7 @@ import TeacherSettings from './pages/Settings/Settings';
 import AdminDashboard from './pages/AdminDashboard/AdminDashboard';
 import ManageUsers from './pages/AdminDashboard/ManageUsers';
 import AllIdeas from './pages/AdminDashboard/AllIdeas';
+import AdminReviewIdeas from './pages/AdminDashboard/ReviewIdeas';
 
 import Notifications from './pages/Notifications/Notifications';
 
@@ -193,7 +194,7 @@ function App() {
               }
             />
             <Route
-              path="/admin-dashboard/users"
+              path="/admin-dashboard/manage-users"
               element={
                 <ProtectedRoute allowedRoles={['admin']}>
                   <ManageUsers />
@@ -201,10 +202,18 @@ function App() {
               }
             />
             <Route
-              path="/admin-dashboard/ideas"
+              path="/admin-dashboard/all-ideas"
               element={
                 <ProtectedRoute allowedRoles={['admin']}>
                   <AllIdeas />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/admin-dashboard/review-ideas"
+              element={
+                <ProtectedRoute allowedRoles={['admin']}>
+                  <AdminReviewIdeas />
                 </ProtectedRoute>
               }
             />

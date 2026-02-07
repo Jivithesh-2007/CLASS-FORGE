@@ -3,20 +3,18 @@ import { MdCheckCircle, MdCancel, MdClose, MdPerson, MdCheckBox, MdCheckBoxOutli
 import Sidebar from '../../components/Sidebar/Sidebar';
 import Header from '../../components/Header/Header';
 import LoadingSpinner from '../../components/LoadingSpinner/LoadingSpinner';
-import { ideaAPI } from '../../services/api';
+import { ideaAPI, adminAPI } from '../../services/api';
 import { useToast } from '../../context/ToastContext';
-import styles from './TeacherDashboard.module.css';
-import reviewStyles from './ReviewIdeas.module.css';
+import styles from '../StudentDashboard/Dashboard.module.css';
+import reviewStyles from '../TeacherDashboard/ReviewIdeas.module.css';
 
-const ReviewIdeas = () => {
+const AdminReviewIdeas = () => {
   const { success, error: showError } = useToast();
   const [ideas, setIdeas] = useState([]);
   const [selectedIdea, setSelectedIdea] = useState(null);
   const [feedback, setFeedback] = useState('');
   const [loading, setLoading] = useState(true);
   const [reviewLoading, setReviewLoading] = useState(false);
-  const [aiInsights, setAiInsights] = useState(null);
-  const [loadingInsights, setLoadingInsights] = useState(false);
   const [selectedForMerge, setSelectedForMerge] = useState([]);
   const [showMergeModal, setShowMergeModal] = useState(false);
   const [mergeTitle, setMergeTitle] = useState('');
@@ -39,43 +37,17 @@ const ReviewIdeas = () => {
     }
   };
 
-  const handleSelectIdea = async (idea) => {
+  const handleSelectIdea = (idea) => {
     setSelectedIdea(idea);
     setFeedback('');
-    
-    try {
-      await ideaAPI.getSimilarIdeas(idea._id);
-    } catch (error) {
-      console.error('Error fetching similar ideas:', error);
-    }
   };
 
-  const handleViewInsights = async (idea) => {
-    setSelectedIdea(idea);
-    setFeedback('');
-    setLoadingInsights(true);
-    try {
-      const response = await ideaAPI.getAiInsights(idea._id);
-      
-      // Show loading for minimum 3 seconds
-      setTimeout(() => {
-        setAiInsights(response.data);
-        setLoadingInsights(false);
-      }, 3000);
-    } catch (error) {
-      console.error('Error fetching AI insights:', error);
-      setLoadingInsights(false);
-      showError('Failed to generate AI insights. Please try again.');
-    }
-  };
-
-  const handleAiModalReview = async (status) => {
+  const handleReviewIdea = async (status) => {
     if (!selectedIdea) return;
     setReviewLoading(true);
     try {
-      await ideaAPI.reviewIdea(selectedIdea._id, { status, feedback });
+      await adminAPI.reviewIdea(selectedIdea._id, { status, feedback });
       success(`Idea ${status} successfully!`);
-      setAiInsights(null);
       setSelectedIdea(null);
       setFeedback('');
       fetchPendingIdeas();
@@ -85,18 +57,6 @@ const ReviewIdeas = () => {
     } finally {
       setReviewLoading(false);
     }
-  };
-
-  const getFilteredAndSortedIdeas = () => {
-    let filtered = ideas.filter(idea =>
-      idea.title.toLowerCase().includes('') ||
-      idea.submittedBy?.fullName.toLowerCase().includes('') ||
-      idea.domain.toLowerCase().includes('')
-    );
-
-    filtered.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-
-    return filtered;
   };
 
   const formatDate = (date) => {
@@ -132,7 +92,7 @@ const ReviewIdeas = () => {
 
     setReviewLoading(true);
     try {
-      await ideaAPI.mergeIdeas({
+      await adminAPI.mergeIdeas({
         ideaIds: selectedForMerge,
         title: mergeTitle,
         description: mergeDescription,
@@ -157,7 +117,7 @@ const ReviewIdeas = () => {
   if (loading) {
     return (
       <div className={styles.layout}>
-        <Sidebar role="teacher" />
+        <Sidebar role="admin" />
         <div className={styles.main}>
           <Header title="Review Ideas" />
           <div className={styles.content}>
@@ -168,43 +128,28 @@ const ReviewIdeas = () => {
     );
   }
 
-  const filteredIdeas = getFilteredAndSortedIdeas();
-
   return (
     <div className={styles.layout}>
-      <Sidebar role="teacher" />
+      <Sidebar role="admin" />
       <div className={styles.main}>
-        <Header title="Review Ideas" />
+        <Header title="Review Ideas" subtitle="Review and manage all pending ideas" />
         <div className={styles.content}>
-          <style>{`
-            @keyframes slideDown {
-              from {
-                opacity: 0;
-                transform: translateY(-10px);
-              }
-              to {
-                opacity: 1;
-                transform: translateY(0);
-              }
-            }
-          `}</style>
-
           <div className={reviewStyles.splitContainer}>
             {/* LEFT SIDE - PENDING SUBMISSIONS */}
             <div className={reviewStyles.leftPanel}>
               <div className={reviewStyles.panelHeader}>
                 <h2>Pending Submissions</h2>
-                <span className={reviewStyles.badge}>{filteredIdeas.length}</span>
+                <span className={reviewStyles.badge}>{ideas.length}</span>
               </div>
 
-              {filteredIdeas.length === 0 ? (
+              {ideas.length === 0 ? (
                 <div className={reviewStyles.emptyPanel}>
                   <MdPerson size={40} />
                   <p>No pending ideas</p>
                 </div>
               ) : (
                 <div className={reviewStyles.submissionsList}>
-                  {filteredIdeas.map((idea) => (
+                  {ideas.map((idea) => (
                     <div
                       key={idea._id}
                       className={`${reviewStyles.submissionItem} ${selectedIdea?._id === idea._id ? reviewStyles.active : ''} ${selectedForMerge.includes(idea._id) ? reviewStyles.selectedForMerge : ''}`}
@@ -225,7 +170,7 @@ const ReviewIdeas = () => {
                         </button>
                         <div 
                           className={reviewStyles.submissionContent}
-                          onClick={() => handleViewInsights(idea)}
+                          onClick={() => handleSelectIdea(idea)}
                         >
                           <div className={reviewStyles.submissionTitle}>{idea.title}</div>
                           <div className={reviewStyles.submissionMeta}>
@@ -254,30 +199,20 @@ const ReviewIdeas = () => {
               )}
             </div>
 
-            {/* RIGHT SIDE - AI INSIGHTS */}
+            {/* RIGHT SIDE - IDEA DETAILS */}
             <div className={reviewStyles.rightPanel}>
               {!selectedIdea ? (
                 <div className={reviewStyles.emptyPanel}>
                   <MdPerson size={40} />
-                  <p>Select an idea to view insights</p>
+                  <p>Select an idea to review</p>
                 </div>
-              ) : loadingInsights ? (
-                <div className={reviewStyles.loadingPanel}>
-                  <div className={reviewStyles.loadingSpinner}></div>
-                  <h3>Analysing the potential...</h3>
-                  <p>Our AI is evaluating this idea for innovation, feasibility, and market potential</p>
-                </div>
-              ) : aiInsights ? (
+              ) : (
                 <div className={reviewStyles.insightsPanel}>
                   <div className={reviewStyles.insightHeader}>
                     <div>
                       <span className={reviewStyles.domainBadge}>{selectedIdea.domain}</span>
                       <h3>{selectedIdea.title}</h3>
                       <p>Proposal by <strong>{selectedIdea.submittedBy?.fullName || 'Unknown'}</strong></p>
-                    </div>
-                    <div className={reviewStyles.scoreDisplay}>
-                      <div className={reviewStyles.scoreNumber}>{aiInsights.score}</div>
-                      <div className={reviewStyles.scoreLabel}>SCORE</div>
                     </div>
                   </div>
 
@@ -318,59 +253,25 @@ const ReviewIdeas = () => {
                       <textarea
                         value={feedback}
                         onChange={(e) => setFeedback(e.target.value)}
-                        placeholder="Provide specific feedback, missing links, or improvement suggestions for the student..."
+                        placeholder="Provide specific feedback or improvement suggestions..."
                       />
-                    </div>
-                  </div>
-
-                  <div className={reviewStyles.rightContent}>
-                    <div className={reviewStyles.aiBox}>
-                      <div className={reviewStyles.aiBoxHeader}>
-                        <MdAutoAwesome size={24} />
-                        <h4>AI Innovation Audit</h4>
-                      </div>
-                      <p className={reviewStyles.aiText}>{aiInsights.insight}</p>
-                      
-                      <div className={reviewStyles.keyPointsList}>
-                        {aiInsights.keyPoints?.map((point, idx) => (
-                          <div key={idx} className={reviewStyles.keyPointItem}>
-                            <span className={reviewStyles.bullet}>◆</span>
-                            <span>{point}</span>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-
-                    <div className={reviewStyles.metricsRow}>
-                      <div className={reviewStyles.metricItem}>
-                        <span className={reviewStyles.metricLabel}>Feasibility</span>
-                        <span className={reviewStyles.metricValue}>{aiInsights.feasibility}/10</span>
-                      </div>
-                      <div className={reviewStyles.metricItem}>
-                        <span className={reviewStyles.metricLabel}>Realistic Impact</span>
-                        <span className={reviewStyles.metricValue}>{aiInsights.impact}/10</span>
-                      </div>
-                      <div className={reviewStyles.metricItem}>
-                        <span className={reviewStyles.metricLabel}>Expect Viability</span>
-                        <span className={reviewStyles.metricValue}>{aiInsights.marketPotential}/10</span>
-                      </div>
                     </div>
                   </div>
 
                   <div className={reviewStyles.actionButtons}>
                     <button
-                      onClick={() => handleAiModalReview('rejected')}
+                      onClick={() => handleReviewIdea('rejected')}
                       disabled={reviewLoading}
                       className={reviewStyles.rejectBtn}
                     >
                       <MdCancel /> Reject
                     </button>
                     <button
-                      onClick={() => handleAiModalReview('approved')}
+                      onClick={() => handleReviewIdea('approved')}
                       disabled={reviewLoading}
                       className={reviewStyles.approveBtn}
                     >
-                      <MdCheckCircle /> Approve Submission
+                      <MdCheckCircle /> Approve
                     </button>
                   </div>
 
@@ -378,7 +279,7 @@ const ReviewIdeas = () => {
                     Processing this will notify <strong>{selectedIdea.submittedBy?.fullName || 'the student'}</strong> immediately via email.
                   </div>
                 </div>
-              ) : null}
+              )}
             </div>
           </div>
         </div>
@@ -486,4 +387,4 @@ const ReviewIdeas = () => {
   );
 };
 
-export default ReviewIdeas;
+export default AdminReviewIdeas;

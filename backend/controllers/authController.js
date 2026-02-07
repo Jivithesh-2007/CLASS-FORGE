@@ -6,13 +6,38 @@ const { generateOTP } = require('../utils/otp');
 const { sendOTPEmail } = require('../services/emailService');
 const signup = async (req, res) => {
   try {
-    const { fullName, username, email, password, department } = req.body;
-    if (!fullName || !username || !email || !password) {
+    const { fullName, username, email, password, department, role } = req.body;
+    if (!fullName || !username || !email || !password || !role) {
       return res.status(400).json({
         success: false,
         message: 'All fields are required'
       });
     }
+
+    // Validate role
+    if (!['student', 'teacher', 'admin'].includes(role)) {
+      return res.status(400).json({
+        success: false,
+        message: 'Invalid role selected'
+      });
+    }
+
+    // Admin and teacher must use karunya.edu.in domain
+    if ((role === 'admin' || role === 'teacher') && !email.endsWith('@karunya.edu.in')) {
+      return res.status(400).json({
+        success: false,
+        message: 'Admin and teacher accounts must use @karunya.edu.in domain'
+      });
+    }
+
+    // Student must use karunya.edu.in domain
+    if (role === 'student' && !email.endsWith('@karunya.edu.in')) {
+      return res.status(400).json({
+        success: false,
+        message: 'Student accounts must use @karunya.edu.in domain'
+      });
+    }
+
     const existingUser = await User.findOne({ email });
     if (existingUser) {
       return res.status(400).json({
@@ -20,12 +45,7 @@ const signup = async (req, res) => {
         message: 'Email already registered'
       });
     }
-    let role = 'student';
-    if (email.endsWith('@karunya.edu')) {
-      role = 'teacher';
-    } else if (email.endsWith('@karunya.edu.in')) {
-      role = 'student';
-    }
+
     const hashedPassword = await hashPassword(password);
     const user = new User({
       fullName,
@@ -35,6 +55,7 @@ const signup = async (req, res) => {
       role,
       department
     });
+
     await user.save();
     const token = generateToken(user._id, user.role);
     res.status(201).json({
