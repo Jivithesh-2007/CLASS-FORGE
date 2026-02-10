@@ -17,6 +17,15 @@
   border-color: var(--border-light);
 }
 
+[data-theme="dark"] .card {
+  background-color: #1a1a1a;
+  border-color: #333333;
+}
+
+[data-theme="dark"] .card:hover {
+  border-color: #444444;
+}
+
 .content {
   flex: 1;
 }
@@ -30,11 +39,19 @@
   letter-spacing: 0.5px;
 }
 
+[data-theme="dark"] .label {
+  color: #999999;
+}
+
 .value {
   font-size: 32px;
   font-weight: 700;
   color: var(--text-primary);
   line-height: 1;
+}
+
+[data-theme="dark"] .value {
+  color: #ffffff;
 }
 
 .iconWrapper {

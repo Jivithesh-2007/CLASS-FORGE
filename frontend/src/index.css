@@ -11,6 +11,12 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   background-color: #f5f7fa;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+[data-theme="dark"] body {
+  background-color: #0a0a0a;
+  color: #ffffff;
 }
 
 code {
@@ -74,6 +80,64 @@ code {
   --gradient-orange: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
   --gradient-green: linear-gradient(135deg, #16a34a 0%, #15803d 100%);
   --gradient-red: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+}
+
+[data-theme="dark"] {
+  --primary-color: #4A90E2;
+  --primary-dark: #357ABD;
+  --primary-light: #ffffff;
+  --secondary-color: #50C878;
+  --danger-color: #F44336;
+  --warning-color: #FF9800;
+  --success-color: #4CAF50;
+  --info-color: #2196F3;
+  
+  --background: #0a0a0a;
+  --background-alt: #1a1a1a;
+  --white: #1a1a1a;
+  
+  --text-primary: #ffffff;
+  --text-secondary: #cccccc;
+  --text-tertiary: #999999;
+  
+  --border-color: #333333;
+  --border-light: #2a2a2a;
+  
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.3);
+  --shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.5);
+  --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.6);
+  --shadow-xl: 0 12px 32px rgba(0, 0, 0, 0.7);
+  
+  --radius-sm: 6px;
+  --radius: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  
+  --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-fast: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+  
+  /* Status colors */
+  --status-success: #10b981;
+  --status-warning: #f59e0b;
+  --status-danger: #ef4444;
+  --status-info: #ffffff;
+  
+  /* Icon background colors */
+  --icon-purple-bg: #3a2a5a;
+  --icon-purple-text: #c9a3ff;
+  --icon-teal-bg: #2a4a4a;
+  --icon-teal-text: #5adfcf;
+  --icon-orange-bg: #4a3a2a;
+  --icon-orange-text: #ffb366;
+  --icon-blue-bg: #2a2a3a;
+  --icon-blue-text: #ffffff;
+  
+  /* Gradient colors */
+  --gradient-blue: linear-gradient(135deg, #1a1a1a 0%, #2a2a2a 100%);
+  --gradient-orange: linear-gradient(135deg, #4a3a2a 0%, #5a4a3a 100%);
+  --gradient-green: linear-gradient(135deg, #2a4a2a 0%, #3a5a3a 100%);
+  --gradient-red: linear-gradient(135deg, #4a2a2a 0%, #5a3a3a 100%);
 }
 
 ::-webkit-scrollbar {
@@ -167,4 +231,10 @@ body.dark-mode {
   --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.5);
   --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.6);
   --shadow-xl: 0 12px 32px rgba(0, 0, 0, 0.7);
+}
+
+
+/* Global dark mode transitions */
+[data-theme="dark"] * {
+  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
 }

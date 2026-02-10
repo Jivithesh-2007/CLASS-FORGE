@@ -102,6 +102,45 @@ const ideaSchema = new mongoose.Schema({
       type: Date,
       default: Date.now
     }
+  }],
+  interestedMentors: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User'
+  }],
+  acceptedBy: {
+    mentorId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User'
+    },
+    mentorName: String,
+    mentorEmail: String,
+    acceptedAt: Date,
+    meetLink: String
+  },
+  discussions: [{
+    _id: mongoose.Schema.Types.ObjectId,
+    mentorId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User'
+    },
+    mentorName: String,
+    messages: [{
+      content: String,
+      sentBy: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User'
+      },
+      senderName: String,
+      createdAt: {
+        type: Date,
+        default: Date.now
+      }
+    }],
+    meetLink: String,
+    createdAt: {
+      type: Date,
+      default: Date.now
+    }
   }]
 }, {
   timestamps: true

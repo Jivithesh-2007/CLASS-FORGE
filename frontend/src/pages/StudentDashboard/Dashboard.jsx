@@ -6,6 +6,7 @@ import Header from '../../components/Header/Header';
 import IdeaDetailModal from '../../components/IdeaDetailModal/IdeaDetailModal';
 import LoadingSpinner from '../../components/LoadingSpinner/LoadingSpinner';
 import { useAuth } from '../../context/AuthContext';
+import { useTheme } from '../../context/ThemeContext';
 import { ideaAPI } from '../../services/api';
 import styles from './Dashboard.module.css';
 import { FaChartBar, FaCheckCircle, FaClock, FaTimesCircle } from "react-icons/fa";
@@ -13,6 +14,7 @@ import { FaChartBar, FaCheckCircle, FaClock, FaTimesCircle } from "react-icons/f
 const StudentDashboard = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
+  const { isDarkMode } = useTheme();
   const [stats, setStats] = useState(null);
   const [recentIdeas, setRecentIdeas] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -115,11 +117,11 @@ const StudentDashboard = () => {
       <div 
         onClick={onClick}
         style={{
-          backgroundColor: 'white',
+          backgroundColor: isDarkMode ? '#1a1a1a' : '#ffffff',
           borderRadius: '12px',
           padding: '24px',
-          boxShadow: '0 2px 8px rgba(0, 0, 0, 0.08)',
-          border: '1px solid #e5e7eb',
+          boxShadow: isDarkMode ? '0 2px 8px rgba(0, 0, 0, 0.3)' : '0 2px 8px rgba(0, 0, 0, 0.08)',
+          border: isDarkMode ? '1px solid #333333' : '1px solid #e5e7eb',
           cursor: 'pointer',
           transition: 'all 0.3s ease',
           display: 'flex',
@@ -127,12 +129,14 @@ const StudentDashboard = () => {
           gap: '16px'
         }}
         onMouseEnter={(e) => {
-          e.currentTarget.style.boxShadow = '0 8px 16px rgba(0, 0, 0, 0.12)';
+          e.currentTarget.style.boxShadow = isDarkMode ? '0 8px 16px rgba(0, 0, 0, 0.5)' : '0 8px 16px rgba(0, 0, 0, 0.12)';
           e.currentTarget.style.transform = 'translateY(-2px)';
+          e.currentTarget.style.backgroundColor = isDarkMode ? '#2a2a2a' : '#f9fafb';
         }}
         onMouseLeave={(e) => {
-          e.currentTarget.style.boxShadow = '0 2px 8px rgba(0, 0, 0, 0.08)';
+          e.currentTarget.style.boxShadow = isDarkMode ? '0 2px 8px rgba(0, 0, 0, 0.3)' : '0 2px 8px rgba(0, 0, 0, 0.08)';
           e.currentTarget.style.transform = 'translateY(0)';
+          e.currentTarget.style.backgroundColor = isDarkMode ? '#1a1a1a' : '#ffffff';
         }}
       >
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
@@ -150,10 +154,10 @@ const StudentDashboard = () => {
         </div>
         
         <div>
-          <div style={{ fontSize: '12px', color: '#9ca3af', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '8px' }}>
+          <div style={{ fontSize: '12px', color: isDarkMode ? '#999999' : '#9ca3af', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '8px' }}>
             {label}
           </div>
-          <div style={{ fontSize: '32px', fontWeight: '700', color: '#1f2937' }}>
+          <div style={{ fontSize: '32px', fontWeight: '700', color: isDarkMode ? '#ffffff' : '#1f2937' }}>
             {value}
           </div>
         </div>
@@ -161,7 +165,7 @@ const StudentDashboard = () => {
         <div>
           <div style={{
             height: '6px',
-            backgroundColor: '#e5e7eb',
+            backgroundColor: isDarkMode ? '#333333' : '#e5e7eb',
             borderRadius: '3px',
             overflow: 'hidden'
           }}>
@@ -172,7 +176,7 @@ const StudentDashboard = () => {
               transition: 'width 0.3s ease'
             }} />
           </div>
-          <div style={{ fontSize: '11px', color: '#9ca3af', marginTop: '6px' }}>
+          <div style={{ fontSize: '11px', color: isDarkMode ? '#999999' : '#9ca3af', marginTop: '6px' }}>
             {value} of {total} ideas
           </div>
         </div>
@@ -202,7 +206,17 @@ const StudentDashboard = () => {
       <div className={styles.main}>
         <Header />
         <div className={styles.content}>
-          <div style={{
+          <div style={isDarkMode ? {
+            background: '#1a1a1a',
+            border: '1px solid #333333',
+            padding: '32px',
+            borderRadius: '12px',
+            marginBottom: '32px',
+            position: 'relative',
+            overflow: 'hidden',
+            boxShadow: '0 2px 8px rgba(0, 0, 0, 0.3)',
+            transition: 'background-color 0.3s ease, border-color 0.3s ease'
+          } : {
             background: '#ffffff',
             border: '1px solid #e5e7eb',
             padding: '32px',
@@ -210,20 +224,22 @@ const StudentDashboard = () => {
             marginBottom: '32px',
             position: 'relative',
             overflow: 'hidden',
-            boxShadow: '0 2px 8px rgba(0, 0, 0, 0.04)'
+            boxShadow: '0 2px 8px rgba(0, 0, 0, 0.04)',
+            transition: 'background-color 0.3s ease, border-color 0.3s ease'
           }}>
             <div style={{ position: 'relative', zIndex: 1 }}>
               <p style={{ 
                 margin: '0 0 16px 0', 
                 fontSize: '12px', 
-                color: '#6b7280', 
+                color: isDarkMode ? '#666666' : '#6b7280', 
                 fontWeight: '600',
                 textTransform: 'uppercase',
                 letterSpacing: '0.5px',
-                background: '#f3f4f6',
+                background: isDarkMode ? '#2a2a2a' : '#f3f4f6',
                 padding: '8px 12px',
                 borderRadius: '6px',
-                display: 'inline-block'
+                display: 'inline-block',
+                transition: 'background-color 0.3s ease, color 0.3s ease'
               }}>
                 {new Date().toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }).toUpperCase()}
               </p>
@@ -232,8 +248,9 @@ const StudentDashboard = () => {
                   <p style={{ 
                     margin: '0 0 4px 0', 
                     fontSize: '14px', 
-                    color: '#9ca3af', 
-                    fontWeight: '500'
+                    color: isDarkMode ? '#999999' : '#9ca3af', 
+                    fontWeight: '500',
+                    transition: 'color 0.3s ease'
                   }}>
                     Good {new Date().getHours() < 12 ? 'morning' : new Date().getHours() < 18 ? 'afternoon' : 'evening'},
                   </p>
@@ -241,18 +258,20 @@ const StudentDashboard = () => {
                     margin: '0 0 12px 0', 
                     fontSize: '36px', 
                     fontWeight: '800', 
-                    color: '#000000',
-                    letterSpacing: '-0.5px'
+                    color: isDarkMode ? '#ffffff' : '#000000',
+                    letterSpacing: '-0.5px',
+                    transition: 'color 0.3s ease'
                   }}>
                     {user?.fullName || 'User'}
                   </h1>
                   <p style={{ 
                     margin: '0', 
                     fontSize: '14px', 
-                    color: '#6b7280',
-                    lineHeight: '1.5'
+                    color: isDarkMode ? '#cccccc' : '#6b7280',
+                    lineHeight: '1.5',
+                    transition: 'color 0.3s ease'
                   }}>
-                    You have <span style={{ fontWeight: '600', color: '#000000' }}>{stats?.pendingIdeas || 0} submissions</span> waiting for your final review today.
+                    You have <span style={{ fontWeight: '600', color: isDarkMode ? '#ffffff' : '#000000', transition: 'color 0.3s ease' }}>{stats?.pendingIdeas || 0} submissions</span> waiting for your final review today.
                   </p>
                 </div>
                 

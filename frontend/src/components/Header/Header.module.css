@@ -11,6 +11,12 @@
   left: 250px;
   right: 0;
   z-index: 90;
+  transition: background-color 0.3s ease, border-color 0.3s ease;
+}
+
+[data-theme="dark"] .header {
+  background-color: #1a1a1a;
+  border-bottom-color: #333333;
 }
 
 .greeting {
@@ -31,6 +37,10 @@
   font-weight: 700;
 }
 
+[data-theme="dark"] .breadcrumbApp {
+  color: #ffffff;
+}
+
 
 
 .breadcrumbSeparator {
@@ -44,6 +54,10 @@
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.5px;
+}
+
+[data-theme="dark"] .breadcrumbPage {
+  color: #ffffff;
 }
 
 
@@ -60,6 +74,10 @@
 .greetingSubtext {
   font-size: 14px;
   color: var(--text-secondary);
+}
+
+[data-theme="dark"] .greetingSubtext {
+  color: #cccccc;
 }
 
 
@@ -89,6 +107,16 @@
   color:white;
 }
 
+[data-theme="dark"] .themeToggle {
+  background-color: #333333;
+  color: #ffffff;
+}
+
+[data-theme="dark"] .themeToggle:hover {
+  background-color: #2a2a2a;
+  color: #ffffff;
+}
+
 .iconBtn {
   width: 40px;
   height: 40px;
@@ -107,6 +135,16 @@
 .iconBtn:hover {
   background-color:black;
   color:white;
+}
+
+[data-theme="dark"] .iconBtn {
+  background-color: #333333;
+  color: #ffffff;
+}
+
+[data-theme="dark"] .iconBtn:hover {
+  background-color: #2a2a2a;
+  color: #ffffff;
 }
 
 .icon {
@@ -150,6 +188,10 @@
   background-color: #f5f7fa;
 }
 
+[data-theme="dark"] .profile:hover {
+  background-color: #2a2a2a;
+}
+
 
 
 .avatar {
@@ -166,6 +208,12 @@
   border: 1px solid #e0e0e0;
 }
 
+[data-theme="dark"] .avatar {
+  background: #333333;
+  color: #ffffff;
+  border-color: #555555;
+}
+
 .profileInfo {
   display: flex;
   flex-direction: column;
@@ -177,6 +225,10 @@
   color: var(--text-primary);
 }
 
+[data-theme="dark"] .profileName {
+  color: #ffffff;
+}
+
 
 
 .profileRole {
@@ -185,12 +237,20 @@
   text-transform: capitalize;
 }
 
+[data-theme="dark"] .profileRole {
+  color: #cccccc;
+}
+
 
 
 .dropdownIcon {
   font-size: 20px;
   color: var(--text-secondary);
   transition: transform 0.3s ease;
+}
+
+[data-theme="dark"] .dropdownIcon {
+  color: #cccccc;
 }
 
 
@@ -209,6 +269,11 @@
   min-width: 200px;
   padding: 8px;
   animation: slideDown 0.2s ease;
+}
+
+[data-theme="dark"] .profileMenu {
+  background-color: #2a2a2a;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
 }
 
 
@@ -248,6 +313,15 @@
   color: #000000;
 }
 
+[data-theme="dark"] .menuItem {
+  color: #ffffff;
+}
+
+[data-theme="dark"] .menuItem:hover {
+  background-color: #2a2a2a;
+  color: #ffffff;
+}
+
 
 
 .menuItem:last-child {
@@ -259,6 +333,15 @@
 .menuItem:last-child:hover {
   background-color: #ffebee;
   color: #d32f2f;
+}
+
+[data-theme="dark"] .menuItem:last-child {
+  color: #ff6b6b;
+}
+
+[data-theme="dark"] .menuItem:last-child:hover {
+  background-color: #2a2a2a;
+  color: #ff8888;
 }
 
 

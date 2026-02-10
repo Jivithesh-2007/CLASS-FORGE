@@ -4,6 +4,7 @@ import { ideaAPI } from '../../services/api';
 import { useAuth } from '../../context/AuthContext';
 import { getSocket } from '../../services/socket';
 import { useToast } from '../../context/ToastContext';
+import MentorInterestPanel from '../MentorInterestPanel/MentorInterestPanel';
 import styles from './IdeaDetailModal.module.css';
 
 const IdeaDetailModal = ({ idea, onClose, showComments = false }) => {
@@ -228,6 +229,9 @@ const IdeaDetailModal = ({ idea, onClose, showComments = false }) => {
                 </div>
               </div>
             )}
+
+            {/* Mentor Interest Panel */}
+            <MentorInterestPanel ideaId={idea._id} onInterestChange={() => {}} />
           </div>
 
           {showComments && (

@@ -22,19 +22,19 @@ const signup = async (req, res) => {
       });
     }
 
-    // Admin and teacher must use karunya.edu.in domain
-    if ((role === 'admin' || role === 'teacher') && !email.endsWith('@karunya.edu.in')) {
+    // Admin and student must use karunya.edu.in domain
+    if ((role === 'admin' || role === 'student') && !email.endsWith('@karunya.edu.in')) {
       return res.status(400).json({
         success: false,
-        message: 'Admin and teacher accounts must use @karunya.edu.in domain'
+        message: 'Admin and student accounts must use @karunya.edu.in domain'
       });
     }
 
-    // Student must use karunya.edu.in domain
-    if (role === 'student' && !email.endsWith('@karunya.edu.in')) {
+    // Teacher must use karunya.edu domain
+    if (role === 'teacher' && !email.endsWith('@karunya.edu')) {
       return res.status(400).json({
         success: false,
-        message: 'Student accounts must use @karunya.edu.in domain'
+        message: 'Teacher accounts must use @karunya.edu domain'
       });
     }
 

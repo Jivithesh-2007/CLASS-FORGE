@@ -4,7 +4,7 @@ const User = require('../models/User');
 const Notification = require('../models/Notification');
 const MergeHistory = require('../models/MergeHistory');
 const { findSimilarIdeas } = require('../services/similarityService');
-const { sendIdeaStatusEmail } = require('../services/emailService');
+const { sendIdeaStatusEmail, sendMeetingLinkEmail } = require('../services/emailService');
 const { generateAiInsights } = require('../services/aiInsightsService');
 
 const createIdea = async (req, res) => {
@@ -774,4 +774,629 @@ module.exports = {
   addComment,
   getComments,
   deleteComment
+};
+
+
+// ============================================
+// MENTOR COLLABORATION ENDPOINTS
+// ============================================
+
+const showInterest = async (req, res) => {
+  try {
+    const { ideaId } = req.params;
+    const mentorId = req.user._id;
+
+    if (req.user.role !== 'teacher' && req.user.role !== 'admin') {
+      return res.status(403).json({
+        success: false,
+        message: 'Only teachers/mentors can show interest'
+      });
+    }
+
+    const idea = await Idea.findById(ideaId).populate('submittedBy', 'email fullName');
+    if (!idea) {
+      return res.status(404).json({
+        success: false,
+        message: 'Idea not found'
+      });
+    }
+
+    // Check if already interested
+    if (idea.interestedMentors && idea.interestedMentors.includes(mentorId)) {
+      return res.status(200).json({
+        success: false,
+        message: 'You have already shown interest in this idea',
+        alreadyInterested: true,
+        idea
+      });
+    }
+
+    // Add mentor to interested list
+    if (!idea.interestedMentors) {
+      idea.interestedMentors = [];
+    }
+    idea.interestedMentors.push(mentorId);
+    
+    // Create a discussion thread for this mentor if it doesn't exist
+    const discussionExists = idea.discussions && idea.discussions.some(d => d.mentorId.toString() === mentorId.toString());
+    if (!discussionExists) {
+      if (!idea.discussions) {
+        idea.discussions = [];
+      }
+      idea.discussions.push({
+        _id: new mongoose.Types.ObjectId(),
+        mentorId: mentorId,
+        mentorName: req.user.fullName,
+        messages: [],
+        createdAt: new Date()
+      });
+    }
+    
+    await idea.save();
+
+    // Create notification for student
+    const notification = new Notification({
+      recipient: idea.submittedBy._id,
+      sender: mentorId,
+      type: 'mentor_interested',
+      title: 'Mentor Interested',
+      message: `${req.user.fullName} is interested in your idea "${idea.title}"`,
+      relatedIdea: idea._id
+    });
+    await notification.save();
+
+    // Send email to student
+    await sendIdeaStatusEmail(
+      idea.submittedBy.email,
+      idea.title,
+      'mentor_interested',
+      `Mentor ${req.user.fullName} is interested in your idea`
+    );
+
+    // Emit socket notification
+    const io = req.app.get('io');
+    if (io) {
+      io.to(idea.submittedBy._id.toString()).emit('notification', {
+        type: 'mentor_interested',
+        message: `${req.user.fullName} is interested in your idea`,
+        notification: notification
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: 'Interest shown successfully',
+      idea
+    });
+  } catch (error) {
+    console.error('Show interest error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Error showing interest',
+      error: error.message
+    });
+  }
+};
+
+const withdrawInterest = async (req, res) => {
+  try {
+    const { ideaId } = req.params;
+    const mentorId = req.user._id;
+
+    const idea = await Idea.findById(ideaId);
+    if (!idea) {
+      return res.status(404).json({
+        success: false,
+        message: 'Idea not found'
+      });
+    }
+
+    if (!idea.interestedMentors || !idea.interestedMentors.includes(mentorId)) {
+      return res.status(400).json({
+        success: false,
+        message: 'You have not shown interest in this idea'
+      });
+    }
+
+    idea.interestedMentors = idea.interestedMentors.filter(id => id.toString() !== mentorId.toString());
+    await idea.save();
+
+    res.status(200).json({
+      success: true,
+      message: 'Interest withdrawn successfully',
+      idea
+    });
+  } catch (error) {
+    console.error('Withdraw interest error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Error withdrawing interest',
+      error: error.message
+    });
+  }
+};
+
+const getInterestedMentors = async (req, res) => {
+  try {
+    const { ideaId } = req.params;
+
+    const idea = await Idea.findById(ideaId).populate('interestedMentors', 'fullName email');
+    if (!idea) {
+      return res.status(404).json({
+        success: false,
+        message: 'Idea not found'
+      });
+    }
+
+    const interestedMentors = (idea.interestedMentors || []).map(mentor => ({
+      mentorId: mentor._id,
+      mentorName: mentor.fullName,
+      mentorEmail: mentor.email
+    }));
+
+    res.status(200).json({
+      success: true,
+      interestedMentors
+    });
+  } catch (error) {
+    console.error('Get interested mentors error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Error fetching interested mentors',
+      error: error.message
+    });
+  }
+};
+
+const acceptIdea = async (req, res) => {
+  try {
+    const { ideaId } = req.params;
+    const { meetLink } = req.body;
+    const mentorId = req.user._id;
+
+    if (req.user.role !== 'teacher' && req.user.role !== 'admin') {
+      return res.status(403).json({
+        success: false,
+        message: 'Only teachers/mentors can accept ideas'
+      });
+    }
+
+    const idea = await Idea.findById(ideaId).populate('submittedBy', 'email fullName');
+    if (!idea) {
+      return res.status(404).json({
+        success: false,
+        message: 'Idea not found'
+      });
+    }
+
+    // Update idea with acceptance
+    idea.status = 'accepted';
+    idea.acceptedBy = {
+      mentorId: mentorId,
+      mentorName: req.user.fullName,
+      mentorEmail: req.user.email,
+      acceptedAt: new Date(),
+      meetLink: meetLink || null
+    };
+    await idea.save();
+
+    // Create notification for student
+    const notification = new Notification({
+      recipient: idea.submittedBy._id,
+      sender: mentorId,
+      type: 'idea_accepted',
+      title: 'Idea Accepted',
+      message: `Your idea "${idea.title}" has been accepted by ${req.user.fullName}`,
+      relatedIdea: idea._id
+    });
+    await notification.save();
+
+    // Send email to student
+    await sendIdeaStatusEmail(
+      idea.submittedBy.email,
+      idea.title,
+      'accepted',
+      `Congratulations! Your idea has been accepted by ${req.user.fullName}`
+    );
+
+    // Emit socket notification
+    const io = req.app.get('io');
+    if (io) {
+      io.to(idea.submittedBy._id.toString()).emit('notification', {
+        type: 'idea_accepted',
+        message: `Your idea has been accepted by ${req.user.fullName}`,
+        notification: notification
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: 'Idea accepted successfully',
+      idea
+    });
+  } catch (error) {
+    console.error('Accept idea error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Error accepting idea',
+      error: error.message
+    });
+  }
+};
+
+const getMentorInterestedIdeas = async (req, res) => {
+  try {
+    const mentorId = req.user._id;
+
+    const ideas = await Idea.find({
+      interestedMentors: mentorId
+    }).populate('submittedBy', 'fullName email').populate('interestedMentors', 'fullName email');
+
+    res.status(200).json({
+      success: true,
+      ideas
+    });
+  } catch (error) {
+    console.error('Get mentor interested ideas error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Error fetching interested ideas',
+      error: error.message
+    });
+  }
+};
+
+const getMentorAcceptedIdeas = async (req, res) => {
+  try {
+    const mentorId = req.user._id;
+
+    const ideas = await Idea.find({
+      'acceptedBy.mentorId': mentorId
+    }).populate('submittedBy', 'fullName email').populate('interestedMentors', 'fullName email');
+
+    res.status(200).json({
+      success: true,
+      ideas
+    });
+  } catch (error) {
+    console.error('Get mentor accepted ideas error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Error fetching accepted ideas',
+      error: error.message
+    });
+  }
+};
+
+const getDiscussions = async (req, res) => {
+  try {
+    const { ideaId } = req.params;
+
+    const idea = await Idea.findById(ideaId).populate('discussions.mentorId', 'fullName email').populate('discussions.messages.sentBy', 'fullName email');
+    if (!idea) {
+      return res.status(404).json({
+        success: false,
+        message: 'Idea not found'
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      discussions: idea.discussions || []
+    });
+  } catch (error) {
+    console.error('Get discussions error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Error fetching discussions',
+      error: error.message
+    });
+  }
+};
+
+const addDiscussionMessage = async (req, res) => {
+  try {
+    const { ideaId } = req.params;
+    const { content } = req.body;
+    const mentorId = req.user._id;
+
+    if (!content || !content.trim()) {
+      return res.status(400).json({
+        success: false,
+        message: 'Message content is required'
+      });
+    }
+
+    const idea = await Idea.findById(ideaId);
+    if (!idea) {
+      return res.status(404).json({
+        success: false,
+        message: 'Idea not found'
+      });
+    }
+
+    // Find or create discussion for this mentor
+    let discussion = idea.discussions.find(d => d.mentorId.toString() === mentorId.toString());
+    
+    if (!discussion) {
+      discussion = {
+        _id: new mongoose.Types.ObjectId(),
+        mentorId: mentorId,
+        mentorName: req.user.fullName,
+        messages: [],
+        createdAt: new Date()
+      };
+      idea.discussions.push(discussion);
+    }
+
+    // Add message to discussion
+    discussion.messages.push({
+      content: content,
+      sentBy: mentorId,
+      senderName: req.user.fullName,
+      createdAt: new Date()
+    });
+
+    await idea.save();
+
+    // Emit socket notification to student
+    const io = req.app.get('io');
+    if (io) {
+      io.to(idea.submittedBy.toString()).emit('new_discussion_message', {
+        ideaId: idea._id,
+        mentorName: req.user.fullName,
+        message: content
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: 'Message added successfully',
+      discussion
+    });
+  } catch (error) {
+    console.error('Add discussion message error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Error adding message',
+      error: error.message
+    });
+  }
+};
+
+const addMeetLink = async (req, res) => {
+  try {
+    const { ideaId, discussionId } = req.params;
+    const { meetLink } = req.body;
+    const mentorId = req.user._id;
+
+    if (!meetLink || !meetLink.trim()) {
+      return res.status(400).json({
+        success: false,
+        message: 'Meet link is required'
+      });
+    }
+
+    const idea = await Idea.findById(ideaId);
+    if (!idea) {
+      return res.status(404).json({
+        success: false,
+        message: 'Idea not found'
+      });
+    }
+
+    const discussion = idea.discussions.find(d => d._id.toString() === discussionId);
+    if (!discussion) {
+      return res.status(404).json({
+        success: false,
+        message: 'Discussion not found'
+      });
+    }
+
+    // Verify mentor owns this discussion
+    if (discussion.mentorId.toString() !== mentorId.toString()) {
+      return res.status(403).json({
+        success: false,
+        message: 'You can only add meet links to your own discussions'
+      });
+    }
+
+    discussion.meetLink = meetLink;
+    await idea.save();
+
+    // Create notification for student
+    const notification = new Notification({
+      recipient: idea.submittedBy._id,
+      sender: mentorId,
+      type: 'meet_link_shared',
+      title: 'Meeting Link Shared',
+      message: `${req.user.fullName} shared a Google Meet link for your idea "${idea.title}"`,
+      relatedIdea: idea._id,
+      metadata: {
+        meetLink: meetLink,
+        mentorName: req.user.fullName
+      }
+    });
+    await notification.save();
+
+    // Send email to student
+    const emailContent = `
+      <h2>Meeting Link Shared</h2>
+      <p>Hi ${idea.submittedBy.fullName},</p>
+      <p>${req.user.fullName} has shared a Google Meet link to discuss your idea "${idea.title}".</p>
+      <p><strong>Join the meeting:</strong></p>
+      <p><a href="${meetLink}" target="_blank" style="background-color: #4285F4; color: white; padding: 10px 20px; text-decoration: none; border-radius: 4px; display: inline-block;">Join Google Meet</a></p>
+      <p>Meeting Link: ${meetLink}</p>
+      <p>Best regards,<br/>CLASSFORGE Team</p>
+    `;
+
+    try {
+      const nodemailer = require('nodemailer');
+      const transporter = nodemailer.createTransport({
+        service: 'gmail',
+        auth: {
+          user: process.env.EMAIL_USER,
+          pass: process.env.EMAIL_PASSWORD
+        }
+      });
+
+      await transporter.sendMail({
+        from: process.env.EMAIL_FROM,
+        to: idea.submittedBy.email,
+        subject: `Meeting Link: ${idea.title}`,
+        html: emailContent
+      });
+    } catch (emailError) {
+      console.error('Email sending error:', emailError);
+      // Don't fail the request if email fails
+    }
+
+    // Emit socket notification to student
+    const io = req.app.get('io');
+    if (io) {
+      io.to(idea.submittedBy._id.toString()).emit('meet_link_added', {
+        ideaId: idea._id,
+        mentorName: req.user.fullName,
+        meetLink: meetLink,
+        title: idea.title
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: 'Meet link added successfully',
+      discussion
+    });
+  } catch (error) {
+    console.error('Add meet link error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Error adding meet link',
+      error: error.message
+    });
+  }
+};
+
+module.exports = {
+  createIdea,
+  getIdeas,
+  getIdeaById,
+  updateIdea,
+  deleteIdea,
+  reviewIdea,
+  getSimilarIdeas,
+  mergeIdeas,
+  getStudentStats,
+  getTeacherStats,
+  getAiInsights,
+  addComment,
+  getComments,
+  deleteComment,
+  showInterest,
+  withdrawInterest,
+  getInterestedMentors,
+  acceptIdea,
+  getMentorInterestedIdeas,
+  getMentorAcceptedIdeas,
+  getDiscussions,
+  addDiscussionMessage,
+  addMeetLink
+};
+
+
+const shareMeetLink = async (req, res) => {
+  try {
+    const { ideaId } = req.params;
+    const { meetLink } = req.body;
+    const mentorId = req.user._id;
+
+    if (!meetLink || !meetLink.trim()) {
+      return res.status(400).json({
+        success: false,
+        message: 'Meet link is required'
+      });
+    }
+
+    const idea = await Idea.findById(ideaId).populate('submittedBy', 'email fullName');
+    if (!idea) {
+      return res.status(404).json({
+        success: false,
+        message: 'Idea not found'
+      });
+    }
+
+    // Create notification for student
+    const notification = new Notification({
+      recipient: idea.submittedBy._id,
+      sender: mentorId,
+      type: 'meet_link_shared',
+      title: 'Meeting Link Shared',
+      message: `${req.user.fullName} shared a Google Meet link for your idea "${idea.title}"`,
+      relatedIdea: idea._id,
+      metadata: {
+        meetLink: meetLink,
+        mentorName: req.user.fullName
+      }
+    });
+    await notification.save();
+
+    // Send professional email to student with meeting link
+    await sendMeetingLinkEmail(
+      idea.submittedBy.email,
+      idea.submittedBy.fullName,
+      req.user.fullName,
+      idea.title,
+      meetLink
+    );
+
+    // Emit socket notification to student
+    const io = req.app.get('io');
+    if (io) {
+      io.to(idea.submittedBy._id.toString()).emit('meet_link_added', {
+        ideaId: idea._id,
+        mentorName: req.user.fullName,
+        meetLink: meetLink,
+        title: idea.title
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: 'Meeting link shared successfully'
+    });
+  } catch (error) {
+    console.error('Share meet link error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Error sharing meeting link',
+      error: error.message
+    });
+  }
+};
+
+module.exports = {
+  createIdea,
+  getIdeas,
+  getIdeaById,
+  updateIdea,
+  deleteIdea,
+  reviewIdea,
+  getSimilarIdeas,
+  mergeIdeas,
+  getStudentStats,
+  getTeacherStats,
+  getAiInsights,
+  addComment,
+  getComments,
+  deleteComment,
+  showInterest,
+  withdrawInterest,
+  getInterestedMentors,
+  acceptIdea,
+  getMentorInterestedIdeas,
+  getMentorAcceptedIdeas,
+  getDiscussions,
+  addDiscussionMessage,
+  addMeetLink,
+  shareMeetLink
 };

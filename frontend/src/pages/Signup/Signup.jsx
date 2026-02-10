@@ -39,7 +39,9 @@ const Signup = () => {
       return;
     }
     setLoading(true);
-    const email = formData.username + '@karunya.edu.in';
+    const email = activeTab === 'teacher' 
+      ? formData.username + '@karunya.edu'
+      : formData.username + '@karunya.edu.in';
     try {
       const result = await signup({
         fullName: formData.fullName,
@@ -226,7 +228,7 @@ const Signup = () => {
                   fontSize: '14px',
                   fontWeight: '500'
                 }}>
-                  @karunya.edu.in
+                  {activeTab === 'teacher' ? '@karunya.edu' : '@karunya.edu.in'}
                 </span>
               </div>
             </div>

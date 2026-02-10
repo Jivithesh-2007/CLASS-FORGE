@@ -30,7 +30,11 @@ const Login = () => {
     
     let email = formData.username;
     if (!email.includes('@')) {
-      email = formData.username + '@karunya.edu.in';
+      if (activeTab === 'teacher') {
+        email = formData.username + '@karunya.edu';
+      } else {
+        email = formData.username + '@karunya.edu.in';
+      }
     }
 
     try {
@@ -183,7 +187,7 @@ const Login = () => {
                 <input
                   type="text"
                   name="username"
-                  placeholder={activeTab === 'admin' ? 'admin@karunya.edu.in' : 'your.email'}
+                  placeholder={activeTab === 'teacher' ? 'your.email' : (activeTab === 'admin' ? 'admin@karunya.edu.in' : 'your.email')}
                   className={styles.input}
                   value={formData.username}
                   onChange={handleChange}
@@ -195,7 +199,7 @@ const Login = () => {
                   fontSize: '14px',
                   fontWeight: '500'
                 }}>
-                  @karunya.edu.in
+                  {activeTab === 'teacher' ? '@karunya.edu' : '@karunya.edu.in'}
                 </span>
               </div>
             </div>

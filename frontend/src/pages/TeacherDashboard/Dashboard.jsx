@@ -5,6 +5,7 @@ import Sidebar from '../../components/Sidebar/Sidebar';
 import Header from '../../components/Header/Header';
 import LoadingSpinner from '../../components/LoadingSpinner/LoadingSpinner';
 import { useAuth } from '../../context/AuthContext';
+import { useTheme } from '../../context/ThemeContext';
 import { ideaAPI } from '../../services/api';
 import styles from './TeacherDashboard.module.css';
 import {
@@ -17,6 +18,7 @@ import {
 const TeacherDashboard = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
+  const { isDarkMode } = useTheme();
   const [stats, setStats] = useState(null);
   const [recentIdeas, setRecentIdeas] = useState([]);
   const [submissionTrend, setSubmissionTrend] = useState([]);
@@ -193,19 +195,14 @@ const TeacherDashboard = () => {
     // Determine trend color based on card type and trend value
     const getTrendColor = () => {
       if (label === "Total Students") {
-        // Blue for students
         return trendValue >= 0 ? "#3b82f6" : "#ef4444";
       } else if (label === "Ideas Submitted") {
-        // Orange for submissions
         return trendValue >= 0 ? "#f97316" : "#ef4444";
       } else if (label === "Pending Review") {
-        // Purple for pending review, lower is better (green), higher is worse (red)
         return trendValue <= 20 ? "#a855f7" : trendValue <= 40 ? "#f59e0b" : "#ef4444";
       } else if (label === "Approval Rate") {
-        // Green for approval rate, higher is better (green), lower is worse (red)
         return trendValue >= 70 ? "#10b981" : trendValue >= 50 ? "#f59e0b" : "#ef4444";
       } else {
-        // Default
         return trendValue >= 0 ? "#10b981" : "#ef4444";
       }
     };
@@ -239,11 +236,11 @@ const TeacherDashboard = () => {
       <div 
         onClick={onClick}
         style={{
-          backgroundColor: 'white',
+          backgroundColor: isDarkMode ? '#1a1a1a' : '#ffffff',
           borderRadius: '12px',
           padding: '24px',
-          boxShadow: '0 2px 8px rgba(0, 0, 0, 0.08)',
-          border: '1px solid #e5e7eb',
+          boxShadow: isDarkMode ? '0 2px 8px rgba(0, 0, 0, 0.3)' : '0 2px 8px rgba(0, 0, 0, 0.08)',
+          border: isDarkMode ? '1px solid #333333' : '1px solid #e5e7eb',
           cursor: 'pointer',
           transition: 'all 0.3s ease',
           display: 'flex',
@@ -251,12 +248,14 @@ const TeacherDashboard = () => {
           gap: '16px'
         }}
         onMouseEnter={(e) => {
-          e.currentTarget.style.boxShadow = '0 8px 16px rgba(0, 0, 0, 0.12)';
+          e.currentTarget.style.boxShadow = isDarkMode ? '0 8px 16px rgba(0, 0, 0, 0.5)' : '0 8px 16px rgba(0, 0, 0, 0.12)';
           e.currentTarget.style.transform = 'translateY(-2px)';
+          e.currentTarget.style.backgroundColor = isDarkMode ? '#2a2a2a' : '#f9fafb';
         }}
         onMouseLeave={(e) => {
-          e.currentTarget.style.boxShadow = '0 2px 8px rgba(0, 0, 0, 0.08)';
+          e.currentTarget.style.boxShadow = isDarkMode ? '0 2px 8px rgba(0, 0, 0, 0.3)' : '0 2px 8px rgba(0, 0, 0, 0.08)';
           e.currentTarget.style.transform = 'translateY(0)';
+          e.currentTarget.style.backgroundColor = isDarkMode ? '#1a1a1a' : '#ffffff';
         }}
       >
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
@@ -274,10 +273,10 @@ const TeacherDashboard = () => {
         </div>
         
         <div>
-          <div style={{ fontSize: '12px', color: '#9ca3af', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '8px' }}>
+          <div style={{ fontSize: '12px', color: isDarkMode ? '#999999' : '#9ca3af', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '8px' }}>
             {label}
           </div>
-          <div style={{ fontSize: '32px', fontWeight: '700', color: '#1f2937' }}>
+          <div style={{ fontSize: '32px', fontWeight: '700', color: isDarkMode ? '#ffffff' : '#1f2937' }}>
             {value}
           </div>
         </div>
@@ -285,7 +284,7 @@ const TeacherDashboard = () => {
         <div>
           <div style={{
             height: '6px',
-            backgroundColor: '#e5e7eb',
+            backgroundColor: isDarkMode ? '#333333' : '#e5e7eb',
             borderRadius: '3px',
             overflow: 'hidden'
           }}>
@@ -296,7 +295,7 @@ const TeacherDashboard = () => {
               transition: 'width 0.3s ease'
             }} />
           </div>
-          <div style={{ fontSize: '11px', color: '#9ca3af', marginTop: '6px' }}>
+          <div style={{ fontSize: '11px', color: isDarkMode ? '#999999' : '#9ca3af', marginTop: '6px' }}>
             {value} of {total} ideas
           </div>
         </div>

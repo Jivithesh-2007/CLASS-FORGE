@@ -8,6 +8,11 @@
   overflow: hidden;
   box-shadow: var(--shadow-lg);
   position: relative;
+  transition: background-color 0.3s ease;
+}
+
+[data-theme="dark"] .chatContainer {
+  background-color: #1a1a1a;
 }
 
 /* Chat Header */
@@ -19,6 +24,12 @@
   background-color: #ffffff;
   border-bottom: 1px solid #e0e0e0;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  transition: background-color 0.3s ease, border-color 0.3s ease;
+}
+
+[data-theme="dark"] .chatHeader {
+  background-color: #1a1a1a;
+  border-bottom-color: #333333;
 }
 
 .headerInfo {
@@ -41,6 +52,13 @@
   color: #000000;
   flex-shrink: 0;
   border: 1px solid #e0e0e0;
+  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+}
+
+[data-theme="dark"] .groupIcon {
+  background: #2a2a2a;
+  color: #ffffff;
+  border-color: #333333;
 }
 
 .groupName {
@@ -48,6 +66,11 @@
   font-weight: 700;
   color: #000000;
   margin: 0;
+  transition: color 0.3s ease;
+}
+
+[data-theme="dark"] .groupName {
+  color: #ffffff;
 }
 
 .memberCount {
@@ -79,6 +102,14 @@
   background-color: #f5f5f5;
 }
 
+[data-theme="dark"] .iconBtn {
+  color: #ffffff;
+}
+
+[data-theme="dark"] .iconBtn:hover {
+  background-color: #2a2a2a;
+}
+
 .closeBtn {
   background: none;
   border: none;
@@ -96,6 +127,14 @@
   background-color: #f5f5f5;
 }
 
+[data-theme="dark"] .closeBtn {
+  color: #ffffff;
+}
+
+[data-theme="dark"] .closeBtn:hover {
+  background-color: #2a2a2a;
+}
+
 /* Messages Container */
 .messagesContainer {
   flex: 1;
@@ -106,6 +145,11 @@
   gap: 8px;
   background-color: #ffffff;
   padding-bottom: 120px;
+  transition: background-color 0.3s ease;
+}
+
+[data-theme="dark"] .messagesContainer {
+  background-color: #0a0a0a;
 }
 
 .loadingText {
@@ -135,6 +179,11 @@
   font-weight: 600;
   color: #000000;
   margin: 0;
+  transition: color 0.3s ease;
+}
+
+[data-theme="dark"] .emptyText {
+  color: #ffffff;
 }
 
 .emptySubtext {
@@ -158,12 +207,23 @@
   flex: 1;
   height: 1px;
   background-color: #e0e0e0;
+  transition: background-color 0.3s ease;
 }
 
 .dateSeperator span {
   font-size: 12px;
   color: #999999;
   font-weight: 500;
+  transition: color 0.3s ease;
+}
+
+[data-theme="dark"] .dateSeperator::before,
+[data-theme="dark"] .dateSeperator::after {
+  background-color: #333333;
+}
+
+[data-theme="dark"] .dateSeperator span {
+  color: #999999;
 }
 
 /* Message Wrapper */
@@ -206,6 +266,13 @@
   font-weight: 600;
   flex-shrink: 0;
   border: 1px solid #e0e0e0;
+  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+}
+
+[data-theme="dark"] .senderAvatar {
+  background: #2a2a2a;
+  color: #ffffff;
+  border-color: #333333;
 }
 
 .messageContent {
@@ -220,6 +287,11 @@
   font-weight: 600;
   color: #000000;
   margin: 0;
+  transition: color 0.3s ease;
+}
+
+[data-theme="dark"] .senderName {
+  color: #ffffff;
 }
 
 .messageBubble {
@@ -241,6 +313,16 @@
   background-color: #f0f0f0;
   color: #000000;
   border-bottom-left-radius: 4px;
+}
+
+[data-theme="dark"] .sentBubble {
+  background-color: #333333;
+  color: #ffffff;
+}
+
+[data-theme="dark"] .receivedBubble {
+  background-color: #2a2a2a;
+  color: #ffffff;
 }
 
 .messageText {
@@ -326,6 +408,13 @@
   background-color: #f9f9f9;
   border-top: 1px solid #e0e0e0;
   border-bottom: 1px solid #e0e0e0;
+  transition: background-color 0.3s ease, border-color 0.3s ease;
+}
+
+[data-theme="dark"] .filePreview {
+  background-color: #2a2a2a;
+  border-top-color: #333333;
+  border-bottom-color: #333333;
 }
 
 .fileInfo {
@@ -366,6 +455,12 @@
   right: 0;
   width: 100%;
   box-sizing: border-box;
+  transition: background-color 0.3s ease, border-color 0.3s ease;
+}
+
+[data-theme="dark"] .inputContainer {
+  background-color: #1a1a1a;
+  border-top-color: #333333;
 }
 
 .inputActions {
@@ -395,6 +490,17 @@
   color: #000000;
 }
 
+[data-theme="dark"] .attachBtn,
+[data-theme="dark"] .emojiBtn {
+  color: #ffffff;
+}
+
+[data-theme="dark"] .attachBtn:hover,
+[data-theme="dark"] .emojiBtn:hover {
+  background-color: #2a2a2a;
+  color: #ffffff;
+}
+
 .emojiPickerContainer {
   position: relative;
 }
@@ -417,6 +523,12 @@
   box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.1);
   z-index: 100;
   margin-bottom: 8px;
+  transition: background-color 0.3s ease, border-color 0.3s ease;
+}
+
+[data-theme="dark"] .emojiPicker {
+  background-color: #2a2a2a;
+  border-color: #333333;
 }
 
 .emojiOption {
@@ -435,6 +547,10 @@
 .emojiOption:hover {
   background-color: #f5f5f5;
   transform: scale(1.2);
+}
+
+[data-theme="dark"] .emojiOption:hover {
+  background-color: #3a3a3a;
 }
 
 /* Message Input */
@@ -462,6 +578,21 @@
   color: #cccccc;
 }
 
+[data-theme="dark"] .messageInput {
+  background-color: #2a2a2a;
+  border-color: #333333;
+  color: #ffffff;
+}
+
+[data-theme="dark"] .messageInput:focus {
+  border-color: #ffffff;
+  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.1);
+}
+
+[data-theme="dark"] .messageInput::placeholder {
+  color: #666666;
+}
+
 /* Send Button */
 .sendBtn {
   background-color: #000000;
@@ -487,6 +618,20 @@
   background-color: #e0e0e0;
   color: #999999;
   cursor: not-allowed;
+}
+
+[data-theme="dark"] .sendBtn {
+  background-color: #333333;
+  color: #ffffff;
+}
+
+[data-theme="dark"] .sendBtn:hover:not(:disabled) {
+  background-color: #444444;
+}
+
+[data-theme="dark"] .sendBtn:disabled {
+  background-color: #2a2a2a;
+  color: #666666;
 }
 
 /* Scrollbar */

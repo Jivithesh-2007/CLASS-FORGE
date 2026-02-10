@@ -16,7 +16,17 @@ const {
   getAiInsights,
   addComment,
   getComments,
-  deleteComment
+  deleteComment,
+  showInterest,
+  withdrawInterest,
+  getInterestedMentors,
+  acceptIdea,
+  getMentorInterestedIdeas,
+  getMentorAcceptedIdeas,
+  getDiscussions,
+  addDiscussionMessage,
+  addMeetLink,
+  shareMeetLink
 } = require('../controllers/ideaController');
 const { authMiddleware, roleCheck } = require('../middleware/auth');
 
@@ -55,6 +65,10 @@ router.get('/stats/student', roleCheck('student'), getStudentStats);
 router.get('/stats/teacher', roleCheck('teacher', 'admin'), getTeacherStats);
 router.post('/merge', roleCheck('teacher', 'admin'), mergeIdeas);
 
+// Mentor Dashboard Routes (must be before /:id routes)
+router.get('/mentor/interested-ideas', roleCheck('teacher', 'admin'), getMentorInterestedIdeas);
+router.get('/mentor/accepted-ideas', roleCheck('teacher', 'admin'), getMentorAcceptedIdeas);
+
 // Dynamic routes last (after specific routes)
 router.get('/:id', getIdeaById);
 router.put('/:id', updateIdea);
@@ -67,5 +81,15 @@ router.get('/:id/ai-insights', roleCheck('teacher', 'admin'), getAiInsights);
 router.post('/:id/comments', addComment);
 router.get('/:id/comments', getComments);
 router.delete('/:id/comments/:commentId', deleteComment);
+
+// Mentor Collaboration Routes
+router.post('/:ideaId/show-interest', roleCheck('teacher', 'admin'), showInterest);
+router.post('/:ideaId/withdraw-interest', roleCheck('teacher', 'admin'), withdrawInterest);
+router.get('/:ideaId/interested-mentors', getInterestedMentors);
+router.post('/:ideaId/accept', roleCheck('teacher', 'admin'), acceptIdea);
+router.get('/:ideaId/discussions', getDiscussions);
+router.post('/:ideaId/discussions', roleCheck('teacher', 'admin'), addDiscussionMessage);
+router.put('/:ideaId/discussions/:discussionId/meet-link', roleCheck('teacher', 'admin'), addMeetLink);
+router.post('/:ideaId/share-meet-link', roleCheck('teacher', 'admin'), shareMeetLink);
 
 module.exports = router;

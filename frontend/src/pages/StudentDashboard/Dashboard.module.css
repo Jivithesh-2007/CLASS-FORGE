@@ -2,6 +2,7 @@
   display: flex;
   min-height: 100vh;
   background-color: var(--background);
+  transition: background-color 0.3s ease;
 }
 
 .main {
@@ -49,6 +50,11 @@
   box-shadow: var(--shadow-md);
 }
 
+[data-theme="dark"] .section {
+  background-color: #1a1a1a;
+  border-color: #333333;
+}
+
 .sectionHeader {
   display: flex;
   align-items: center;
@@ -68,6 +74,10 @@
   align-items: center;
   gap: 12px;
   margin: 0;
+}
+
+[data-theme="dark"] .sectionTitle {
+  color: #ffffff;
 }
 
 .sectionSubtitle {
@@ -106,6 +116,18 @@
   color: var(--text-primary);
   border-bottom-color: var(--primary-color);
   font-weight: 600;
+}
+
+[data-theme="dark"] .filterTab {
+  color: #999999;
+}
+
+[data-theme="dark"] .filterTab:hover {
+  color: #ffffff;
+}
+
+[data-theme="dark"] .filterTab.active {
+  color: #ffffff;
 }
 
 
@@ -151,6 +173,16 @@
   color: var(--primary-color);
 }
 
+[data-theme="dark"] .paginationBtn {
+  border-color: #333333;
+  color: #ffffff;
+}
+
+[data-theme="dark"] .paginationBtn:hover {
+  background-color: #2a2a2a;
+  border-color: var(--primary-color);
+}
+
 
 
 .button {
@@ -179,6 +211,16 @@
   transform: translateY(0);
 }
 
+[data-theme="dark"] .button {
+  background-color: #ffffff;
+  color: #000000;
+  box-shadow: 0 4px 12px rgba(255, 255, 255, 0.2);
+}
+
+[data-theme="dark"] .button:hover {
+  box-shadow: 0 6px 16px rgba(255, 255, 255, 0.3);
+}
+
 .emptyState {
   text-align: center;
   padding: 100px 40px;
@@ -197,6 +239,10 @@
   font-weight: 600;
   margin-bottom: 12px;
   color: var(--text-primary);
+}
+
+[data-theme="dark"] .emptyText {
+  color: #ffffff;
 }
 
 .emptySubtext {
@@ -258,6 +304,10 @@
   margin: 0 -16px;
 }
 
+[data-theme="dark"] .ideaRow:hover {
+  background-color: #2a2a2a;
+}
+
 
 
 .proposalDetails {
@@ -272,6 +322,10 @@
   color: var(--text-primary);
   margin: 0;
   line-height: 1.4;
+}
+
+[data-theme="dark"] .ideaRowTitleText {
+  color: #ffffff;
 }
 
 .ideaRowDescription {
@@ -308,10 +362,19 @@
   flex-shrink: 0;
 }
 
+[data-theme="dark"] .authorInitial {
+  background-color: #333333;
+  color: #cccccc;
+}
+
 .authorName {
   font-size: 13px;
   font-weight: 500;
   color: var(--text-primary);
+}
+
+[data-theme="dark"] .authorName {
+  color: #ffffff;
 }
 
 .departmentCell {
@@ -373,6 +436,16 @@
   border-color: var(--primary-color);
 }
 
+[data-theme="dark"] .ideaCard {
+  background-color: #1a1a1a;
+  border-color: #333333;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+[data-theme="dark"] .ideaCard:hover {
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.5);
+}
+
 .ideaHeader {
   display: flex;
   justify-content: space-between;
@@ -388,6 +461,10 @@
   margin: 0 0 12px 0;
   line-height: 1.4;
   word-break: break-word;
+}
+
+[data-theme="dark"] .ideaTitle {
+  color: #ffffff;
 }
 
 .ideaDescription {
@@ -580,6 +657,15 @@
   border-color: var(--primary-color);
 }
 
+[data-theme="dark"] .groupCard {
+  background-color: #1a1a1a;
+  border-color: #333333;
+}
+
+[data-theme="dark"] .groupCard:hover {
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+}
+
 
 
 .groupCardHeader {
@@ -635,6 +721,10 @@
   font-weight: 700;
   color: var(--text-primary);
   margin: 0 0 4px 0;
+}
+
+[data-theme="dark"] .groupName {
+  color: #ffffff;
 }
 
 .groupRole {
@@ -709,6 +799,16 @@
   background-color: var(--primary-color);
   color: white;
   transform: scale(1.1);
+}
+
+[data-theme="dark"] .actionIcon {
+  background-color: #2a2a2a;
+  color: #cccccc;
+}
+
+[data-theme="dark"] .actionIcon:hover {
+  background-color: var(--primary-color);
+  color: white;
 }
 
 
