@@ -320,3 +320,87 @@
   opacity: 0.6;
   cursor: not-allowed;
 }
+
+.withdrawBtn {
+  flex: 1;
+  min-width: 150px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  background: #fee2e2;
+  border: 1px solid #fecaca;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  color: #dc2626;
+  transition: all 0.2s ease;
+  justify-content: center;
+}
+
+.withdrawBtn:hover:not(:disabled) {
+  background: #fecaca;
+  border-color: #f87171;
+}
+
+.withdrawBtn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.approveBtn {
+  flex: 1;
+  min-width: 150px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  background: #d1fae5;
+  border: 1px solid #a7f3d0;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  color: #059669;
+  transition: all 0.2s ease;
+  justify-content: center;
+}
+
+.approveBtn:hover:not(:disabled) {
+  background: #a7f3d0;
+  border-color: #6ee7b7;
+}
+
+.approveBtn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.rejectBtn {
+  flex: 1;
+  min-width: 150px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  background: #fee2e2;
+  border: 1px solid #fecaca;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  color: #dc2626;
+  transition: all 0.2s ease;
+  justify-content: center;
+}
+
+.rejectBtn:hover:not(:disabled) {
+  background: #fecaca;
+  border-color: #f87171;
+}
+
+.rejectBtn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}

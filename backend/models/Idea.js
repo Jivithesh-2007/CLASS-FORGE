@@ -117,6 +117,17 @@ const ideaSchema = new mongoose.Schema({
     acceptedAt: Date,
     meetLink: String
   },
+  meetingArranged: {
+    type: Boolean,
+    default: false
+  },
+  meetingArrangedBy: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User'
+  },
+  meetingArrangedAt: {
+    type: Date
+  },
   discussions: [{
     _id: mongoose.Schema.Types.ObjectId,
     mentorId: {

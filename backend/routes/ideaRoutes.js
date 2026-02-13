@@ -26,7 +26,8 @@ const {
   getDiscussions,
   addDiscussionMessage,
   addMeetLink,
-  shareMeetLink
+  shareMeetLink,
+  markMeetingArranged
 } = require('../controllers/ideaController');
 const { authMiddleware, roleCheck } = require('../middleware/auth');
 
@@ -91,5 +92,6 @@ router.get('/:ideaId/discussions', getDiscussions);
 router.post('/:ideaId/discussions', roleCheck('teacher', 'admin'), addDiscussionMessage);
 router.put('/:ideaId/discussions/:discussionId/meet-link', roleCheck('teacher', 'admin'), addMeetLink);
 router.post('/:ideaId/share-meet-link', roleCheck('teacher', 'admin'), shareMeetLink);
+router.post('/:ideaId/mark-meeting-arranged', roleCheck('teacher', 'admin'), markMeetingArranged);
 
 module.exports = router;

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { MdThumbUp, MdThumbDown, MdVideoCall, MdContentCopy, MdCheck } from 'react-icons/md';
 import { useAuth } from '../../context/AuthContext';
 import { useToast } from '../../context/ToastContext';
@@ -13,9 +13,7 @@ const MentorInterestPanel = ({ ideaId, onInterestChange }) => {
   const [showMeetModal, setShowMeetModal] = useState(false);
   const [meetLink, setMeetLink] = useState('');
   const [submittingMeetLink, setSubmittingMeetLink] = useState(false);
-  const [gmeetIframeUrl, setGmeetIframeUrl] = useState('');
   const [copied, setCopied] = useState(false);
-  const iframeRef = useRef(null);
 
   useEffect(() => {
     fetchMentorData();
@@ -49,12 +47,10 @@ const MentorInterestPanel = ({ ideaId, onInterestChange }) => {
       const data = await response.json();
       if (data.success) {
         setIsInterested(true);
-        fetchMentorData();
         success('Interest shown successfully!');
         onInterestChange?.();
       } else if (data.alreadyInterested) {
         setIsInterested(true);
-        fetchMentorData();
       } else {
         showError(data.message || 'Failed to show interest');
       }
@@ -76,7 +72,6 @@ const MentorInterestPanel = ({ ideaId, onInterestChange }) => {
       const data = await response.json();
       if (data.success) {
         setIsInterested(false);
-        fetchMentorData();
         success('Interest withdrawn');
         onInterestChange?.();
       } else {
@@ -90,7 +85,26 @@ const MentorInterestPanel = ({ ideaId, onInterestChange }) => {
     }
   };
 
-  const handleOpenGMeet = () => {
+  const handleOpenGMeet = async () => {
+    // Mark meeting as arranged when mentor clicks to arrange meeting
+    try {
+      const response = await fetch(`/api/ideas/${ideaId}/mark-meeting-arranged`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        }
+      });
+
+      const data = await response.json();
+      if (data.success) {
+        success('Meeting arrangement started!');
+        onInterestChange?.();
+      }
+    } catch (error) {
+      console.error('Error marking meeting as arranged:', error);
+    }
+
     window.open('https://meet.google.com/new', '_blank');
   };
 
@@ -124,6 +138,7 @@ const MentorInterestPanel = ({ ideaId, onInterestChange }) => {
         setMeetLink('');
         setShowMeetModal(false);
         success('Meeting link shared with student!');
+        onInterestChange?.();
       } else {
         showError(data.message || 'Failed to share meeting link');
       }
@@ -144,29 +159,34 @@ const MentorInterestPanel = ({ ideaId, onInterestChange }) => {
         
         {user?.role === 'teacher' || user?.role === 'admin' ? (
           <div className={styles.buttonGroup}>
-            <button
-              className={`${styles.interestBtn} ${isInterested ? styles.interested : ''}`}
-              onClick={isInterested ? handleWithdrawInterest : handleShowInterest}
-              disabled={loading}
-            >
-              {isInterested ? (
-                <>
-                  <MdThumbDown /> Withdraw Interest
-                </>
-              ) : (
-                <>
-                  <MdThumbUp /> Show Interest
-                </>
-              )}
-            </button>
-
-            {isInterested && (
+            {/* Step 1: Show Interest */}
+            {!isInterested && (
               <button
-                className={styles.meetBtn}
-                onClick={() => setShowMeetModal(true)}
+                className={styles.interestBtn}
+                onClick={handleShowInterest}
+                disabled={loading}
               >
-                <MdVideoCall /> Arrange Meeting
+                <MdThumbUp /> Show Interest
               </button>
+            )}
+
+            {/* Step 2: After Interest - Arrange Meeting & Withdraw */}
+            {isInterested && (
+              <>
+                <button
+                  className={styles.meetBtn}
+                  onClick={() => setShowMeetModal(true)}
+                >
+                  <MdVideoCall /> Arrange Meeting
+                </button>
+                <button
+                  className={styles.withdrawBtn}
+                  onClick={handleWithdrawInterest}
+                  disabled={loading}
+                >
+                  <MdThumbDown /> Withdraw Interest
+                </button>
+              </>
             )}
           </div>
         ) : null}

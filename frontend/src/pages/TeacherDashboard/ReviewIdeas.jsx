@@ -3,6 +3,7 @@ import { MdCheckCircle, MdCancel, MdClose, MdPerson, MdCheckBox, MdCheckBoxOutli
 import Sidebar from '../../components/Sidebar/Sidebar';
 import Header from '../../components/Header/Header';
 import LoadingSpinner from '../../components/LoadingSpinner/LoadingSpinner';
+import MentorInterestPanel from '../../components/MentorInterestPanel/MentorInterestPanel';
 import { ideaAPI } from '../../services/api';
 import { useToast } from '../../context/ToastContext';
 import styles from './TeacherDashboard.module.css';
@@ -357,26 +358,62 @@ const ReviewIdeas = () => {
                     </div>
                   </div>
 
-                  <div className={reviewStyles.actionButtons}>
-                    <button
-                      onClick={() => handleAiModalReview('rejected')}
-                      disabled={reviewLoading}
-                      className={reviewStyles.rejectBtn}
-                    >
-                      <MdCancel /> Reject
-                    </button>
-                    <button
-                      onClick={() => handleAiModalReview('approved')}
-                      disabled={reviewLoading}
-                      className={reviewStyles.approveBtn}
-                    >
-                      <MdCheckCircle /> Approve Submission
-                    </button>
+                  {/* Mentor Interest Panel */}
+                  <div style={{ marginTop: '24px', paddingTop: '24px', borderTop: '1px solid #e5e7eb' }}>
+                    <MentorInterestPanel 
+                      ideaId={selectedIdea._id}
+                      onInterestChange={() => {
+                        // Refresh the idea data when interest changes
+                        fetchPendingIdeas();
+                      }}
+                    />
                   </div>
 
-                  <div className={reviewStyles.footerText}>
-                    Processing this will notify <strong>{selectedIdea.submittedBy?.fullName || 'the student'}</strong> immediately via email.
-                  </div>
+                  {selectedIdea.meetingArranged ? (
+                    <div className={reviewStyles.actionButtons}>
+                      <button
+                        onClick={() => handleAiModalReview('rejected')}
+                        disabled={reviewLoading}
+                        className={reviewStyles.rejectBtn}
+                      >
+                        <MdCancel /> Reject
+                      </button>
+                      <button
+                        onClick={() => handleAiModalReview('approved')}
+                        disabled={reviewLoading}
+                        className={reviewStyles.approveBtn}
+                      >
+                        <MdCheckCircle /> Approve Submission
+                      </button>
+                    </div>
+                  ) : (
+                    <div className={reviewStyles.actionButtons} style={{ opacity: 0.5, pointerEvents: 'none' }}>
+                      <button
+                        disabled={true}
+                        className={reviewStyles.rejectBtn}
+                      >
+                        <MdCancel /> Reject
+                      </button>
+                      <button
+                        disabled={true}
+                        className={reviewStyles.approveBtn}
+                      >
+                        <MdCheckCircle /> Approve Submission
+                      </button>
+                    </div>
+                  )}
+
+                  {!selectedIdea.meetingArranged && (
+                    <div className={reviewStyles.footerText} style={{ color: '#ef4444', fontWeight: '500' }}>
+                      ⚠️ Please arrange a meeting first before approving or rejecting this idea.
+                    </div>
+                  )}
+
+                  {selectedIdea.meetingArranged && (
+                    <div className={reviewStyles.footerText}>
+                      Processing this will notify <strong>{selectedIdea.submittedBy?.fullName || 'the student'}</strong> immediately via email.
+                    </div>
+                  )}
                 </div>
               ) : null}
             </div>

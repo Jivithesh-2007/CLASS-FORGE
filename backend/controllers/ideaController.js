@@ -1329,14 +1329,10 @@ const shareMeetLink = async (req, res) => {
     const notification = new Notification({
       recipient: idea.submittedBy._id,
       sender: mentorId,
-      type: 'meet_link_shared',
+      type: 'meeting_link_shared',
       title: 'Meeting Link Shared',
       message: `${req.user.fullName} shared a Google Meet link for your idea "${idea.title}"`,
-      relatedIdea: idea._id,
-      metadata: {
-        meetLink: meetLink,
-        mentorName: req.user.fullName
-      }
+      relatedIdea: idea._id
     });
     await notification.save();
 
@@ -1348,6 +1344,12 @@ const shareMeetLink = async (req, res) => {
       idea.title,
       meetLink
     );
+
+    // Mark meeting as arranged
+    idea.meetingArranged = true;
+    idea.meetingArrangedBy = mentorId;
+    idea.meetingArrangedAt = new Date();
+    await idea.save();
 
     // Emit socket notification to student
     const io = req.app.get('io');
@@ -1369,6 +1371,39 @@ const shareMeetLink = async (req, res) => {
     res.status(500).json({
       success: false,
       message: 'Error sharing meeting link',
+      error: error.message
+    });
+  }
+};
+
+markMeetingArranged = async (req, res) => {
+  try {
+    const { ideaId } = req.params;
+    const mentorId = req.user._id;
+
+    const idea = await Idea.findById(ideaId);
+    if (!idea) {
+      return res.status(404).json({
+        success: false,
+        message: 'Idea not found'
+      });
+    }
+
+    // Mark meeting as arranged
+    idea.meetingArranged = true;
+    idea.meetingArrangedBy = mentorId;
+    idea.meetingArrangedAt = new Date();
+    await idea.save();
+
+    res.status(200).json({
+      success: true,
+      message: 'Meeting marked as arranged'
+    });
+  } catch (error) {
+    console.error('Mark meeting arranged error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Error marking meeting as arranged',
       error: error.message
     });
   }
@@ -1398,5 +1433,6 @@ module.exports = {
   getDiscussions,
   addDiscussionMessage,
   addMeetLink,
-  shareMeetLink
+  shareMeetLink,
+  markMeetingArranged
 };

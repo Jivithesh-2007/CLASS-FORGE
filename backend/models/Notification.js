@@ -11,7 +11,7 @@ const notificationSchema = new mongoose.Schema({
   },
   type: {
     type: String,
-    enum: ['idea_status', 'merge_request', 'group_invite', 'group_join', 'feedback', 'system', 'comment_added', 'idea_submitted'],
+    enum: ['idea_status', 'merge_request', 'group_invite', 'group_join', 'feedback', 'system', 'comment_added', 'idea_submitted', 'mentor_interested', 'meeting_link_shared', 'idea_accepted'],
     required: true
   },
   title: {
