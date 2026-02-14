@@ -336,14 +336,14 @@ const TeacherDashboard = () => {
         <Header title="Dashboard" />
         <div className={styles.content}>
           <div style={{
-            background: '#ffffff',
-            border: '1px solid #e5e7eb',
+            background: isDarkMode ? '#1a1a1a' : '#ffffff',
+            border: isDarkMode ? '1px solid #333333' : '1px solid #e5e7eb',
             padding: '32px',
             borderRadius: '50px',
             marginBottom: '32px',
             position: 'relative',
             overflow: 'hidden',
-            boxShadow: '0 2px 8px rgba(0, 0, 0, 0.04)'
+            boxShadow: isDarkMode ? '0 2px 8px rgba(0, 0, 0, 0.3)' : '0 2px 8px rgba(0, 0, 0, 0.04)'
           }}>
             <div style={{ position: 'relative', zIndex: 1 }}>
               <p style={{ 
@@ -365,7 +365,7 @@ const TeacherDashboard = () => {
                   <p style={{ 
                     margin: '0 0 4px 0', 
                     fontSize: '14px', 
-                    color: '#9ca3af', 
+                    color: isDarkMode ? '#9ca3af' : '#9ca3af', 
                     fontWeight: '500'
                   }}>
                     Good {new Date().getHours() < 12 ? 'morning' : new Date().getHours() < 18 ? 'afternoon' : 'evening'},
@@ -374,7 +374,7 @@ const TeacherDashboard = () => {
                     margin: '0 0 12px 0', 
                     fontSize: '36px', 
                     fontWeight: '800', 
-                    color: '#000000',
+                    color: isDarkMode ? '#ffffff' : '#000000',
                     letterSpacing: '-0.5px'
                   }}>
                     {user?.fullName || 'Teacher'}
@@ -382,10 +382,10 @@ const TeacherDashboard = () => {
                   <p style={{ 
                     margin: '0', 
                     fontSize: '14px', 
-                    color: '#6b7280',
+                    color: isDarkMode ? '#d1d5db' : '#6b7280',
                     lineHeight: '1.5'
                   }}>
-                    You have <span style={{ fontWeight: '600', color: '#000000' }}>{stats?.pendingReview || 0} submissions</span> waiting for your final review today.
+                    You have <span style={{ fontWeight: '600', color: isDarkMode ? '#ffffff' : '#000000' }}>{stats?.pendingReview || 0} submissions</span> waiting for your final review today.
                   </p>
                 </div>
                 
@@ -489,7 +489,7 @@ const TeacherDashboard = () => {
                     <div className={styles.headerCell}>DATE</div>
                     <div className={styles.headerCell}>STATUS</div>
                   </div>
-                  {recentIdeas.map((idea) => (
+                  {recentIdeas.slice(0, 2).map((idea) => (
                     <div key={idea._id} className={styles.ideaRow}>
                       <div className={styles.proposalDetails}>
                         <h3 className={styles.ideaRowTitleText}>{idea.title}</h3>
@@ -556,12 +556,12 @@ const TeacherDashboard = () => {
                             const y = 300 - (idx / (yLabels.length - 1)) * 250;
                             return (
                               <g key={`y-${idx}`}>
-                                <line x1="60" y1={y} x2="70" y2={y} stroke="#000000" strokeWidth="1" />
-                                <text x="55" y={y + 5} textAnchor="end" fontSize="13" fill="#000000" fontWeight="500">
+                                <line x1="60" y1={y} x2="70" y2={y} stroke={isDarkMode ? '#ffffff' : '#000000'} strokeWidth="1" />
+                                <text x="55" y={y + 5} textAnchor="end" fontSize="13" fill={isDarkMode ? '#ffffff' : '#000000'} fontWeight="500">
                                   {label}
                                 </text>
                                 {idx > 0 && (
-                                  <line x1="70" y1={y} x2="870" y2={y} stroke="#e0e0e0" strokeWidth="1" strokeDasharray="4" />
+                                  <line x1="70" y1={y} x2="870" y2={y} stroke={isDarkMode ? '#444444' : '#e0e0e0'} strokeWidth="1" strokeDasharray="4" />
                                 )}
                               </g>
                             );
@@ -579,7 +579,7 @@ const TeacherDashboard = () => {
                                   y={barY}
                                   width={barWidth}
                                   height={barHeight}
-                                  fill="#000000"
+                                  fill={isDarkMode ? '#3b82f6' : '#000000'}
                                   rx="4"
                                   style={{ cursor: 'pointer' }}
                                   onMouseEnter={() => setHoveredPoint(idx)}
@@ -589,8 +589,8 @@ const TeacherDashboard = () => {
                                   <g>
                                     <polygon
                                       points={`${barX + barWidth / 2},${barY - 18} ${barX + barWidth / 2 - 10},${barY - 28} ${barX + barWidth / 2 + 10},${barY - 28}`}
-                                      fill="#ffffff"
-                                      stroke="#000000"
+                                      fill={isDarkMode ? '#1a1a1a' : '#ffffff'}
+                                      stroke={isDarkMode ? '#ffffff' : '#000000'}
                                       strokeWidth="2"
                                       strokeLinejoin="round"
                                     />
@@ -599,8 +599,8 @@ const TeacherDashboard = () => {
                                       y={barY - 85} 
                                       width="120" 
                                       height="60" 
-                                      fill="#ffffff" 
-                                      stroke="#000000" 
+                                      fill={isDarkMode ? '#1a1a1a' : '#ffffff'} 
+                                      stroke={isDarkMode ? '#ffffff' : '#000000'} 
                                       strokeWidth="2"
                                       rx="8"
                                     />
@@ -610,7 +610,7 @@ const TeacherDashboard = () => {
                                       textAnchor="middle" 
                                       fontSize="18" 
                                       fontWeight="700"
-                                      fill="#000000"
+                                      fill={isDarkMode ? '#ffffff' : '#000000'}
                                     >
                                       {value}
                                     </text>
@@ -619,7 +619,7 @@ const TeacherDashboard = () => {
                                       y={barY - 32} 
                                       textAnchor="middle" 
                                       fontSize="13" 
-                                      fill="#666666"
+                                      fill={isDarkMode ? '#999999' : '#666666'}
                                       fontWeight="500"
                                     >
                                       submissions
@@ -633,17 +633,17 @@ const TeacherDashboard = () => {
                           {dates.map((date, idx) => {
                             const barX = 70 + (idx * (barWidth + barGap)) + barGap + barWidth / 2;
                             return (
-                              <text key={`x-${idx}`} x={barX} y="325" textAnchor="middle" fontSize="13" fill="#000000" fontWeight="500">
+                              <text key={`x-${idx}`} x={barX} y="325" textAnchor="middle" fontSize="13" fill={isDarkMode ? '#ffffff' : '#000000'} fontWeight="500">
                                 {date}
                               </text>
                             );
                           })}
 
-                          <text x="20" y="175" textAnchor="middle" fontSize="12" fill="#000000" fontWeight="500" transform="rotate(-90 20 175)">
+                          <text x="20" y="175" textAnchor="middle" fontSize="12" fill={isDarkMode ? '#ffffff' : '#000000'} fontWeight="500" transform="rotate(-90 20 175)">
                             Submissions
                           </text>
 
-                          <text x="470" y="345" textAnchor="middle" fontSize="12" fill="#000000" fontWeight="500">
+                          <text x="470" y="345" textAnchor="middle" fontSize="12" fill={isDarkMode ? '#ffffff' : '#000000'} fontWeight="500">
                             Dates (Last 7 Days)
                           </text>
                         </>
