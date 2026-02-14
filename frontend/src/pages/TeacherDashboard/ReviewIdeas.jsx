@@ -16,8 +16,6 @@ const ReviewIdeas = () => {
   const [feedback, setFeedback] = useState('');
   const [loading, setLoading] = useState(true);
   const [reviewLoading, setReviewLoading] = useState(false);
-  const [aiInsights, setAiInsights] = useState(null);
-  const [loadingInsights, setLoadingInsights] = useState(false);
   const [selectedForMerge, setSelectedForMerge] = useState([]);
   const [showMergeModal, setShowMergeModal] = useState(false);
   const [mergeTitle, setMergeTitle] = useState('');
@@ -51,32 +49,12 @@ const ReviewIdeas = () => {
     }
   };
 
-  const handleViewInsights = async (idea) => {
-    setSelectedIdea(idea);
-    setFeedback('');
-    setLoadingInsights(true);
-    try {
-      const response = await ideaAPI.getAiInsights(idea._id);
-      
-      // Show loading for minimum 3 seconds
-      setTimeout(() => {
-        setAiInsights(response.data);
-        setLoadingInsights(false);
-      }, 3000);
-    } catch (error) {
-      console.error('Error fetching AI insights:', error);
-      setLoadingInsights(false);
-      showError('Failed to generate AI insights. Please try again.');
-    }
-  };
-
-  const handleAiModalReview = async (status) => {
+  const handleReview = async (status) => {
     if (!selectedIdea) return;
     setReviewLoading(true);
     try {
       await ideaAPI.reviewIdea(selectedIdea._id, { status, feedback });
       success(`Idea ${status} successfully!`);
-      setAiInsights(null);
       setSelectedIdea(null);
       setFeedback('');
       fetchPendingIdeas();
@@ -226,7 +204,7 @@ const ReviewIdeas = () => {
                         </button>
                         <div 
                           className={reviewStyles.submissionContent}
-                          onClick={() => handleViewInsights(idea)}
+                          onClick={() => handleSelectIdea(idea)}
                         >
                           <div className={reviewStyles.submissionTitle}>{idea.title}</div>
                           <div className={reviewStyles.submissionMeta}>
@@ -255,30 +233,20 @@ const ReviewIdeas = () => {
               )}
             </div>
 
-            {/* RIGHT SIDE - AI INSIGHTS */}
+            {/* RIGHT SIDE - IDEA DETAILS */}
             <div className={reviewStyles.rightPanel}>
               {!selectedIdea ? (
                 <div className={reviewStyles.emptyPanel}>
                   <MdPerson size={40} />
-                  <p>Select an idea to view insights</p>
+                  <p>Select an idea to view details</p>
                 </div>
-              ) : loadingInsights ? (
-                <div className={reviewStyles.loadingPanel}>
-                  <div className={reviewStyles.loadingSpinner}></div>
-                  <h3>Analysing the potential...</h3>
-                  <p>Our AI is evaluating this idea for innovation, feasibility, and market potential</p>
-                </div>
-              ) : aiInsights ? (
+              ) : (
                 <div className={reviewStyles.insightsPanel}>
                   <div className={reviewStyles.insightHeader}>
                     <div>
                       <span className={reviewStyles.domainBadge}>{selectedIdea.domain}</span>
                       <h3>{selectedIdea.title}</h3>
-                      <p>Proposal by <strong>{selectedIdea.submittedBy?.fullName || 'Unknown'}</strong></p>
-                    </div>
-                    <div className={reviewStyles.scoreDisplay}>
-                      <div className={reviewStyles.scoreNumber}>{aiInsights.score}</div>
-                      <div className={reviewStyles.scoreLabel}>SCORE</div>
+                      <p>Idea by <strong>{selectedIdea.submittedBy?.fullName || 'Unknown'}</strong></p>
                     </div>
                   </div>
 
@@ -324,40 +292,6 @@ const ReviewIdeas = () => {
                     </div>
                   </div>
 
-                  <div className={reviewStyles.rightContent}>
-                    <div className={reviewStyles.aiBox}>
-                      <div className={reviewStyles.aiBoxHeader}>
-                        <MdAutoAwesome size={24} />
-                        <h4>AI Innovation Audit</h4>
-                      </div>
-                      <p className={reviewStyles.aiText}>{aiInsights.insight}</p>
-                      
-                      <div className={reviewStyles.keyPointsList}>
-                        {aiInsights.keyPoints?.map((point, idx) => (
-                          <div key={idx} className={reviewStyles.keyPointItem}>
-                            <span className={reviewStyles.bullet}>◆</span>
-                            <span>{point}</span>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-
-                    <div className={reviewStyles.metricsRow}>
-                      <div className={reviewStyles.metricItem}>
-                        <span className={reviewStyles.metricLabel}>Feasibility</span>
-                        <span className={reviewStyles.metricValue}>{aiInsights.feasibility}/10</span>
-                      </div>
-                      <div className={reviewStyles.metricItem}>
-                        <span className={reviewStyles.metricLabel}>Realistic Impact</span>
-                        <span className={reviewStyles.metricValue}>{aiInsights.impact}/10</span>
-                      </div>
-                      <div className={reviewStyles.metricItem}>
-                        <span className={reviewStyles.metricLabel}>Expect Viability</span>
-                        <span className={reviewStyles.metricValue}>{aiInsights.marketPotential}/10</span>
-                      </div>
-                    </div>
-                  </div>
-
                   {/* Mentor Interest Panel */}
                   <div style={{ marginTop: '24px', paddingTop: '24px', borderTop: '1px solid #e5e7eb' }}>
                     <MentorInterestPanel 
@@ -372,14 +306,14 @@ const ReviewIdeas = () => {
                   {selectedIdea.meetingArranged ? (
                     <div className={reviewStyles.actionButtons}>
                       <button
-                        onClick={() => handleAiModalReview('rejected')}
+                        onClick={() => handleReview('rejected')}
                         disabled={reviewLoading}
                         className={reviewStyles.rejectBtn}
                       >
                         <MdCancel /> Reject
                       </button>
                       <button
-                        onClick={() => handleAiModalReview('approved')}
+                        onClick={() => handleReview('approved')}
                         disabled={reviewLoading}
                         className={reviewStyles.approveBtn}
                       >
@@ -415,7 +349,7 @@ const ReviewIdeas = () => {
                     </div>
                   )}
                 </div>
-              ) : null}
+              )}
             </div>
           </div>
         </div>

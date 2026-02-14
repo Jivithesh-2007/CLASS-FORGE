@@ -144,7 +144,7 @@
 /* CHARTS SECTION */
 .chartsGrid {
   display: grid;
-  grid-template-columns: 2fr 1fr;
+  grid-template-columns: 1.5fr 1fr;
   gap: 24px;
   margin-bottom: 32px;
 }
@@ -183,7 +183,7 @@
 }
 
 .chartPlaceholder {
-  height: 240px;
+  height: 180px;
   margin-bottom: 16px;
   display: flex;
   align-items: center;

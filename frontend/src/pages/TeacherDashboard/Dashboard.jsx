@@ -53,7 +53,7 @@ const TeacherDashboard = () => {
       // Get all ideas for trend calculation
       const allIdeasData = ideasRes.data.ideas;
       setAllIdeas(allIdeasData);
-      setRecentIdeas(allIdeasData.filter(idea => idea.status === 'pending').slice(0, 6));
+      setRecentIdeas(allIdeasData.filter(idea => idea.status === 'pending').slice(0, 10));
       
       // Store student count
       const studentCount = studentsRes.users?.length || 0;
@@ -339,7 +339,7 @@ const TeacherDashboard = () => {
             background: '#ffffff',
             border: '1px solid #e5e7eb',
             padding: '32px',
-            borderRadius: '12px',
+            borderRadius: '50px',
             marginBottom: '32px',
             position: 'relative',
             overflow: 'hidden',
@@ -440,9 +440,84 @@ const TeacherDashboard = () => {
             </div>
           </div>
 
-          {/* CHARTS SECTION */}
+          {/* CHARTS SECTION - ROW 1: 60/40 split */}
           <div className={styles.chartsGrid}>
-            <div className={styles.chartCard}>
+            {/* LEFT: Review Pending Ideas - 60% (moved from Row 2) */}
+            <div className={styles.chartCard} style={{ borderRadius: '60px' }}>
+              <div className={styles.sectionHeader} style={{ marginBottom: '24px', paddingBottom: '20px', borderBottom: '1px solid var(--border-light)' }}>
+                <div>
+                  <h2 className={styles.sectionTitle}>Review Pending ideas</h2>
+                  <p className={styles.sectionSubtitle}>Pending ideas that require attention</p>
+                </div>
+                <button 
+                  onClick={() => navigate('/teacher-dashboard/review')}
+                  style={{
+                    padding: '8px 16px',
+                    background: '#000000',
+                    color: '#ffffff',
+                    border: 'none',
+                    fontSize: '12px',
+                    fontWeight: '600',
+                    cursor: 'pointer',
+                    borderRadius: '50px',
+                    transition: 'all 0.3s ease'
+                  }}
+                  onMouseEnter={(e) => {
+                    e.target.style.background = '#333333';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.target.style.background = '#141414ff';
+                  }}
+                >
+                  Review Queue →
+                </button>
+              </div>
+
+              {recentIdeas.length === 0 ? (
+                <div className={styles.emptyState}>
+                  <div className={styles.emptyText}>No pending ideas</div>
+                  <div className={styles.emptySubtext}>
+                    All submissions have been reviewed
+                  </div>
+                </div>
+              ) : (
+                <div className={styles.ideaTable}>
+                  <div className={styles.tableHeader}>
+                    <div className={styles.headerCell}>IDEA</div>
+                    <div className={styles.headerCell}>STUDENT</div>
+                    <div className={styles.headerCell}>DOMAIN</div>
+                    <div className={styles.headerCell}>DATE</div>
+                    <div className={styles.headerCell}>STATUS</div>
+                  </div>
+                  {recentIdeas.map((idea) => (
+                    <div key={idea._id} className={styles.ideaRow}>
+                      <div className={styles.proposalDetails}>
+                        <h3 className={styles.ideaRowTitleText}>{idea.title}</h3>
+                        <p className={styles.ideaRowDescription}>{idea.description}</p>
+                      </div>
+                      <div className={styles.authorCell}>
+                        <span className={styles.authorInitial}>{idea.submittedBy?.fullName?.charAt(0) || 'U'}</span>
+                        <span className={styles.authorName}>{idea.submittedBy?.fullName || 'Unknown'}</span>
+                      </div>
+                      <div className={styles.departmentCell}>
+                        {idea.domain}
+                      </div>
+                      <div className={styles.dateCell}>
+                        {new Date(idea.createdAt).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })}
+                      </div>
+                      <div className={styles.statusCell}>
+                        <span className={`${styles.status} ${getStatusClass(idea.status)}`}>
+                          {idea.status === 'pending' ? 'UNDER REVIEW' : idea.status.charAt(0).toUpperCase() + idea.status.slice(1)}
+                        </span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {/* RIGHT: Submission Trend - 40% */}
+            <div className={styles.chartCard} style={{ borderRadius: '60px' }}>
               <div className={styles.chartHeader}>
                 <h3>Submission Trend</h3>
                 <p>Daily idea submissions</p>
@@ -461,7 +536,6 @@ const TeacherDashboard = () => {
                       }
 
                       const maxValue = Math.max(...data, 1);
-                      // Generate dates for last 7 days
                       const dates = [];
                       for (let i = 6; i >= 0; i--) {
                         const date = new Date();
@@ -471,17 +545,12 @@ const TeacherDashboard = () => {
                       const barWidth = 70;
                       const barGap = 30;
                       const padding = 70;
-                      const chartHeight = 280;
-                      const chartWidth = 900 - 2 * padding;
 
                       return (
                         <>
-                          {/* Y-axis */}
                           <line x1="70" y1="50" x2="70" y2="300" stroke="#000000" strokeWidth="2" />
-                          {/* X-axis */}
                           <line x1="70" y1="300" x2="870" y2="300" stroke="#000000" strokeWidth="2" />
                           
-                          {/* Y-axis labels and grid lines */}
                           {[0, Math.ceil(maxValue / 3), Math.ceil((maxValue * 2) / 3), maxValue].map((label, idx) => {
                             const yLabels = [0, Math.ceil(maxValue / 3), Math.ceil((maxValue * 2) / 3), maxValue];
                             const y = 300 - (idx / (yLabels.length - 1)) * 250;
@@ -498,7 +567,6 @@ const TeacherDashboard = () => {
                             );
                           })}
 
-                          {/* Bars */}
                           {data.map((value, idx) => {
                             const barX = 70 + (idx * (barWidth + barGap)) + barGap;
                             const barHeight = (value / maxValue) * 250;
@@ -519,7 +587,6 @@ const TeacherDashboard = () => {
                                 />
                                 {hoveredPoint === idx && (
                                   <g>
-                                    {/* Pointer triangle pointing down */}
                                     <polygon
                                       points={`${barX + barWidth / 2},${barY - 18} ${barX + barWidth / 2 - 10},${barY - 28} ${barX + barWidth / 2 + 10},${barY - 28}`}
                                       fill="#ffffff"
@@ -527,7 +594,6 @@ const TeacherDashboard = () => {
                                       strokeWidth="2"
                                       strokeLinejoin="round"
                                     />
-                                    {/* Tooltip box */}
                                     <rect 
                                       x={barX + barWidth / 2 - 60} 
                                       y={barY - 85} 
@@ -538,7 +604,6 @@ const TeacherDashboard = () => {
                                       strokeWidth="2"
                                       rx="8"
                                     />
-                                    {/* Number */}
                                     <text 
                                       x={barX + barWidth / 2} 
                                       y={barY - 52} 
@@ -549,7 +614,6 @@ const TeacherDashboard = () => {
                                     >
                                       {value}
                                     </text>
-                                    {/* Label */}
                                     <text 
                                       x={barX + barWidth / 2} 
                                       y={barY - 32} 
@@ -566,7 +630,6 @@ const TeacherDashboard = () => {
                             );
                           })}
 
-                          {/* X-axis labels */}
                           {dates.map((date, idx) => {
                             const barX = 70 + (idx * (barWidth + barGap)) + barGap + barWidth / 2;
                             return (
@@ -576,12 +639,10 @@ const TeacherDashboard = () => {
                             );
                           })}
 
-                          {/* Y-axis label */}
                           <text x="20" y="175" textAnchor="middle" fontSize="12" fill="#000000" fontWeight="500" transform="rotate(-90 20 175)">
                             Submissions
                           </text>
 
-                          {/* X-axis label */}
                           <text x="470" y="345" textAnchor="middle" fontSize="12" fill="#000000" fontWeight="500">
                             Dates (Last 7 Days)
                           </text>
@@ -592,122 +653,129 @@ const TeacherDashboard = () => {
                 </div>
               </div>
             </div>
-
-            <div className={styles.chartCard}>
-              <div className={styles.chartHeader}>
-                <h3>Domain Engagement</h3>
-              </div>
-              <div className={styles.departmentBars}>
-                {departmentStats.length === 0 ? (
-                  <div style={{ padding: '20px', textAlign: 'center', color: '#666666' }}>
-                    No department data available
-                  </div>
-                ) : (
-                  (() => {
-                    const maxCount = Math.max(...departmentStats.map(d => d.count), 1);
-                    return departmentStats.map((dept, idx) => (
-                      <div key={idx} className={styles.barItem}>
-                        <span className={styles.barLabel}>{dept._id || 'Unknown'}</span>
-                        <div className={styles.barContainer}>
-                          <div 
-                            className={styles.bar} 
-                            style={{ 
-                              width: `${(dept.count / maxCount) * 100}%`, 
-                              background: '#000000' 
-                            }}
-                          ></div>
-                        </div>
-                        <span style={{ fontSize: '12px', color: '#666666', marginLeft: '8px' }}>
-                          {dept.count}
-                        </span>
-                      </div>
-                    ));
-                  })()
-                )}
-              </div>
-              <div className={styles.chartFooter}>
-                <MdTrendingUp size={16} style={{ color: '#10b981' }} />
-                <span style={{ color: '#666666' }}>
-                  {departmentStats.length > 0 
-                    ? `${departmentStats[0]._id} leading with ${departmentStats[0].count} ideas`
-                    : 'No data available'
-                  }
-                </span>
-              </div>
-            </div>
           </div>
 
-
-
-          {/* RECENT IDEAS SECTION */}
-          <div className={styles.section}>
-            <div className={styles.sectionHeader}>
-              <h2 className={styles.sectionTitle}>Recent Pending Ideas</h2>
-              <button 
-                onClick={() => navigate('/teacher-dashboard/review')}
-                style={{
-                  padding: '0',
-                  background: 'none',
-                  color: 'var(--primary-color)',
-                  border: 'none',
-                  fontSize: '12px',
-                  fontWeight: '600',
-                  cursor: 'pointer',
-                  transition: 'var(--transition-fast)',
-                  textDecoration: 'none'
-                }}
-                onMouseEnter={(e) => {
-                  e.target.style.textDecoration = 'underline';
-                }}
-                onMouseLeave={(e) => {
-                  e.target.style.textDecoration = 'none';
-                }}
-              >
-                REVIEW QUEUE
-              </button>
-            </div>
-
-            {recentIdeas.length === 0 ? (
-              <div className={styles.emptyState}>
-                <div className={styles.emptyText}>No pending ideas</div>
-                <div className={styles.emptySubtext}>
-                  All submissions have been reviewed
-                </div>
+          {/* RECENT IDEAS SECTION - ROW 2: 60/40 split */}
+          <div className={styles.chartsGrid}>
+            {/* LEFT: Domain Engagement - 60% (moved from Row 2 RIGHT) */}
+            <div className={styles.chartCard} style={{ borderRadius: '60px' }}>
+              <div className={styles.chartHeader}>
+                <h3>Domain Engagement</h3>
+                <p>Daily idea submissions</p>
               </div>
-            ) : (
-              <div className={styles.ideaTable}>
-                <div className={styles.tableHeader}>
-                  <div className={styles.headerCell}>PROPOSAL DETAILS</div>
-                  <div className={styles.headerCell}>STUDENT</div>
-                  <div className={styles.headerCell}>DEPARTMENT</div>
-                  <div className={styles.headerCell}>DATE</div>
-                  <div className={styles.headerCell}>STATUS</div>
-                </div>
-                {recentIdeas.map((idea) => (
-                  <div key={idea._id} className={styles.ideaRow}>
-                    <div className={styles.proposalDetails}>
-                      <h3 className={styles.ideaRowTitleText}>{idea.title}</h3>
-                      <p className={styles.ideaRowDescription}>{idea.description}</p>
-                    </div>
-                    <div className={styles.authorCell}>
-                      <span className={styles.authorInitial}>{idea.submittedBy?.fullName?.charAt(0) || 'U'}</span>
-                      <span className={styles.authorName}>{idea.submittedBy?.fullName || 'Unknown'}</span>
-                    </div>
-                    <div className={styles.departmentCell}>
-                      {idea.domain}
-                    </div>
-                    <div className={styles.dateCell}>
-                      {new Date(idea.createdAt).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })}
-                    </div>
-                    <div className={styles.statusCell}>
-                      <span className={`${styles.status} ${getStatusClass(idea.status)}`}>
-                        {idea.status === 'pending' ? 'Under Review' : idea.status.charAt(0).toUpperCase() + idea.status.slice(1)}
-                      </span>
+              <div className={styles.chartPlaceholder}>
+                <div style={{ display: 'flex', gap: '48px', alignItems: 'center', width: '100%', padding: '24px' }}>
+                  {/* Pie Chart */}
+                  <div style={{ flex: 0.4, display: 'flex', justifyContent: 'center' }}>
+                    <div style={{ position: 'relative', width: '160px', height: '160px' }}>
+                      <svg viewBox="0 0 200 200" style={{ width: '100%', height: '100%', filter: 'drop-shadow(0 4px 12px rgba(0, 0, 0, 0.1))' }}>
+                        {(() => {
+                          const total = departmentStats.reduce((sum, d) => sum + d.count, 0);
+                          const colors = ['#10b981', '#3b82f6', '#a855f7', '#fbbf24', '#ef4444', '#06b6d4'];
+                          let currentAngle = -90;
+
+                          return (
+                            <>
+                              {departmentStats.slice(0, 6).map((dept, idx) => {
+                                const sliceAngle = (dept.count / total) * 360;
+                                const startAngle = currentAngle;
+                                const endAngle = currentAngle + sliceAngle;
+                                
+                                const startRad = (startAngle * Math.PI) / 180;
+                                const endRad = (endAngle * Math.PI) / 180;
+                                
+                                const x1 = 100 + 70 * Math.cos(startRad);
+                                const y1 = 100 + 70 * Math.sin(startRad);
+                                const x2 = 100 + 70 * Math.cos(endRad);
+                                const y2 = 100 + 70 * Math.sin(endRad);
+                                
+                                const largeArc = sliceAngle > 180 ? 1 : 0;
+                                const pathData = `M 100 100 L ${x1} ${y1} A 70 70 0 ${largeArc} 1 ${x2} ${y2} Z`;
+                                
+                                currentAngle = endAngle;
+                                
+                                return (
+                                  <path key={idx} d={pathData} fill={colors[idx % colors.length]} style={{ filter: 'drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1))', transition: 'all 0.3s ease', cursor: 'pointer' }} />
+                                );
+                              })}
+                              {/* Center circle for donut */}
+                              <circle cx="100" cy="100" r="45" fill="white" />
+                              <text x="100" y="108" textAnchor="middle" fontSize="28" fontWeight="700" fill="#059669">
+                                62%
+                              </text>
+                              <text x="100" y="125" textAnchor="middle" fontSize="12" fill="#6b7280">
+                                Approved
+                              </text>
+                            </>
+                          );
+                        })()}
+                      </svg>
                     </div>
                   </div>
-                ))}
+
+                  {/* Legend */}
+                  <div style={{ flex: 0.6, display: 'flex', flexDirection: 'column', gap: '14px' }}>
+                    {departmentStats.slice(0, 5).map((dept, idx) => {
+                      const colors = ['#10b981', '#3b82f6', '#a855f7', '#fbbf24', '#ef4444'];
+                      const total = departmentStats.reduce((sum, d) => sum + d.count, 0);
+                      const percentage = Math.round((dept.count / total) * 100);
+                      
+                      return (
+                        <div key={idx} style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '10px 12px', borderRadius: '10px', background: '#f9fafb', transition: 'all 0.3s ease', cursor: 'pointer' }}>
+                          <span style={{ width: '14px', height: '14px', background: colors[idx], borderRadius: '50%', boxShadow: `0 2px 8px ${colors[idx]}40` }}></span>
+                          <span style={{ fontSize: '14px', fontWeight: '600', color: '#1f2937' }}>{dept._id}</span>
+                          <span style={{ marginLeft: 'auto', fontSize: '14px', fontWeight: '700', color: colors[idx] }}>{dept.count}</span>
+                          <span style={{ fontSize: '12px', fontWeight: '600', color: '#9ca3af' }}>({percentage}%)</span>
+                        </div>
+                      );
+                    })}
+                    <div style={{ fontSize: '12px', color: '#6b7280', marginTop: '12px', paddingTop: '12px', borderTop: '2px solid #e5e7eb', fontWeight: '600' }}>
+                      ✓ Total ideas — {departmentStats.reduce((sum, d) => sum + d.count, 0)} of {totalSubmissions} total
+                    </div>
+                  </div>
+                </div>
               </div>
-            )}
+            </div>
+
+            {/* RIGHT: Submission Status - 40% (moved from Row 1 LEFT) */}
+            <div className={styles.chartCard} style={{ borderRadius: '60px' }}>
+              <div className={styles.chartHeader}>
+                <h3>Submission Status</h3>
+                <p>Total submitted ideas</p>
+              </div>
+              <div className={styles.chartPlaceholder}>
+                <div style={{ width: '100%', display: 'flex', flexDirection: 'column', gap: '24px', padding: '24px' }}>
+                  {/* Stacked Bar */}
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+                    <div style={{ flex: 1, height: '32px', display: 'flex', borderRadius: '16px', overflow: 'hidden', boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)' }}>
+                      <div style={{ width: `${(approved / (approved + pendingReview + rejected)) * 100}%`, background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)', transition: 'all 0.3s ease' }}></div>
+                      <div style={{ width: `${(pendingReview / (approved + pendingReview + rejected)) * 100}%`, background: 'linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%)', transition: 'all 0.3s ease' }}></div>
+                      <div style={{ width: `${(rejected / (approved + pendingReview + rejected)) * 100}%`, background: 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)', transition: 'all 0.3s ease' }}></div>
+                    </div>
+                    <span style={{ fontSize: '18px', fontWeight: '700', minWidth: '60px', color: '#059669' }}>62%</span>
+                  </div>
+
+                  {/* Legend */}
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '12px', background: '#f0fdf4', borderRadius: '12px', transition: 'all 0.3s ease' }}>
+                      <span style={{ width: '14px', height: '14px', background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)', borderRadius: '4px', boxShadow: '0 2px 8px rgba(16, 185, 129, 0.3)' }}></span>
+                      <span style={{ fontSize: '14px', fontWeight: '600', color: '#1f2937' }}>Approved</span>
+                      <span style={{ marginLeft: 'auto', fontSize: '14px', fontWeight: '700', color: '#059669' }}>{approved} (62%)</span>
+                    </div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '12px', background: '#fffbeb', borderRadius: '12px', transition: 'all 0.3s ease' }}>
+                      <span style={{ width: '14px', height: '14px', background: 'linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%)', borderRadius: '4px', boxShadow: '0 2px 8px rgba(251, 191, 36, 0.3)' }}></span>
+                      <span style={{ fontSize: '14px', fontWeight: '600', color: '#1f2937' }}>Pending</span>
+                      <span style={{ marginLeft: 'auto', fontSize: '14px', fontWeight: '700', color: '#f59e0b' }}>{pendingReview} (29%)</span>
+                    </div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '12px', background: '#fef2f2', borderRadius: '12px', transition: 'all 0.3s ease' }}>
+                      <span style={{ width: '14px', height: '14px', background: 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)', borderRadius: '4px', boxShadow: '0 2px 8px rgba(239, 68, 68, 0.3)' }}></span>
+                      <span style={{ fontSize: '14px', fontWeight: '600', color: '#1f2937' }}>Rejected</span>
+                      <span style={{ marginLeft: 'auto', fontSize: '14px', fontWeight: '700', color: '#dc2626' }}>{rejected} (9%)</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
